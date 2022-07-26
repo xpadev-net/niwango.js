@@ -2947,7 +2947,7 @@
       },
       peg$c384 = function (body) {
         return {
-          type: "ArrowFunctionExpression",
+          type: "BlockStatement",
           body: body,
         };
       },

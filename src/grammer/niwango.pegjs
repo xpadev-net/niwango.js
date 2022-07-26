@@ -1287,7 +1287,7 @@ LambdaDeclaration
   = LambdaToken __ "(" __ body:FunctionBody __ ")"
     {
       return {
-        type: "ArrowFunctionExpression",
+        type: "LambdaDeclaration",
         body: body
       };
     }

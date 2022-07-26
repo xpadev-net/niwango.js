@@ -6,7 +6,7 @@ import json from "@rollup/plugin-json";
 import pkg from "./package.json";
 import * as path from "path";
 const banner = `/*!
-  niconicomments.js v${pkg.version}
+  niwango.js v${pkg.version}
   (c) 2021 xpadev-net https://xpadev.net
   Released under the ${pkg.license} License.
 */`;
@@ -16,7 +16,7 @@ export default {
     output: {
         file: 'dist/bundle.js',
         format: 'umd',
-        name: 'NiconiComments',
+        name: 'niwango',
         banner
     },
     plugins: [
@@ -28,6 +28,5 @@ export default {
             babelHelpers: "bundled",
             configFile: path.resolve(__dirname, ".babelrc.js"),
         }),
-        nodeResolve(),
     ]
 }
