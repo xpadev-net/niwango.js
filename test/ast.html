@@ -1,0 +1,27 @@
+<div>
+	<textarea id="input"></textarea>
+	<textarea id="output"></textarea>
+</div>
+<script src="../src/niwango.peg.js"></script>
+<script src="./test.js"></script>
+<script>
+	const input = document.getElementById("input"),
+		output = document.getElementById("output");
+	input.onchange = () => {
+		const AST = niwango.parse(input.value);
+		output.value = JSON.stringify(AST,undefined," ");
+		console.log(test(AST));
+	}
+
+</script>
+<style>
+	div{
+		display: flex;
+		flex-direction: row;
+		height: 100%;
+	}
+	textarea{
+		height: 100%;
+		flex: 1;
+	}
+</style>
