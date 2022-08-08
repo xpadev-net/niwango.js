@@ -11,17 +11,17 @@ type A_Literal = {
 };
 type A_ExpressionStatement = {
   type: "ExpressionStatement";
-  expression: unknown;
+  expression: A_ANY;
 };
 type A_AssignmentExpression = {
   type: "AssignmentExpression";
   operator: "=";
-  left: unknown;
-  right: unknown;
+  left: A_ANY;
+  right: A_ANY;
 };
 type A_ArrayExpression = {
   type: "ArrayExpression";
-  elements: unknown[];
+  elements: A_ANY[];
 };
 type A_ArrowFunctionExpression = {
   type: "ArrowFunctionExpression";
@@ -30,17 +30,17 @@ type A_ArrowFunctionExpression = {
 type A_BinaryExpression = {
   type: "BinaryExpression";
   operator: string;
-  left: unknown;
-  right: unknown;
+  left: A_ANY;
+  right: A_ANY;
 };
 type A_BlockStatement = {
   type: "BlockStatement";
-  body: unknown[];
+  body: A_ANY[];
 };
 type A_CallExpression = {
   type: "CallExpression";
-  callee?: unknown;
-  arguments: unknown[];
+  callee?: A_ANY;
+  arguments: A_ANY[];
 };
 type A_CallExpression_drawShape = A_CallExpression & {
   callee: "drawShape";
@@ -122,17 +122,17 @@ type A_CallExpression_playCM = A_CallExpression & {
 }
 type A_IfStatement = {
   type: "IfStatement";
-  test: unknown;
+  test: A_ANY;
 };
 
 type A_MemberExpression = {
   type: "MemberExpression";
-  object: unknown;
-  property: unknown;
+  object: A_ANY;
+  property: A_ANY;
 };
 type A_Program = {
   type: "Program";
-  body: unknown[];
+  body: A_ANY[];
 };
 type A_UnaryExpression = {
   type: "UnaryExpression";

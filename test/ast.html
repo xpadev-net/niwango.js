@@ -2,15 +2,18 @@
 	<textarea id="input"></textarea>
 	<textarea id="output"></textarea>
 </div>
-<script src="../src/niwango.peg.js"></script>
+<script src="../src/parser/parser.js"></script>
 <script src="./test.js"></script>
+<script src="../dist/bundle.js"></script>
 <script>
 	const input = document.getElementById("input"),
-		output = document.getElementById("output");
+		output = document.getElementById("output"),
+		niwa = new niwango();
 	input.onchange = () => {
-		const AST = niwango.parse(input.value);
+		const AST = parser.parse(input.value);
 		output.value = JSON.stringify(AST,undefined," ");
 		console.log(test(AST));
+		niwa.execute(input.value)
 	}
 
 </script>

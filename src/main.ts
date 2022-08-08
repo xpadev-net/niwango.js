@@ -1,6 +1,6 @@
 import execute from "@/executor";
 // @ts-ignore
-import { parse } from "./niwango.peg";
+import { parse } from "./parser/parser";
 
 class Niwango {
   private readonly globalScope: T_scope;

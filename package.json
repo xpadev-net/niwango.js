@@ -6,7 +6,7 @@
   "types": "dist/dts/types.d.ts",
   "scripts": {
     "build": "rollup -c rollup.config.js",
-    "pegjs": "pegjs --cache --optimize speed -o ./src/niwango.peg.js --format umd --export-var niwango ./src/grammer/niwango.pegjs",
+    "pegjs": "pegjs --cache --optimize speed -o ./src/parser/parser.js --format umd --export-var parser ./src/grammer/niwango.pegjs",
     "watch": "rollup -c rollup.config.js -w",
     "typedoc": "typedoc --entryPointStrategy Expand --options tsdoc.json --out ./docs/ ./src/",
     "copy-dts": "npx copyfiles -u 2 src/@types/*.d.ts dist/dts",
