@@ -2,75 +2,76 @@ import typeGuard from "@/typeGuard";
 
 const execute = (script: A_ANY, scopes: T_scope[]) => {
   try {
-    if (!script) return
-    if (typeGuard.ExpressionStatement(script)){
-      execute(script.expression,scopes);
-    }else if(typeGuard.AssignmentExpression(script)){
-      if (script.operator === "="){
-        assign(script.left,execute(script.right,scopes),scopes);
+    if (!script) return;
+    if (typeGuard.ExpressionStatement(script)) {
+      execute(script.expression, scopes);
+    } else if (typeGuard.AssignmentExpression(script)) {
+      if (script.operator === "=") {
+        assign(script.left, execute(script.right, scopes), scopes);
       }
-    }else if(typeGuard.ArrayExpression(script)){
-      return script.elements.reduce((pv,value)=>{
-        pv.push(execute(value,scopes));
+    } else if (typeGuard.ArrayExpression(script)) {
+      return script.elements.reduce((pv, value) => {
+        pv.push(execute(value, scopes));
         return pv;
-      },[] as unknown[]);
-    }else if(typeGuard.ArrowFunctionExpression(script)){
-      return execute(script.body,scopes);
-    }else if(typeGuard.BinaryExpression(script)){
-      const left = execute(script.left, scopes),right = execute(script.right, scopes);
-      if (script.operator===">="){
+      }, [] as unknown[]);
+    } else if (typeGuard.ArrowFunctionExpression(script)) {
+      return execute(script.body, scopes);
+    } else if (typeGuard.BinaryExpression(script)) {
+      const left = execute(script.left, scopes),
+        right = execute(script.right, scopes);
+      if (script.operator === ">=") {
         return left >= right;
-      }else if (script.operator==="<="){
+      } else if (script.operator === "<=") {
         return left <= right;
-      }else if (script.operator===">"){
+      } else if (script.operator === ">") {
         return left > right;
-      }else if (script.operator==="<"){
+      } else if (script.operator === "<") {
         return left < right;
-      }else if (script.operator==="!="){
+      } else if (script.operator === "!=") {
         return left != right;
-      }else if (script.operator==="+="){
-        const result = left+execute(script.right, scopes);
-        assign(script.left,result,scopes);
+      } else if (script.operator === "+=") {
+        const result = left + execute(script.right, scopes);
+        assign(script.left, result, scopes);
         return result;
-      }else if (script.operator==="+="){
-        const result = left-execute(script.right, scopes);
-        assign(script.left,result,scopes);
+      } else if (script.operator === "+=") {
+        const result = left - execute(script.right, scopes);
+        assign(script.left, result, scopes);
         return result;
-      }else if(script.operator==="+"){
-        return left+right;
-      }else if(script.operator==="-"){
+      } else if (script.operator === "+") {
+        return left + right;
+      } else if (script.operator === "-") {
         return left - right;
-      }else{
+      } else {
         console.warn("unknown binary expression:", script, scopes);
       }
-    }else if(typeGuard.BlockStatement(script)){
+    } else if (typeGuard.BlockStatement(script)) {
       for (let item of script.body) {
         execute(item, scopes);
       }
-    }else if(typeGuard.CallExpression(script)){
-      console.log("CallExpression:" ,script,scopes);
-      if (script.callee?.name==="dump"){
-        console.log(execute(script.arguments[0],scopes));
+    } else if (typeGuard.CallExpression(script)) {
+      console.log("CallExpression:", script, scopes);
+      if (script.callee?.name === "dump") {
+        console.log(execute(script.arguments[0], scopes));
       }
-    }else if(typeGuard.IfStatement(script)){
+    } else if (typeGuard.IfStatement(script)) {
       let test = execute(script.test, scopes);
       console.log("ifstate:", script.test, test, script, scopes);
-    }else if(typeGuard.Identifier(script)){
-      return resolve(script,scopes);
-    }else if(typeGuard.Literal(script)){
+    } else if (typeGuard.Identifier(script)) {
+      return resolve(script, scopes);
+    } else if (typeGuard.Literal(script)) {
       return script.value;
-    }else if(typeGuard.MemberExpression(script)){
-      console.log("MemberExpression:" ,script,scopes);
-    }else if(typeGuard.Program(script)){
-      for (let item of script.body){
-        execute(item,scopes);
+    } else if (typeGuard.MemberExpression(script)) {
+      console.log("MemberExpression:", script, scopes);
+    } else if (typeGuard.Program(script)) {
+      for (let item of script.body) {
+        execute(item, scopes);
       }
-    }else if(typeGuard.UpdateExpression(script)){
-      console.log("UpdateExpression:" ,script,scopes);
-    }else if(typeGuard.VariableDeclaration(script)){
-      console.log("VariableDeclaration:" ,script,scopes);
-    }else{
-      console.log("unknown",script,scopes);
+    } else if (typeGuard.UpdateExpression(script)) {
+      console.log("UpdateExpression:", script, scopes);
+    } else if (typeGuard.VariableDeclaration(script)) {
+      console.log("VariableDeclaration:", script, scopes);
+    } else {
+      console.log("unknown", script, scopes);
     }
     /*switch (script.type) {
       case "CallExpression":
@@ -235,26 +236,26 @@ const execute = (script: A_ANY, scopes: T_scope[]) => {
   }
 };
 
-const resolve = (script:A_ANY,scopes:T_scope[]) => {
-  if (typeGuard.Identifier(script)){
-    for (const scope of scopes){
-      if (scope[script.name]){
-        return scope[script.name]
+const resolve = (script: A_ANY, scopes: T_scope[]) => {
+  if (typeGuard.Identifier(script)) {
+    for (const scope of scopes) {
+      if (scope[script.name]) {
+        return scope[script.name];
       }
     }
   }
-}
-const assign = (target:A_ANY,value:unknown,scopes:T_scope[]) => {
-  if (scopes.length < 1)return;
-  if (typeGuard.Identifier(target)){
-    for (const scope of scopes){
-      if (scope[target.name]){
+};
+const assign = (target: A_ANY, value: unknown, scopes: T_scope[]) => {
+  if (scopes.length < 1) return;
+  if (typeGuard.Identifier(target)) {
+    for (const scope of scopes) {
+      if (scope[target.name]) {
         scope[target.name] = value;
         return;
       }
     }
     if (scopes[0]) scopes[0][target.name] = value;
   }
-}
+};
 
 export default execute;

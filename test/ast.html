@@ -3,7 +3,6 @@
 	<textarea id="output"></textarea>
 </div>
 <script src="../src/parser/parser.js"></script>
-<script src="./test.js"></script>
 <script src="../dist/bundle.js"></script>
 <script>
 	const input = document.getElementById("input"),
@@ -12,7 +11,6 @@
 	input.onchange = () => {
 		const AST = parser.parse(input.value);
 		output.value = JSON.stringify(AST,undefined," ");
-		console.log(test(AST));
 		niwa.execute(input.value)
 	}
 

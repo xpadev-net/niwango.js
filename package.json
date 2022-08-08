@@ -16,7 +16,7 @@
     "eslint:fix": "eslint src/**/*.ts* --fix",
     "format": "prettier --write \"src/**/*.{tsx,ts,js,json,css,scss}\"",
     "lint": "npm run eslint&&npm run check-types",
-    "lint:fix": "npm run eslint:fix&&npm run check-types&&npm run format",
+    "lint:fix": "npm run format&&npm run eslint:fix&&npm run check-types",
     "prepare": "husky install"
   },
   "author": "xpadev(xpadev.net)",

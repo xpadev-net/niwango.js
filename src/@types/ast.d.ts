@@ -44,82 +44,82 @@ type A_CallExpression = {
 };
 type A_CallExpression_drawShape = A_CallExpression & {
   callee: "drawShape";
-}
+};
 type A_CallExpression_drawText = A_CallExpression & {
-  callee: "drawText"|"dt";
-}
+  callee: "drawText" | "dt";
+};
 type A_CallExpression_commentTrigger = A_CallExpression & {
-  callee: "commentTrigger"|"ctrig";
-}
+  callee: "commentTrigger" | "ctrig";
+};
 type A_CallExpression_if = A_CallExpression & {
   callee: "if";
-}
+};
 type A_CallExpression_timer = A_CallExpression & {
   callee: "timer";
-}
+};
 type A_CallExpression_jump = A_CallExpression & {
   callee: "jump";
-}
+};
 type A_CallExpression_jumpCancel = A_CallExpression & {
   callee: "jumpCancel";
-}
+};
 type A_CallExpression_seek = A_CallExpression & {
   callee: "seek";
-}
+};
 type A_CallExpression_addMarker = A_CallExpression & {
   callee: "addMarker";
-}
+};
 type A_CallExpression_getMarker = A_CallExpression & {
   callee: "getMarker";
-}
+};
 type A_CallExpression_sum = A_CallExpression & {
   callee: "sum";
-}
+};
 type A_CallExpression_showResult = A_CallExpression & {
   callee: "showResult";
-}
+};
 type A_CallExpression_replace = A_CallExpression & {
   callee: "replace";
-}
+};
 type A_CallExpression_rand = A_CallExpression & {
   callee: "rand";
-}
+};
 type A_CallExpression_distance = A_CallExpression & {
   callee: "distance";
-}
+};
 type A_CallExpression_screenWidth = A_CallExpression & {
   callee: "screenWidth";
-}
+};
 type A_CallExpression_screenHeight = A_CallExpression & {
   callee: "screenHeight";
-}
+};
 type A_CallExpression_addButton = A_CallExpression & {
   callee: "addButton";
-}
+};
 type A_CallExpression_playStartTime = A_CallExpression & {
   callee: "playStartTime";
-}
+};
 type A_CallExpression_BGM = A_CallExpression & {
   callee: "BGM";
-}
+};
 type A_CallExpression_playBGM = A_CallExpression & {
   callee: "playBGM";
-}
+};
 type A_CallExpression_stopBGM = A_CallExpression & {
   callee: "stopBGM";
-}
+};
 type A_CallExpression_addAtPausePoint = A_CallExpression & {
   callee: "addAtPausePoint";
-}
+};
 type A_CallExpression_addPostRoute = A_CallExpression & {
   callee: "addPostRoute";
-}
+};
 type A_CallExpression_CM = A_CallExpression & {
   callee: "CM";
-}
+};
 type A_CallExpression_playCM = A_CallExpression & {
   callee: "playCM";
-}
+};
 type A_IfStatement = {
   type: "IfStatement";
   test: A_ANY;
