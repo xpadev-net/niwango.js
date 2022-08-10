@@ -21,6 +21,8 @@ const typeGuard = {
     typeof i === "object" && (i as A_ANY).type === "IfStatement",
   MemberExpression: (i: unknown): i is A_MemberExpression =>
     typeof i === "object" && (i as A_ANY).type === "MemberExpression",
+  ObjectExpression: (i: unknown): i is A_ObjectExpression =>
+    typeof i === "object" && (i as A_ANY).type === "ObjectExpression",
   Program: (i: unknown): i is A_Program =>
     typeof i === "object" && (i as A_ANY).type === "Program",
   UnaryExpression: (i: unknown): i is A_UnaryExpression =>

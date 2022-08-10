@@ -62,7 +62,17 @@ const execute = (script: A_ANY, scopes: T_scope[]) => {
       return script.value;
     } else if (typeGuard.MemberExpression(script)) {
       console.log("MemberExpression:", script, scopes);
-    } else if (typeGuard.Program(script)) {
+      const left = execute(script.object,scopes);
+      console.log(left);
+      return left[getName(script.property,scopes)]
+    } else if (typeGuard.ObjectExpression(script)){
+      const object:{[key:string|number|symbol]:unknown} = {};
+      for (const item of script.properties){
+        object[getName(item.key,scopes)]=execute(item.value,scopes);
+      }
+      console.log(object);
+      return object;
+    }else if (typeGuard.Program(script)) {
       for (let item of script.body) {
         execute(item, scopes);
       }
@@ -257,5 +267,12 @@ const assign = (target: A_ANY, value: unknown, scopes: T_scope[]) => {
     if (scopes[0]) scopes[0][target.name] = value;
   }
 };
+const getName = (target: A_ANY,scopes: T_scope[]) => {
+  if (typeGuard.Identifier(target)){
+    return target.name;
+  }else{
+    return execute(target,scopes);
+  }
+}
 
 export default execute;
