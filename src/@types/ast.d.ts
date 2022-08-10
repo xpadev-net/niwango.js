@@ -132,8 +132,8 @@ type A_MemberExpression = {
 };
 type A_ObjectExpression = {
   type: "ObjectExpression";
-  properties: A_Property[]
-}
+  properties: A_Property[];
+};
 type A_Program = {
   type: "Program";
   body: A_ANY[];
@@ -142,7 +142,7 @@ type A_Property = {
   type: "Property";
   key: A_ANY;
   value: A_ANY;
-}
+};
 type A_UnaryExpression = {
   type: "UnaryExpression";
   operator: string;
