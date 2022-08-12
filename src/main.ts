@@ -6,19 +6,21 @@ class Niwango {
   private readonly globalScope: T_scope;
   private readonly environmentScope: T_environment;
   constructor() {
-    this.globalScope = {};
+    this.globalScope = {
+      Object: {},
+    };
     this.environmentScope = {
       chat: undefined,
-      commentColor: undefined, //0xffffff
-      commentPlace: undefined, //naka
-      commentSize: undefined, //medium
-      commentInvisible: undefined, //false
-      commentReverse: undefined, //0
+      commentColor: null, //0xffffff
+      commentPlace: null, //naka
+      commentSize: null, //medium
+      commentInvisible: null, //false
+      commentReverse: null, //0
       defaultSage: false, //false
-      postDisabled: undefined, //false
-      seekDisabled: undefined, //false
+      postDisabled: null, //false
+      seekDisabled: null, //false
       isLoaded: true, //true
-      isWide: undefined, //false
+      isWide: null, //false
       lastVideo: "sm1", //sm1
     };
   }

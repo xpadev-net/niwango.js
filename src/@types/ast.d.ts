@@ -39,7 +39,7 @@ type A_BlockStatement = {
 };
 type A_CallExpression = {
   type: "CallExpression";
-  callee?: A_ANY;
+  callee: A_ANY;
   arguments: A_ANY[];
 };
 type A_CallExpression_drawShape = A_CallExpression & {
@@ -146,12 +146,13 @@ type A_Property = {
 type A_UnaryExpression = {
   type: "UnaryExpression";
   operator: string;
-  argument: unknown;
+  prefix: boolean;
+  argument: A_ANY;
 };
 type A_UpdateExpression = {
   type: "UpdateExpression";
-  operator: unknown;
-  argument: unknown;
+  operator: string;
+  argument: A_ANY;
   prefix: boolean;
 };
 type A_VariableDeclaration = {
@@ -164,16 +165,16 @@ type T_scope = {
 };
 type T_environment = {
   chat?: T_chat;
-  commentColor: number | undefined; //0xffffff
-  commentPlace: T_commentPos | undefined; //naka
-  commentSize: T_commentSize | undefined; //medium
-  commentInvisible: boolean | undefined; //false
-  commentReverse: number | undefined; //0
+  commentColor: number | null; //0xffffff
+  commentPlace: T_commentPos | null; //naka
+  commentSize: T_commentSize | null; //medium
+  commentInvisible: boolean | null; //false
+  commentReverse: number | null; //0
   defaultSage: false; //false
-  postDisabled: boolean | undefined; //false
-  seekDisabled: boolean | undefined; //false
+  postDisabled: boolean | null; //false
+  seekDisabled: boolean | null; //false
   isLoaded: true; //true
-  isWide: boolean | undefined; //false
+  isWide: boolean | null; //false
   lastVideo: "sm1"; //sm1
 };
 type T_chat = {

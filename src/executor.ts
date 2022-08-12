@@ -7,7 +7,9 @@ const execute = (script: A_ANY, scopes: T_scope[]) => {
       execute(script.expression, scopes);
     } else if (typeGuard.AssignmentExpression(script)) {
       if (script.operator === "=") {
-        assign(script.left, execute(script.right, scopes), scopes);
+        const result = execute(script.right, scopes);
+        assign(script.left, result, scopes);
+        return result;
       }
     } else if (typeGuard.ArrayExpression(script)) {
       return script.elements.reduce((pv, value) => {
@@ -50,8 +52,25 @@ const execute = (script: A_ANY, scopes: T_scope[]) => {
       }
     } else if (typeGuard.CallExpression(script)) {
       console.log("CallExpression:", script, scopes);
-      if (script.callee?.name === "dump") {
-        console.log(execute(script.arguments[0], scopes));
+      const isMemberExpression=typeGuard.MemberExpression(script.callee);
+      const callee = getName(isMemberExpression?(script.callee as A_MemberExpression).property:script.callee,scopes);
+      let object = getGlobalScope(scopes);//global scope
+      if (typeGuard.MemberExpression(script.callee)){
+        object = execute(script.callee.object,scopes);
+      }
+      if (callee === "dump") {
+        for (const argument of script.arguments){
+          console.debug("%cdump","background:green;",execute(argument, scopes));
+        }
+      }else if(callee === "def"&&typeof object === "object"){
+        if (!typeGuard.CallExpression(script.arguments[0]))return;
+        const functionName = getName(script.arguments[0].callee,scopes);
+        object[functionName] = script;
+      }else if(callee === "def_kari"&&typeof object === "object"){
+        if (!script.arguments[0])return;
+        const functionName = execute(script.arguments[0],scopes);
+        if (typeof functionName !== "string")return;
+        object[functionName] = script;
       }
     } else if (typeGuard.IfStatement(script)) {
       let test = execute(script.test, scopes);
@@ -63,8 +82,42 @@ const execute = (script: A_ANY, scopes: T_scope[]) => {
     } else if (typeGuard.MemberExpression(script)) {
       console.log("MemberExpression:", script, scopes);
       const left = execute(script.object, scopes);
-      console.log(left);
-      return left[getName(script.property, scopes)];
+      const right = getName(script.property, scopes);
+      if (typeof right === "string"){
+        if (right==="clone"){
+          if (typeof left === "object"){
+            if (Array.isArray(left)){
+              return [...left];
+            }else{
+              return {...left};
+            }
+          }else{
+            return left;
+          }
+        }else if(function(i:string):i is "not"|"plus"|"minus"{return !!i.match(/^not|plus|minus$/)}(right)){
+          const operator = {not:"!",plus:"+",minus:"-"};
+          const UnaryExpression:A_UnaryExpression = {
+            "type": "UnaryExpression",
+            "operator": operator[right],
+            "argument": script.object,
+            "prefix": true
+          };
+          return execute(UnaryExpression,scopes);
+        }else if(function(i:string):i is "increase"|"decrease"{return !!i.match(/^increase|decreases$/)}(right)){
+          const operator = {increase:"+",decrease:"-"};
+          const BinaryExpression:A_BinaryExpression = {
+            "type": "BinaryExpression",
+            "operator": operator[right],
+            "left": script.object,
+            "right": {
+              "type": "Literal",
+              "value": 1
+            } as A_ANY
+          };
+          return execute(BinaryExpression,scopes);
+        }
+      }
+      return left[right];
     } else if (typeGuard.ObjectExpression(script)) {
       const object: { [key: string | number | symbol]: unknown } = {};
       for (const item of script.properties) {
@@ -76,7 +129,31 @@ const execute = (script: A_ANY, scopes: T_scope[]) => {
       for (let item of script.body) {
         execute(item, scopes);
       }
+    }else if(typeGuard.UnaryExpression(script)){
+      const left = execute(script.argument,scopes);
+      if (script.operator === "-"){
+        return left - 1;
+      }else if(script.operator === "+"){
+        return left + 1;
+      }
+      console.log("UnaryExpression:",script,scopes);
     } else if (typeGuard.UpdateExpression(script)) {
+      const left = execute(script.argument,scopes);
+      if(script.operator === "--"){
+        assign(script.argument,left-1,scopes);
+        if (script.prefix){
+          return left - 1;
+        }else {
+          return left;
+        }
+      }else if(script.operator === "++"){
+        assign(script.argument,left+1,scopes);
+        if (script.prefix){
+          return left + 1;
+        }else {
+          return left;
+        }
+      }
       console.log("UpdateExpression:", script, scopes);
     } else if (typeGuard.VariableDeclaration(script)) {
       console.log("VariableDeclaration:", script, scopes);
@@ -162,7 +239,6 @@ const execute = (script: A_ANY, scopes: T_scope[]) => {
             }
             break;
           case "@":
-            //todo: @関数実装(引数にtmpを代入)
             break;
           default:
             if (this.functions[callee.raw]) {
@@ -249,17 +325,18 @@ const execute = (script: A_ANY, scopes: T_scope[]) => {
 const resolve = (script: A_ANY, scopes: T_scope[]) => {
   if (typeGuard.Identifier(script)) {
     for (const scope of scopes) {
-      if (scope[script.name]) {
+      if (scope[script.name]!==undefined) {
         return scope[script.name];
       }
     }
   }
+  return undefined
 };
 const assign = (target: A_ANY, value: unknown, scopes: T_scope[]) => {
   if (scopes.length < 1) return;
   if (typeGuard.Identifier(target)) {
     for (const scope of scopes) {
-      if (scope[target.name]) {
+      if (scope[target.name]!==undefined) {
         scope[target.name] = value;
         return;
       }
@@ -274,5 +351,11 @@ const getName = (target: A_ANY, scopes: T_scope[]) => {
     return execute(target, scopes);
   }
 };
-
+const getGlobalScope = (scopes: T_scope[]):T_scope|undefined=>{
+  if (scopes.length<2){
+    return undefined;
+  }else{
+    return scopes[scopes.length-2];
+  }
+}
 export default execute;
