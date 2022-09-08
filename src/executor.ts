@@ -51,7 +51,7 @@ const execute = (script: A_ANY, scopes: T_scope[]) => {
         execute(item, scopes);
       }
     } else if (typeGuard.CallExpression(script)) {
-      console.log("CallExpression:", script, scopes);
+      console.log("%cCallExpression:","background:blue;", script, scopes);
       const isMemberExpression=typeGuard.MemberExpression(script.callee);
       const callee = getName(isMemberExpression?(script.callee as A_MemberExpression).property:script.callee,scopes);
       let object = getGlobalScope(scopes);//global scope
@@ -71,6 +71,10 @@ const execute = (script: A_ANY, scopes: T_scope[]) => {
         const functionName = execute(script.arguments[0],scopes);
         if (typeof functionName !== "string")return;
         object[functionName] = script;
+      }else if(object&&object[callee]){
+        return execute((object[callee] as A_CallExpression).arguments[1],scopes);
+      }else{
+        console.warn("unknown call expression:", script, scopes);
       }
     } else if (typeGuard.IfStatement(script)) {
       let test = execute(script.test, scopes);
@@ -80,7 +84,6 @@ const execute = (script: A_ANY, scopes: T_scope[]) => {
     } else if (typeGuard.Literal(script)) {
       return script.value;
     } else if (typeGuard.MemberExpression(script)) {
-      console.log("MemberExpression:", script, scopes);
       const left = execute(script.object, scopes);
       const right = getName(script.property, scopes);
       if (typeof right === "string"){
