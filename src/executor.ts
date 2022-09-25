@@ -1,4 +1,5 @@
 import typeGuard from "@/typeGuard";
+import {rand} from "@/functions/rand";
 
 const execute = (script: A_ANY, scopes: T_scope[]) => {
   try {
@@ -73,6 +74,12 @@ const execute = (script: A_ANY, scopes: T_scope[]) => {
         object[functionName] = script;
       }else if(object&&object[callee]){
         return execute((object[callee] as A_CallExpression).arguments[1],scopes);
+      }else if(callee === "times"&&!isNaN(Number(object))){
+        for (let i = 0;i < Number(object);i++){
+          execute(script.arguments[0], [{},...scopes]);
+        }
+      }else if(callee === "rand"){
+        return rand(execute(script.arguments[0],scopes));
       }else{
         console.warn("unknown call expression:", script, scopes);
       }

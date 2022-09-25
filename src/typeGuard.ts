@@ -31,17 +31,28 @@ const typeGuard = {
     typeof i === "object" && (i as A_ANY).type === "UpdateExpression",
   VariableDeclaration: (i: unknown): i is A_VariableDeclaration =>
     typeof i === "object" && (i as A_ANY).type === "VariableDeclaration",
+  comment: {
+    comment: (i: unknown): i is formattedComment =>
+      objectVerify(i, [
+        "id",
+        "vpos",
+        "content",
+        "date",
+        "date_usec",
+        "owner",
+        "premium",
+        "mail",
+        "user_id",
+        "layer",
+      ]),
+  }
 };
-/*const typeVerify = (item: unknown, keys: string[]): boolean => {
-  for (let key of keys) {
-    if (item[key] === undefined) return false;
+
+const objectVerify = (item: unknown, keys: string[]): boolean => {
+  if (typeof item !== "object" || !item) return false;
+  for (const key of keys) {
+    if (!Object.prototype.hasOwnProperty.call(item, key)) return false;
   }
   return true;
 };
-const typeAttributeVerify = (item: unknown, keys: string[]): boolean => {
-  for (let key of keys) {
-    if (item.getAttribute(key) === null) return false;
-  }
-  return true;
-};*/
 export default typeGuard;
