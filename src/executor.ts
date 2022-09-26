@@ -1,6 +1,8 @@
 import typeGuard from "@/typeGuard";
 import {rand} from "@/functions/rand";
 
+let context: CanvasRenderingContext2D;
+
 const execute = (script: A_ANY, scopes: T_scope[]) => {
   try {
     if (!script) return;
@@ -52,36 +54,35 @@ const execute = (script: A_ANY, scopes: T_scope[]) => {
         execute(item, scopes);
       }
     } else if (typeGuard.CallExpression(script)) {
-      console.log("%cCallExpression:","background:blue;", script, scopes);
-      const isMemberExpression=typeGuard.MemberExpression(script.callee);
-      const callee = getName(isMemberExpression?(script.callee as A_MemberExpression).property:script.callee,scopes);
+      const isMemberExpression = typeGuard.MemberExpression(script.callee);
+      const callee = getName(isMemberExpression ? (script.callee as A_MemberExpression).property : script.callee, scopes);
       let object = getGlobalScope(scopes);//global scope
-      if (typeGuard.MemberExpression(script.callee)){
-        object = execute(script.callee.object,scopes);
+      if (typeGuard.MemberExpression(script.callee)) {
+        object = execute(script.callee.object, scopes);
       }
       if (callee === "dump") {
-        for (const argument of script.arguments){
-          console.debug("%cdump","background:green;",execute(argument, scopes));
+        for (const argument of script.arguments) {
+          console.debug("%cdump", "background:green;", execute(argument, scopes));
         }
-      }else if(callee === "def"&&typeof object === "object"){
-        if (!typeGuard.CallExpression(script.arguments[0]))return;
-        const functionName = getName(script.arguments[0].callee,scopes);
+      } else if (callee === "def" && typeof object === "object") {
+        if (!typeGuard.CallExpression(script.arguments[0])) return;
+        const functionName = getName(script.arguments[0].callee, scopes);
         object[functionName] = script;
-      }else if(callee === "def_kari"&&typeof object === "object"){
-        if (!script.arguments[0])return;
-        const functionName = execute(script.arguments[0],scopes);
-        if (typeof functionName !== "string")return;
+      } else if (callee === "def_kari" && typeof object === "object") {
+        if (!script.arguments[0]) return;
+        const functionName = execute(script.arguments[0], scopes);
+        if (typeof functionName !== "string") return;
         object[functionName] = script;
-      }else if(object&&object[callee]){
-        return execute((object[callee] as A_CallExpression).arguments[1],scopes);
-      }else if(callee === "times"&&!isNaN(Number(object))){
-        for (let i = 0;i < Number(object);i++){
-          execute(script.arguments[0], [{},...scopes]);
+      } else if (object && object[callee]) {
+        return execute((object[callee] as A_CallExpression).arguments[1], scopes);
+      } else if (callee === "times" && !isNaN(Number(object))) {
+        for (let i = 0; i < Number(object); i++) {
+          execute(script.arguments[0], [{'@0':i}, ...scopes]);
         }
-      }else if(callee === "rand"){
-        return rand(execute(script.arguments[0],scopes));
-      }else{
-        console.warn("unknown call expression:", script, scopes);
+      } else if (callee === "rand") {
+        return rand(execute(script.arguments[0], scopes));
+      } else {
+        console.log("%cCallExpression:", "background:red;", script, scopes);
       }
     } else if (typeGuard.IfStatement(script)) {
       let test = execute(script.test, scopes);
@@ -93,29 +94,33 @@ const execute = (script: A_ANY, scopes: T_scope[]) => {
     } else if (typeGuard.MemberExpression(script)) {
       const left = execute(script.object, scopes);
       const right = getName(script.property, scopes);
-      if (typeof right === "string"){
-        if (right==="clone"){
-          if (typeof left === "object"){
-            if (Array.isArray(left)){
+      if (typeof right === "string") {
+        if (right === "clone") {
+          if (typeof left === "object") {
+            if (Array.isArray(left)) {
               return [...left];
-            }else{
+            } else {
               return {...left};
             }
-          }else{
+          } else {
             return left;
           }
-        }else if(function(i:string):i is "not"|"plus"|"minus"{return !!i.match(/^not|plus|minus$/)}(right)){
-          const operator = {not:"!",plus:"+",minus:"-"};
-          const UnaryExpression:A_UnaryExpression = {
+        } else if (function (i: string): i is "not" | "plus" | "minus" {
+          return !!i.match(/^not|plus|minus$/)
+        }(right)) {
+          const operator = {not: "!", plus: "+", minus: "-"};
+          const UnaryExpression: A_UnaryExpression = {
             "type": "UnaryExpression",
             "operator": operator[right],
             "argument": script.object,
             "prefix": true
           };
-          return execute(UnaryExpression,scopes);
-        }else if(function(i:string):i is "increase"|"decrease"{return !!i.match(/^increase|decreases$/)}(right)){
-          const operator = {increase:"+",decrease:"-"};
-          const BinaryExpression:A_BinaryExpression = {
+          return execute(UnaryExpression, scopes);
+        } else if (function (i: string): i is "increase" | "decrease" {
+          return !!i.match(/^increase|decreases$/)
+        }(right)) {
+          const operator = {increase: "+", decrease: "-"};
+          const BinaryExpression: A_BinaryExpression = {
             "type": "BinaryExpression",
             "operator": operator[right],
             "left": script.object,
@@ -124,7 +129,7 @@ const execute = (script: A_ANY, scopes: T_scope[]) => {
               "value": 1
             } as A_ANY
           };
-          return execute(BinaryExpression,scopes);
+          return execute(BinaryExpression, scopes);
         }
       }
       return left[right];
@@ -139,28 +144,28 @@ const execute = (script: A_ANY, scopes: T_scope[]) => {
       for (let item of script.body) {
         execute(item, scopes);
       }
-    }else if(typeGuard.UnaryExpression(script)){
-      const left = execute(script.argument,scopes);
-      if (script.operator === "-"){
+    } else if (typeGuard.UnaryExpression(script)) {
+      const left = execute(script.argument, scopes);
+      if (script.operator === "-") {
         return left - 1;
-      }else if(script.operator === "+"){
+      } else if (script.operator === "+") {
         return left + 1;
       }
-      console.log("UnaryExpression:",script,scopes);
+      console.log("UnaryExpression:", script, scopes);
     } else if (typeGuard.UpdateExpression(script)) {
-      const left = execute(script.argument,scopes);
-      if(script.operator === "--"){
-        assign(script.argument,left-1,scopes);
-        if (script.prefix){
+      const left = execute(script.argument, scopes);
+      if (script.operator === "--") {
+        assign(script.argument, left - 1, scopes);
+        if (script.prefix) {
           return left - 1;
-        }else {
+        } else {
           return left;
         }
-      }else if(script.operator === "++"){
-        assign(script.argument,left+1,scopes);
-        if (script.prefix){
+      } else if (script.operator === "++") {
+        assign(script.argument, left + 1, scopes);
+        if (script.prefix) {
           return left + 1;
-        }else {
+        } else {
           return left;
         }
       }
@@ -335,7 +340,7 @@ const execute = (script: A_ANY, scopes: T_scope[]) => {
 const resolve = (script: A_ANY, scopes: T_scope[]) => {
   if (typeGuard.Identifier(script)) {
     for (const scope of scopes) {
-      if (scope[script.name]!==undefined) {
+      if (scope[script.name] !== undefined) {
         return scope[script.name];
       }
     }
@@ -346,7 +351,7 @@ const assign = (target: A_ANY, value: unknown, scopes: T_scope[]) => {
   if (scopes.length < 1) return;
   if (typeGuard.Identifier(target)) {
     for (const scope of scopes) {
-      if (scope[target.name]!==undefined) {
+      if (scope[target.name] !== undefined) {
         scope[target.name] = value;
         return;
       }
@@ -361,11 +366,14 @@ const getName = (target: A_ANY, scopes: T_scope[]) => {
     return execute(target, scopes);
   }
 };
-const getGlobalScope = (scopes: T_scope[]):T_scope|undefined=>{
-  if (scopes.length<2){
+const getGlobalScope = (scopes: T_scope[]): T_scope | undefined => {
+  if (scopes.length < 2) {
     return undefined;
-  }else{
-    return scopes[scopes.length-2];
+  } else {
+    return scopes[scopes.length - 2];
   }
 }
-export default execute;
+const setContext = (input: CanvasRenderingContext2D) => {
+  context = input;
+}
+export {execute, setContext};

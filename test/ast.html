@@ -1,14 +1,23 @@
-<div>
+<div class="wrapper">
 	<textarea id="input" spellcheck="false"></textarea>
-	<textarea id="output" spellcheck="false"></textarea>
+	<div class="right">
+		<canvas id="canvas" width="1920" height="1080"></canvas>
+		<textarea id="output" spellcheck="false"></textarea>
+	</div>
 </div>
 <script src="../src/parser/parser.js"></script>
 <script src="../dist/bundle.js"></script>
 <script>
 	const input = document.getElementById("input"),
 		output = document.getElementById("output"),
-		niwa = new niwango();
+			context = document.getElementById("canvas"),
+		niwa = new Niwango(context.getContext("2d"));
 	input.onchange = () => {
+		const AST = parser.parse(input.value);
+		output.value = JSON.stringify(AST,undefined," ");
+		niwa.execute(input.value)
+	}
+	input.onclick = () => {
 		const AST = parser.parse(input.value);
 		output.value = JSON.stringify(AST,undefined," ");
 		niwa.execute(input.value)
@@ -16,10 +25,18 @@
 
 </script>
 <style>
-	div{
+	.wrapper{
 		display: flex;
 		flex-direction: row;
 		height: 100%;
+	}
+	.right{
+		display: flex;
+		flex-direction: column;
+		width: 50vw;
+	}
+	#canvas{
+		border: solid 1px black;
 	}
 	textarea{
 		height: 100%;

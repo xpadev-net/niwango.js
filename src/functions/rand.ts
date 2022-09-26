@@ -1,5 +1,5 @@
 import typeGuard from "@/typeGuard";
-import {mt19937} from "@/functions/mt19937";
+import {mt19937} from "@/utils/mt19937";
 
 let randCalledCount = 0,onload = new Date().getTime();
 const rand = (value: unknown) => {
