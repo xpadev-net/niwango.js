@@ -1,3 +1,9 @@
+//
+//  original source: https://github.com/pegjs/pegjs/blob/master/examples/javascript.pegjs
+//  (c) 2010-2016 David Majda
+//  (c) 2017+ Futago-za Ryuu
+//  Released under the MIT License.
+//
 // JavaScript Grammar
 // ==================
 //
