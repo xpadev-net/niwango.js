@@ -1,11 +1,11 @@
-import {execute,setContext} from "@/executor";
+import { execute, setContext } from "@/executor";
 // @ts-ignore
 import { parse } from "./parser/parser";
 
 class Niwango {
   private readonly globalScope: T_scope;
   private readonly environmentScope: T_environment;
-  constructor(context:CanvasRenderingContext2D) {
+  constructor(context: CanvasRenderingContext2D) {
     setContext(context);
     this.globalScope = {
       Object: {},

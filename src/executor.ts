@@ -1,6 +1,6 @@
 import typeGuard from "@/typeGuard";
-import {rand} from "@/functions/rand";
-import {IrText} from "@/objects/text";
+import { rand } from "@/functions/rand";
+import { IrText } from "@/objects/text";
 
 let context: CanvasRenderingContext2D;
 
@@ -56,14 +56,23 @@ const execute = (script: A_ANY, scopes: T_scope[]) => {
       }
     } else if (typeGuard.CallExpression(script)) {
       const isMemberExpression = typeGuard.MemberExpression(script.callee);
-      const callee = getName(isMemberExpression ? (script.callee as A_MemberExpression).property : script.callee, scopes);
-      let object = getGlobalScope(scopes);//global scope
+      const callee = getName(
+        isMemberExpression
+          ? (script.callee as A_MemberExpression).property
+          : script.callee,
+        scopes
+      );
+      let object = getGlobalScope(scopes); //global scope
       if (typeGuard.MemberExpression(script.callee)) {
         object = execute(script.callee.object, scopes);
       }
       if (callee === "dump") {
         for (const argument of script.arguments) {
-          console.debug("%cdump", "background:green;", execute(argument, scopes));
+          console.debug(
+            "%cdump",
+            "background:green;",
+            execute(argument, scopes)
+          );
         }
       } else if (callee === "def" && typeof object === "object") {
         if (!typeGuard.CallExpression(script.arguments[0])) return;
@@ -75,17 +84,20 @@ const execute = (script: A_ANY, scopes: T_scope[]) => {
         if (typeof functionName !== "string") return;
         object[functionName] = script;
       } else if (object && object[callee]) {
-        return execute((object[callee] as A_CallExpression).arguments[1], scopes);
+        return execute(
+          (object[callee] as A_CallExpression).arguments[1],
+          scopes
+        );
       } else if (callee === "times" && !isNaN(Number(object))) {
         for (let i = 0; i < Number(object); i++) {
-          execute(script.arguments[0], [{'@0':i}, ...scopes]);
+          execute(script.arguments[0], [{ "@0": i }, ...scopes]);
         }
       } else if (callee === "rand") {
         return rand(execute(script.arguments[0], scopes));
-      } else if (callee === "dt" || callee === "drawText"){
-        const text = new IrText(context,{});
+      } else if (callee === "dt" || callee === "drawText") {
+        const text = new IrText(context, {});
         return text;
-      }else {
+      } else {
         console.log("%cCallExpression:", "background:red;", script, scopes);
       }
     } else if (typeGuard.IfStatement(script)) {
@@ -104,34 +116,38 @@ const execute = (script: A_ANY, scopes: T_scope[]) => {
             if (Array.isArray(left)) {
               return [...left];
             } else {
-              return {...left};
+              return { ...left };
             }
           } else {
             return left;
           }
-        } else if (function (i: string): i is "not" | "plus" | "minus" {
-          return !!i.match(/^not|plus|minus$/)
-        }(right)) {
-          const operator = {not: "!", plus: "+", minus: "-"};
+        } else if (
+          (function (i: string): i is "not" | "plus" | "minus" {
+            return !!i.match(/^not|plus|minus$/);
+          })(right)
+        ) {
+          const operator = { not: "!", plus: "+", minus: "-" };
           const UnaryExpression: A_UnaryExpression = {
-            "type": "UnaryExpression",
-            "operator": operator[right],
-            "argument": script.object,
-            "prefix": true
+            type: "UnaryExpression",
+            operator: operator[right],
+            argument: script.object,
+            prefix: true,
           };
           return execute(UnaryExpression, scopes);
-        } else if (function (i: string): i is "increase" | "decrease" {
-          return !!i.match(/^increase|decreases$/)
-        }(right)) {
-          const operator = {increase: "+", decrease: "-"};
+        } else if (
+          (function (i: string): i is "increase" | "decrease" {
+            return !!i.match(/^increase|decreases$/);
+          })(right)
+        ) {
+          const operator = { increase: "+", decrease: "-" };
           const BinaryExpression: A_BinaryExpression = {
-            "type": "BinaryExpression",
-            "operator": operator[right],
-            "left": script.object,
-            "right": {
-              "type": "Literal",
-              "value": 1
-            } as A_ANY
+            type: "BinaryExpression",
+            operator: operator[right],
+            left: script.object,
+            right: {
+              type: "Literal",
+              value: 1,
+            } as A_ANY,
           };
           return execute(BinaryExpression, scopes);
         }
@@ -349,7 +365,7 @@ const resolve = (script: A_ANY, scopes: T_scope[]) => {
       }
     }
   }
-  return undefined
+  return undefined;
 };
 const assign = (target: A_ANY, value: unknown, scopes: T_scope[]) => {
   if (scopes.length < 1) return;
@@ -376,8 +392,8 @@ const getGlobalScope = (scopes: T_scope[]): T_scope | undefined => {
   } else {
     return scopes[scopes.length - 2];
   }
-}
+};
 const setContext = (input: CanvasRenderingContext2D) => {
   context = input;
-}
-export {execute, setContext};
+};
+export { execute, setContext };

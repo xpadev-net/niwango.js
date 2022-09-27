@@ -45,7 +45,7 @@ const typeGuard = {
         "user_id",
         "layer",
       ]),
-  }
+  },
 };
 
 const objectVerify = (item: unknown, keys: string[]): boolean => {

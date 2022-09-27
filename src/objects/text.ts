@@ -10,14 +10,17 @@ const defaultOptions: ITextOptions = {
   visible: true,
   filter: "",
   alpha: 0,
-  mover: ""
-}
+  mover: "",
+};
 
 class IrText {
   private readonly context: CanvasRenderingContext2D;
   private options: ITextOptions;
 
-  constructor(context: CanvasRenderingContext2D, options: ITextOptionsNullable) {
+  constructor(
+    context: CanvasRenderingContext2D,
+    options: ITextOptionsNullable
+  ) {
     this.context = context;
     this.context.textAlign = "start";
     this.context.textBaseline = "alphabetic";
@@ -42,18 +45,18 @@ class IrText {
   }
 
   get z() {
-    return this.options.z
+    return this.options.z;
   }
 
   set z(val) {
-    this.options.z = val
+    this.options.z = val;
   }
 
-  get size(){
-    return this.options.size
+  get size() {
+    return this.options.size;
   }
 
-  set size(val){
+  set size(val) {
     this.options.size = val;
   }
 
@@ -65,14 +68,12 @@ class IrText {
     this.options.text = val;
   }
 
-  __font(){
+  __font() {
     this.context.font = `normal 600 ${this.size}px Arial, "ＭＳ Ｐゴシック", "MS PGothic", MSPGothic, MS-PGothic`;
   }
 
   __draw() {
     this.context.fillText(this.text, this.x, this.y);
   }
-
 }
-
-export {IrText};
+export { IrText };
