@@ -1,5 +1,6 @@
 import typeGuard from "@/typeGuard";
 import {rand} from "@/functions/rand";
+import {IrText} from "@/objects/text";
 
 let context: CanvasRenderingContext2D;
 
@@ -81,7 +82,10 @@ const execute = (script: A_ANY, scopes: T_scope[]) => {
         }
       } else if (callee === "rand") {
         return rand(execute(script.arguments[0], scopes));
-      } else {
+      } else if (callee === "dt" || callee === "drawText"){
+        const text = new IrText(context,{});
+        return text;
+      }else {
         console.log("%cCallExpression:", "background:red;", script, scopes);
       }
     } else if (typeGuard.IfStatement(script)) {

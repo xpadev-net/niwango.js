@@ -3,5 +3,6 @@
 /node_modules
 /dist
 /.DS_Store
-/docs
+/docs/type
 /as
+/docs
