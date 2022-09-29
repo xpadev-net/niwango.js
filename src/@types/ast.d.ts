@@ -138,6 +138,10 @@ type A_Program = {
   type: "Program";
   body: A_ANY[];
 };
+type A_ReturnStatement = {
+  type: "ReturnStatement";
+  argument: A_ANY[];
+};
 type A_Property = {
   type: "Property";
   key: A_ANY;
