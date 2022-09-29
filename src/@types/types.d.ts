@@ -11,32 +11,53 @@ type formattedComment = {
   layer: number;
 };
 type ITextFilter = "" | "fuchi" | "kasumi" | "kage";
-type ITextMover = "" | "smooth" | "simple" | "rolling" | "hopping";
-type ITextOptions = {
-  text: string;
+type IShapeType = "circle" | "rect";
+type IObjectMover = "" | "smooth" | "simple" | "rolling" | "hopping";
+type IObjectOptions = {
   x: number;
   y: number;
   z: number;
-  size: number;
   pos: string;
   color: number;
-  bold: boolean;
   visible: boolean;
-  filter: ITextFilter;
   alpha: number;
-  mover: ITextMover;
+  mover: IObjectMover;
 };
-type ITextOptionsNullable = {
-  text?: string;
+type IObjectOptionsNullable = {
   x?: number;
   y?: number;
   z?: number;
-  size?: number;
   pos?: string;
   color?: number;
-  bold?: boolean;
   visible?: boolean;
-  filter?: ITextFilter;
   alpha?: number;
-  mover?: ITextMover;
+  mover?: IObjectMover;
 };
+type ITextOptions = {
+  text: string;
+  size: number;
+  bold: boolean;
+  filter: ITextFilter;
+} & IObjectOptions;
+type ITextOptionsNullable = {
+  text?: string;
+  size?: number;
+  bold?: boolean;
+  filter?: ITextFilter;
+} & IObjectOptionsNullable;
+type IShapeOptions = {
+  shape: IShapeType;
+  width: number;
+  height: number;
+  mask: boolean;
+  commentmask: boolean;
+  rotation: number;
+} & IObjectOptions;
+type IShapeOptionsNullable = {
+  shape?: IShapeType;
+  width?: number;
+  height?: number;
+  mask?: boolean;
+  commentmask?: boolean;
+  rotation?: number;
+} & IObjectOptionsNullable;

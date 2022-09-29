@@ -1,3 +1,5 @@
+import { IrObject } from "@/objects/object";
+
 const defaultOptions: ITextOptions = {
   text: "",
   x: 0,
@@ -13,43 +15,14 @@ const defaultOptions: ITextOptions = {
   mover: "",
 };
 
-class IrText {
-  private readonly context: CanvasRenderingContext2D;
-  private options: ITextOptions;
-
+class IrText extends IrObject {
+  options: ITextOptions;
   constructor(
-    context: CanvasRenderingContext2D,
-    options: ITextOptionsNullable
+    _context: CanvasRenderingContext2D,
+    _options: ITextOptionsNullable
   ) {
-    this.context = context;
-    this.context.textAlign = "start";
-    this.context.textBaseline = "alphabetic";
-    this.context.lineWidth = 4;
-    this.options = Object.assign(defaultOptions, options);
-  }
-
-  get x() {
-    return this.options.x;
-  }
-
-  set x(val) {
-    this.options.x = val;
-  }
-
-  get y() {
-    return this.options.y;
-  }
-
-  set y(val) {
-    this.options.y = val;
-  }
-
-  get z() {
-    return this.options.z;
-  }
-
-  set z(val) {
-    this.options.z = val;
+    super(_context, _options);
+    this.options = Object.assign(defaultOptions, _options);
   }
 
   get size() {
@@ -66,6 +39,22 @@ class IrText {
 
   set text(val) {
     this.options.text = val;
+  }
+
+  get bold() {
+    return this.options.bold;
+  }
+
+  set bold(val) {
+    this.options.bold = val;
+  }
+
+  get filter() {
+    return this.options.filter;
+  }
+
+  set filter(val) {
+    this.options.filter = val;
   }
 
   __font() {
