@@ -224,6 +224,9 @@ NumericLiteral "number"
   = literal:HexIntegerLiteral !(IdentifierStart / DecimalDigit) {
       return literal;
     }
+  / literal:OctalIntegerLiteral !(IdentifierStart / DecimalDigit) {
+      return literal;
+    }
   / literal:DecimalLiteral !(IdentifierStart / DecimalDigit) {
       return literal;
     }
@@ -263,8 +266,15 @@ HexIntegerLiteral
       return { type: "Literal", value: parseInt(digits, 16) };
      }
 
+OctalIntegerLiteral
+  = "0"i digits:$OctalDigit+ {
+      return { type: "Literal", value: parseInt(digits, 8) };
+     }
+
 HexDigit
   = [0-9a-f]i
+OctalDigit
+  = [0-7]i
 
 StringLiteral "string"
   = '"' chars:DoubleStringCharacter* '"' {

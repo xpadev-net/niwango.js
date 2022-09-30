@@ -4,39 +4,39 @@ type A_ANY = {
 type A_Identifier = {
   type: "Identifier";
   name: string;
-};
+} & A_ANY;
 type A_Literal = {
   type: "Literal";
   value: null | boolean | number | string;
-};
+} & A_ANY;
 type A_ExpressionStatement = {
   type: "ExpressionStatement";
   expression: A_ANY;
-};
+} & A_ANY;
 type A_AssignmentExpression = {
   type: "AssignmentExpression";
   operator: "=";
   left: A_ANY;
   right: A_ANY;
-};
+} & A_ANY;
 type A_ArrayExpression = {
   type: "ArrayExpression";
   elements: A_ANY[];
-};
+} & A_ANY;
 type A_ArrowFunctionExpression = {
   type: "ArrowFunctionExpression";
   body: A_BlockStatement;
-};
+} & A_ANY;
 type A_BinaryExpression = {
   type: "BinaryExpression";
   operator: string;
   left: A_ANY;
   right: A_ANY;
-};
+} & A_ANY;
 type A_BlockStatement = {
   type: "BlockStatement";
   body: A_ANY[];
-};
+} & A_ANY;
 type A_CallExpression = {
   type: "CallExpression";
   callee: A_ANY;
@@ -44,7 +44,7 @@ type A_CallExpression = {
 };
 type A_CallExpression_drawShape = A_CallExpression & {
   callee: "drawShape";
-};
+} & A_ANY;
 type A_CallExpression_drawText = A_CallExpression & {
   callee: "drawText" | "dt";
 };
@@ -123,52 +123,57 @@ type A_CallExpression_playCM = A_CallExpression & {
 type A_IfStatement = {
   type: "IfStatement";
   test: A_ANY;
-};
+} & A_ANY;
 
 type A_MemberExpression = {
   type: "MemberExpression";
   object: A_ANY;
   property: A_ANY;
-};
+} & A_ANY;
 type A_LogicalExpression = {
   type: "LogicalExpression";
   left: A_ANY;
   right: A_ANY;
   operator: string;
-};
+} & A_ANY;
 type A_ObjectExpression = {
   type: "ObjectExpression";
   properties: A_Property[];
-};
+} & A_ANY;
 type A_Program = {
   type: "Program";
   body: A_ANY[];
-};
+} & A_ANY;
 type A_ReturnStatement = {
   type: "ReturnStatement";
   argument: A_ANY[];
-};
+} & A_ANY;
 type A_Property = {
   type: "Property";
   key: A_ANY;
   value: A_ANY;
-};
+} & A_ANY;
 type A_UnaryExpression = {
   type: "UnaryExpression";
   operator: string;
   prefix: boolean;
   argument: A_ANY;
-};
+} & A_ANY;
 type A_UpdateExpression = {
   type: "UpdateExpression";
   operator: string;
   argument: A_ANY;
   prefix: boolean;
-};
+} & A_ANY;
 type A_VariableDeclaration = {
   type: "VariableDeclaration";
-  declarations: unknown;
+  declarations: A_VariableDeclarator[];
   kind: string;
+} & A_ANY;
+type A_VariableDeclarator = {
+  id: A_ANY;
+  init: A_ANY | null;
+  type: "VariableDeclarator";
 };
 type T_scope = {
   [key: string]: unknown;

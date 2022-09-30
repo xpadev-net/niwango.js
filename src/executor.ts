@@ -164,10 +164,10 @@ const execute = (script: A_ANY, scopes: T_scope[]) => {
         if (typeof functionName !== "string") return;
         object[functionName] = script;
       } else if (object && object[callee]) {
-        return execute(
-          (object[callee] as A_CallExpression).arguments[1],
-          scopes
-        );
+        return execute((object[callee] as A_CallExpression).arguments[1], [
+          {},
+          ...scopes,
+        ]);
       } else if (callee === "times" && !isNaN(Number(object))) {
         for (let i = 0; i < Number(object); i++) {
           execute(script.arguments[0], [{ "@0": i }, ...scopes]);
@@ -292,7 +292,21 @@ const execute = (script: A_ANY, scopes: T_scope[]) => {
       }
       console.log("UpdateExpression:", script, scopes);
     } else if (typeGuard.VariableDeclaration(script)) {
-      console.log("VariableDeclaration:", script, scopes);
+      for (const item of script.declarations) {
+        if (item.init === null) {
+          execute(
+            {
+              type: "CallExpression",
+              callee: item.id,
+              arguments: [],
+            } as A_CallExpression,
+            scopes
+          );
+        } else {
+          if (scopes[0])
+            scopes[0][getName(item.id)] = execute(item.init, scopes);
+        }
+      }
     } else {
       console.log("unknown", script, scopes);
     }
