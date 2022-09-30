@@ -7,7 +7,6 @@ let mti = N + 1;
 const mt: number[] = [];
 
 const __init_genrand = (seed: number): void => {
-  //MethodID:392, LocalCount= 4 , MaxScope= 1, MaxStack= 7, CodeLength= 127
   mt[0] = seed & 0xffffffff;
   mti = 1;
 
@@ -62,14 +61,13 @@ const __init_by_array = (seed: number[], length: number) => {
   mt[0] = 0x80000000;
 };
 const __genrand_int32 = (): number => {
-  var result: number = NaN;
-  var key: number = NaN;
-  var index: number[] = [0, MATRIX_A];
+  let result: number = NaN;
 
   if (mti >= N) {
     if (mti == N + 1) __init_genrand(5489);
 
-    key = 0;
+    let key = 0;
+    const index: number[] = [0, MATRIX_A];
 
     while (key < N - M) {
       result =
