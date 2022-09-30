@@ -14,9 +14,9 @@ if (file_exists(__DIR__."/$filename.niwango")){
 }
 $json = json_decode(file_get_contents(__DIR__."/$filename.json"),true);
 $data = [];
-foreach($json as $key => $value){
-    if(array_key_exists("chat",$value)&&!array_key_exists("user_id",$value["chat"])&&strpos($value["chat"]["content"],"/")===0){
-        $data[]=mb_substr($value["chat"]["content"],1);
+foreach($json["data"]["threads"][0]["comments"] as $key => $value){
+    if(strpos($value["body"],"/")===0){
+        $data[]=mb_substr($value["body"],1);
     }
 }
 @unlink(__DIR__."/$filename.json");

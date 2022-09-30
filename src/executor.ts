@@ -1,6 +1,7 @@
 import typeGuard from "@/typeGuard";
 import { rand } from "@/functions/rand";
 import { IrText } from "@/objects/text";
+import { argParser } from "@/utils/argParser";
 
 let context: CanvasRenderingContext2D;
 
@@ -31,6 +32,50 @@ const execute = (script: A_ANY, scopes: T_scope[]) => {
         const result = left / execute(script.right, scopes);
         assign(script.left, result, scopes);
         return result;
+      } else if (script.operator === "%=") {
+        const result = left % execute(script.right, scopes);
+        assign(script.left, result, scopes);
+        return result;
+      } else if (script.operator === "**=") {
+        const result = left ** execute(script.right, scopes);
+        assign(script.left, result, scopes);
+        return result;
+      } else if (script.operator === "<<=") {
+        const result = left << execute(script.right, scopes);
+        assign(script.left, result, scopes);
+        return result;
+      } else if (script.operator === ">>=") {
+        const result = left >> execute(script.right, scopes);
+        assign(script.left, result, scopes);
+        return result;
+      } else if (script.operator === ">>>=") {
+        const result = left >>> execute(script.right, scopes);
+        assign(script.left, result, scopes);
+        return result;
+      } else if (script.operator === "&=") {
+        const result = left & execute(script.right, scopes);
+        assign(script.left, result, scopes);
+        return result;
+      } else if (script.operator === "^=") {
+        const result = left ^ execute(script.right, scopes);
+        assign(script.left, result, scopes);
+        return result;
+      } else if (script.operator === "|=") {
+        const result = left | execute(script.right, scopes);
+        assign(script.left, result, scopes);
+        return result;
+      } else if (script.operator === "&&=") {
+        const result = left && execute(script.right, scopes);
+        assign(script.left, result, scopes);
+        return result;
+      } else if (script.operator === "||=") {
+        const result = left || execute(script.right, scopes);
+        assign(script.left, result, scopes);
+        return result;
+      } else if (script.operator === "??=") {
+        const result = left ?? execute(script.right, scopes);
+        assign(script.left, result, scopes);
+        return result;
       }
     } else if (typeGuard.ArrayExpression(script)) {
       return script.elements.reduce((pv, value) => {
@@ -52,6 +97,12 @@ const execute = (script: A_ANY, scopes: T_scope[]) => {
         return left < right;
       } else if (script.operator === "!=") {
         return left != right;
+      } else if (script.operator === "!==") {
+        return left != right;
+      } else if (script.operator === "==") {
+        return left == right;
+      } else if (script.operator === "===") {
+        return left === right;
       } else if (script.operator === "+") {
         return left + right;
       } else if (script.operator === "-") {
@@ -60,6 +111,22 @@ const execute = (script: A_ANY, scopes: T_scope[]) => {
         return left * right;
       } else if (script.operator === "/") {
         return left / right;
+      } else if (script.operator === "%") {
+        return left % right;
+      } else if (script.operator === "**") {
+        return left ** right;
+      } else if (script.operator === "&") {
+        return left & right;
+      } else if (script.operator === "|") {
+        return left | right;
+      } else if (script.operator === "^") {
+        return left ^ right;
+      } else if (script.operator === "<<") {
+        return left << right;
+      } else if (script.operator === ">>") {
+        return left >> right;
+      } else if (script.operator === ">>>") {
+        return left >>> right;
       } else {
         console.warn("unknown binary expression:", script, scopes);
       }
@@ -108,6 +175,7 @@ const execute = (script: A_ANY, scopes: T_scope[]) => {
       } else if (callee === "rand") {
         return rand(execute(script.arguments[0], scopes));
       } else if (callee === "dt" || callee === "drawText") {
+        argParser(script.arguments);
         const text = new IrText(context, {});
         return text;
       } else {
@@ -120,6 +188,16 @@ const execute = (script: A_ANY, scopes: T_scope[]) => {
       return resolve(script, scopes);
     } else if (typeGuard.Literal(script)) {
       return script.value;
+    } else if (typeGuard.LogicalExpression(script)) {
+      const left = execute(script.left, scopes),
+        right = execute(script.right, scopes);
+      if (script.operator === "&&") {
+        return left && right;
+      } else if (script.operator === "||") {
+        return left || right;
+      } else {
+        console.log(script);
+      }
     } else if (typeGuard.MemberExpression(script)) {
       const left = execute(script.object, scopes);
       const right = getName(script.property, scopes);
@@ -182,14 +260,17 @@ const execute = (script: A_ANY, scopes: T_scope[]) => {
         }
       }
     } else if (typeGuard.ReturnStatement(script)) {
-      const data = execute(script.argument, scopes);
-      return data;
+      return execute(script.argument, scopes);
     } else if (typeGuard.UnaryExpression(script)) {
       const left = execute(script.argument, scopes);
       if (script.operator === "-") {
-        return left - 1;
+        return left * -1;
       } else if (script.operator === "+") {
         return left + 1;
+      } else if (script.operator === "~") {
+        return ~left;
+      } else if (script.operator === "!") {
+        return !left;
       }
       console.log("UnaryExpression:", script, scopes);
     } else if (typeGuard.UpdateExpression(script)) {

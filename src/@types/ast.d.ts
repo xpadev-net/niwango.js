@@ -130,6 +130,12 @@ type A_MemberExpression = {
   object: A_ANY;
   property: A_ANY;
 };
+type A_LogicalExpression = {
+  type: "LogicalExpression";
+  left: A_ANY;
+  right: A_ANY;
+  operator: string;
+};
 type A_ObjectExpression = {
   type: "ObjectExpression";
   properties: A_Property[];

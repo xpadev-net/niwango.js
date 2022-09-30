@@ -76,7 +76,13 @@ class IrShape extends IrObject {
   }
 
   __draw() {
-    this.context.fillText(this.text, this.x, this.y);
+    if (this.shape === "rect") {
+      this.context.fillRect(this.x, this.y, this.width, this.height);
+    } else {
+      this.context.beginPath();
+      this.context.ellipse(this.x, this.y, this.width, this.height, 0, 0, 360);
+      this.context.fill();
+    }
   }
 }
 export { IrShape };

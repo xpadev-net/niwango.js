@@ -1,8 +1,8 @@
 import typeGuard from "@/typeGuard";
 import { mt19937 } from "@/utils/mt19937";
 
-let randCalledCount = 0,
-  onload = new Date().getTime();
+let randCalledCount = 0;
+const onload = new Date().getTime();
 const rand = (value: unknown) => {
   let seed = 0;
   if (typeof value === "undefined") {

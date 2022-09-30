@@ -1,0 +1,11 @@
+ts=[dt(""),dt(""),dt(""),dt(""),dt(""),dt(""),dt(""),dt(""),dt(""),dt("")]
+cs=[0xff0000,0xff8500,0xe5f000,0x55f000,0x00f03a,0x00f0c0,0x00a5f0,0x001ef0,0x6e00f0]; cn=0
+seekDisabled=true
+replace(src:"", dest:" ", enabled:true, fill:true)
+def_kari("setup", ts[$1].pos="ue"; ts[$1].ani=false; $1+1 < ts.size && setup($1+1)); setup(0)
+def_kari("find", ts[$1].ani.alternative($1+1 < ts.size && find($1+1), ts[$1]))
+ctrig(then: t=find(0); if(when:t, then:t.text=chat.message; t.color=cs[cn++%cs.size]; t.x=0; t.y=-20; t.size=5; t.rad=0; t.ani=true))
+def_kari("_step", if(when:$1.ani, then:$1.x=($1.rad=$1.rad+0.3).sin*100; $1.y=$1.y+20; $1.size=$1.size+5; if(when:$1.y>screenHeight, then:$1.ani=false)))
+def_kari("step", _step(ts[$1]); $1+1 < ts.size && step($1+1))
+def_kari("tick", timer(timer:0.2, then:tick); step(0))
+tick

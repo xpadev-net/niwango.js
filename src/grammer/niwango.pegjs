@@ -838,6 +838,7 @@ BitwiseXORExpressionNoIn
 
 BitwiseXOROperator
   = $("^" !"=")
+  / "**"
 
 BitwiseORExpression
   = head:BitwiseXORExpression

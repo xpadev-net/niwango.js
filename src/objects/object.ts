@@ -1,3 +1,5 @@
+import { register } from "@/utils/objectManager";
+
 const defaultOptions: IObjectOptions = {
   x: 0,
   y: 0,
@@ -22,6 +24,7 @@ class IrObject {
     this.context.textBaseline = "alphabetic";
     this.context.lineWidth = 4;
     this.options = Object.assign(defaultOptions, options);
+    register(this);
   }
 
   get x() {
@@ -87,5 +90,7 @@ class IrObject {
   set mover(val) {
     this.options.mover = val;
   }
+
+  __draw() {}
 }
 export { IrObject };

@@ -3,8 +3,8 @@ const N = 624.0,
   MATRIX_A = 0x9908b0df,
   UPPER_MASK = 0x80000000,
   LOWER_MASK = 0x7fffffff;
-let mti = N + 1,
-  mt: number[] = [];
+let mti = N + 1;
+const mt: number[] = [];
 
 const __init_genrand = (seed: number): void => {
   //MethodID:392, LocalCount= 4 , MaxScope= 1, MaxStack= 7, CodeLength= 127
