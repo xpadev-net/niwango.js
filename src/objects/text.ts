@@ -1,7 +1,7 @@
 import { IrObject } from "@/objects/object";
 
 const defaultOptions: ITextOptions = {
-  text: "",
+  text: "test",
   x: 0,
   y: 0,
   z: 0,
@@ -23,6 +23,8 @@ class IrText extends IrObject {
   ) {
     super(_context, _options);
     this.options = Object.assign(defaultOptions, _options);
+    this.__updateStyle();
+    this.__draw();
   }
 
   get size() {
@@ -57,12 +59,18 @@ class IrText extends IrObject {
     this.options.filter = val;
   }
 
-  __font() {
-    this.context.font = `normal 600 ${this.size}px Arial, "ＭＳ Ｐゴシック", "MS PGothic", MSPGothic, MS-PGothic`;
+  __updateStyle() {
+    this.__context.font = `normal 600 ${this.size}px Arial, "ＭＳ Ｐゴシック", "MS PGothic", MSPGothic, MS-PGothic`;
+    this.__context.fillStyle = this.color;
   }
 
   __draw() {
-    this.context.fillText(this.text, this.x, this.y);
+    this.__updateStyle();
+    this.__context.fillText(this.text, this.x, this.y);
+  }
+  
+  draw(){
+    this.targetContext.drawImage(this.__canvas,this.x,this.y);
   }
 }
 export { IrText };

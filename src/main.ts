@@ -8,8 +8,7 @@ class Niwango {
   private readonly globalScope: T_scope;
   private readonly environmentScope: T_environment;
   public readonly drawCanvas: HTMLCanvasElement;
-  constructor() {
-    const drawCanvas = document.createElement("canvas");
+  constructor(drawCanvas:HTMLCanvasElement) {
     drawCanvas.width = config.canvasWidth;
     drawCanvas.height = config.canvasHeight;
     const drawContext = drawCanvas.getContext("2d");

@@ -1,3 +1,5 @@
+import {config} from "@/definition/config";
+
 import { register } from "@/utils/objectManager";
 
 const defaultOptions: IObjectOptions = {
@@ -12,18 +14,27 @@ const defaultOptions: IObjectOptions = {
 };
 
 class IrObject {
-  protected readonly context: CanvasRenderingContext2D;
+  protected readonly targetContext: CanvasRenderingContext2D;
+  protected readonly __canvas: HTMLCanvasElement;
+  protected readonly __context: CanvasRenderingContext2D;
   protected options: IObjectOptions;
 
   constructor(
     context: CanvasRenderingContext2D,
     options: IObjectOptionsNullable
   ) {
-    this.context = context;
-    this.context.textAlign = "start";
-    this.context.textBaseline = "alphabetic";
-    this.context.lineWidth = 4;
+    this.targetContext = context;
     this.options = Object.assign(defaultOptions, options);
+    const canvas = document.createElement("canvas");
+    canvas.width = config.canvasWidth;
+    canvas.height = config.canvasHeight;
+    const __context = canvas.getContext("2d");
+    if (!__context)throw new Error("Fail to get CanvasRenderingContext2D");
+    this.__canvas = canvas;
+    this.__context = __context;
+    this.__context.textAlign = "start";
+    this.__context.textBaseline = "alphabetic";
+    this.__context.lineWidth = 4;
     register(this);
   }
 
@@ -31,7 +42,7 @@ class IrObject {
     return this.options.x;
   }
 
-  set x(val) {
+  set x(val:number) {
     this.options.x = val;
   }
 
@@ -39,7 +50,7 @@ class IrObject {
     return this.options.y;
   }
 
-  set y(val) {
+  set y(val:number) {
     this.options.y = val;
   }
 
@@ -47,7 +58,7 @@ class IrObject {
     return this.options.z;
   }
 
-  set z(val) {
+  set z(val:number) {
     this.options.z = val;
   }
 
@@ -55,7 +66,7 @@ class IrObject {
     return this.options.pos;
   }
 
-  set pos(val) {
+  set pos(val:string) {
     this.options.pos = val;
   }
 
@@ -63,7 +74,7 @@ class IrObject {
     return this.options.color;
   }
 
-  set color(val) {
+  set color(val:number) {
     this.options.color = val;
   }
 
@@ -71,7 +82,7 @@ class IrObject {
     return this.options.visible;
   }
 
-  set visible(val) {
+  set visible(val:boolean) {
     this.options.visible = val;
   }
 
@@ -79,7 +90,7 @@ class IrObject {
     return this.options.alpha;
   }
 
-  set alpha(val) {
+  set alpha(val:number) {
     this.options.alpha = val;
   }
 
@@ -87,10 +98,10 @@ class IrObject {
     return this.options.mover;
   }
 
-  set mover(val) {
+  set mover(val:IObjectMover) {
     this.options.mover = val;
   }
-
-  __draw() {}
+  
+  draw(){}
 }
 export { IrObject };

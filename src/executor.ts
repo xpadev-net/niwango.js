@@ -1,7 +1,8 @@
 import typeGuard from "@/typeGuard";
 import { rand } from "@/functions/rand";
 import { IrText } from "@/objects/text";
-import { argParser } from "@/utils/argParser";
+import {assign,getGlobalScope,resolve} from "@/utils/utils";
+//import {argumentParser} from "@/utils/argumentParser";
 
 let context: CanvasRenderingContext2D;
 
@@ -131,7 +132,7 @@ const execute = (script: A_ANY, scopes: T_scope[]) => {
         console.warn("unknown binary expression:", script, scopes);
       }
     } else if (typeGuard.BlockStatement(script)) {
-      for (let item of script.body) {
+      for (const item of script.body) {
         execute(item, scopes);
       }
     } else if (typeGuard.CallExpression(script)) {
@@ -175,14 +176,15 @@ const execute = (script: A_ANY, scopes: T_scope[]) => {
       } else if (callee === "rand") {
         return rand(execute(script.arguments[0], scopes));
       } else if (callee === "dt" || callee === "drawText") {
-        argParser(script.arguments);
-        const text = new IrText(context, {});
+        const args = argumentParser(script.arguments,scopes,["text","x","y","z","size","pos","color","bold","visible","filter","alpha","mover"]);
+        console.log(args);
+        const text = new IrText(context, args);
         return text;
       } else {
         console.log("%cCallExpression:", "background:red;", script, scopes);
       }
     } else if (typeGuard.IfStatement(script)) {
-      let test = execute(script.test, scopes);
+      const test = execute(script.test, scopes);
       console.log("ifstate:", script.test, test, script, scopes);
     } else if (typeGuard.Identifier(script)) {
       return resolve(script, scopes);
@@ -315,28 +317,31 @@ const execute = (script: A_ANY, scopes: T_scope[]) => {
   }
 };
 
-const resolve = (script: A_ANY, scopes: T_scope[]) => {
-  if (typeGuard.Identifier(script)) {
-    for (const scope of scopes) {
-      if (scope[script.name] !== undefined) {
-        return scope[script.name];
+const argumentParser = (inputs: Argument<A_ANY>[],scopes:T_scope[],keys: string[]) => {
+  const result:{[key:string]:any} = {};
+  const nonKeyValues:Argument<A_ANY>[] = [];
+  for (const i in inputs){
+    const item = inputs[i];
+    if (!item)continue;
+    if (item.NIWANGO_Identifier){
+      const key = getName(item.NIWANGO_Identifier,scopes);
+      if (keys.includes(key)){
+        result[key] = execute(item,scopes);
+        continue;
       }
     }
+    nonKeyValues.push(item);
   }
-  return undefined;
-};
-const assign = (target: A_ANY, value: unknown, scopes: T_scope[]) => {
-  if (scopes.length < 1) return;
-  if (typeGuard.Identifier(target)) {
-    for (const scope of scopes) {
-      if (scope[target.name] !== undefined) {
-        scope[target.name] = value;
-        return;
-      }
+  let i = 0;
+  for (const key of keys) {
+    const value = nonKeyValues[i];
+    if (!result[key]&&value){
+      result[key] = execute(value,scopes);
+      i++;
     }
-    if (scopes[0]) scopes[0][target.name] = value;
   }
-};
+  return result;
+}
 const getName = (target: A_ANY, scopes: T_scope[]) => {
   if (typeGuard.Identifier(target)) {
     return target.name;
@@ -344,14 +349,7 @@ const getName = (target: A_ANY, scopes: T_scope[]) => {
     return execute(target, scopes);
   }
 };
-const getGlobalScope = (scopes: T_scope[]): T_scope | undefined => {
-  if (scopes.length < 2) {
-    return undefined;
-  } else {
-    return scopes[scopes.length - 2];
-  }
-};
 const setContext = (input: CanvasRenderingContext2D) => {
   context = input;
 };
-export { execute, setContext };
+export { execute, setContext,getName };

@@ -11,7 +11,7 @@
 	const input = document.getElementById("input"),
 		output = document.getElementById("output"),
 			context = document.getElementById("canvas"),
-		niwa = new Niwango(context.getContext("2d"));
+		niwa = new Niwango(context);
 	input.onchange = () => {
 		const AST = parser.parse(input.value);
 		output.value = JSON.stringify(AST,undefined," ");

@@ -1,6 +1,8 @@
 const config = {
-  canvasWidth: 672,
-  canvasHeight: 384,
+  stageWidth: 672,
+  stageHeight: 384,
+  canvasWidth: 683,
+  canvasHeight: 385,
 };
 
 export { config };
