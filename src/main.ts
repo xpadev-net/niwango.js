@@ -7,13 +7,15 @@ import { config } from "@/definition/config";
 class Niwango {
   private readonly globalScope: T_scope;
   private readonly environmentScope: T_environment;
+  private readonly drawContext: CanvasRenderingContext2D;
   public readonly drawCanvas: HTMLCanvasElement;
-  constructor(drawCanvas:HTMLCanvasElement) {
+  constructor(drawCanvas: HTMLCanvasElement) {
     drawCanvas.width = config.canvasWidth;
     drawCanvas.height = config.canvasHeight;
     const drawContext = drawCanvas.getContext("2d");
     if (!drawContext) throw new Error();
     this.drawCanvas = drawCanvas;
+    this.drawContext = drawContext;
     setContext(drawContext);
     this.globalScope = {
       Object: {},
@@ -41,6 +43,14 @@ class Niwango {
 
   public draw() {
     draw();
+  }
+  public clear() {
+    this.drawContext.clearRect(
+      0,
+      0,
+      this.drawCanvas.width,
+      this.drawCanvas.height
+    );
   }
 }
 

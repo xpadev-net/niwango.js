@@ -16,11 +16,15 @@
 		const AST = parser.parse(input.value);
 		output.value = JSON.stringify(AST,undefined," ");
 		niwa.execute(input.value)
+	  niwa.clear();
+      niwa.draw()
 	}
 	input.onclick = () => {
 		const AST = parser.parse(input.value);
 		output.value = JSON.stringify(AST,undefined," ");
 		niwa.execute(input.value)
+      niwa.clear();
+	  niwa.draw()
 	}
 
 </script>

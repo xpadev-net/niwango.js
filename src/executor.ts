@@ -1,7 +1,8 @@
 import typeGuard from "@/typeGuard";
 import { rand } from "@/functions/rand";
 import { IrText } from "@/objects/text";
-import {assign,getGlobalScope,resolve} from "@/utils/utils";
+import { assign, getGlobalScope, resolve } from "@/utils/utils";
+import { register } from "@/utils/objectManager";
 //import {argumentParser} from "@/utils/argumentParser";
 
 let context: CanvasRenderingContext2D;
@@ -176,8 +177,20 @@ const execute = (script: A_ANY, scopes: T_scope[]) => {
       } else if (callee === "rand") {
         return rand(execute(script.arguments[0], scopes));
       } else if (callee === "dt" || callee === "drawText") {
-        const args = argumentParser(script.arguments,scopes,["text","x","y","z","size","pos","color","bold","visible","filter","alpha","mover"]);
-        console.log(args);
+        const args = argumentParser(script.arguments, scopes, [
+          "text",
+          "x",
+          "y",
+          "z",
+          "size",
+          "pos",
+          "color",
+          "bold",
+          "visible",
+          "filter",
+          "alpha",
+          "mover",
+        ]);
         const text = new IrText(context, args);
         return text;
       } else {
@@ -317,16 +330,20 @@ const execute = (script: A_ANY, scopes: T_scope[]) => {
   }
 };
 
-const argumentParser = (inputs: Argument<A_ANY>[],scopes:T_scope[],keys: string[]) => {
-  const result:{[key:string]:any} = {};
-  const nonKeyValues:Argument<A_ANY>[] = [];
-  for (const i in inputs){
+const argumentParser = (
+  inputs: Argument<A_ANY>[],
+  scopes: T_scope[],
+  keys: string[]
+) => {
+  const result: { [key: string]: any } = {};
+  const nonKeyValues: Argument<A_ANY>[] = [];
+  for (const i in inputs) {
     const item = inputs[i];
-    if (!item)continue;
-    if (item.NIWANGO_Identifier){
-      const key = getName(item.NIWANGO_Identifier,scopes);
-      if (keys.includes(key)){
-        result[key] = execute(item,scopes);
+    if (!item) continue;
+    if (item.NIWANGO_Identifier) {
+      const key = getName(item.NIWANGO_Identifier, scopes);
+      if (keys.includes(key)) {
+        result[key] = execute(item, scopes);
         continue;
       }
     }
@@ -335,13 +352,13 @@ const argumentParser = (inputs: Argument<A_ANY>[],scopes:T_scope[],keys: string[
   let i = 0;
   for (const key of keys) {
     const value = nonKeyValues[i];
-    if (!result[key]&&value){
-      result[key] = execute(value,scopes);
+    if (!result[key] && value) {
+      result[key] = execute(value, scopes);
       i++;
     }
   }
   return result;
-}
+};
 const getName = (target: A_ANY, scopes: T_scope[]) => {
   if (typeGuard.Identifier(target)) {
     return target.name;
@@ -352,4 +369,4 @@ const getName = (target: A_ANY, scopes: T_scope[]) => {
 const setContext = (input: CanvasRenderingContext2D) => {
   context = input;
 };
-export { execute, setContext,getName };
+export { execute, setContext, getName };

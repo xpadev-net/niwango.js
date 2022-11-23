@@ -1,4 +1,5 @@
 import { IrObject } from "@/objects/object";
+import { number2color } from "@/utils/number2color";
 
 const defaultOptions: ITextOptions = {
   text: "test",
@@ -7,6 +8,8 @@ const defaultOptions: ITextOptions = {
   z: 0,
   size: 14,
   pos: "naka",
+  posX: "naka",
+  posY: "naka",
   color: 0,
   bold: false,
   visible: true,
@@ -22,7 +25,8 @@ class IrText extends IrObject {
     _options: ITextOptionsNullable
   ) {
     super(_context, _options);
-    this.options = Object.assign(defaultOptions, _options);
+    this.options = { ...Object.assign(defaultOptions, _options) };
+    this.__parsePos();
     this.__updateStyle();
     this.__draw();
   }
@@ -61,16 +65,16 @@ class IrText extends IrObject {
 
   __updateStyle() {
     this.__context.font = `normal 600 ${this.size}px Arial, "ＭＳ Ｐゴシック", "MS PGothic", MSPGothic, MS-PGothic`;
-    this.__context.fillStyle = this.color;
+    this.__context.fillStyle = number2color(this.color);
   }
 
   __draw() {
     this.__updateStyle();
-    this.__context.fillText(this.text, this.x, this.y);
+    this.__context.fillText(this.text, 0, this.size);
   }
-  
-  draw(){
-    this.targetContext.drawImage(this.__canvas,this.x,this.y);
+
+  draw() {
+    this.targetContext.drawImage(this.__canvas, this.__x, this.__y);
   }
 }
 export { IrText };

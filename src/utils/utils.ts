@@ -29,4 +29,4 @@ const getGlobalScope = (scopes: T_scope[]): T_scope | undefined => {
     return scopes[scopes.length - 2];
   }
 };
-export {resolve,assign,getGlobalScope};
+export { resolve, assign, getGlobalScope };
