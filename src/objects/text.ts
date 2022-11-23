@@ -37,6 +37,9 @@ class IrText extends IrObject {
 
   set size(val) {
     this.options.size = val;
+    this.__updateStyle();
+    this.__measure();
+    this.__draw();
   }
 
   get text() {
@@ -45,6 +48,7 @@ class IrText extends IrObject {
 
   set text(val) {
     this.options.text = val;
+    this.__draw();
   }
 
   get bold() {
@@ -68,6 +72,13 @@ class IrText extends IrObject {
     this.__context.fillStyle = number2color(this.color);
   }
 
+  __measure() {
+    const measure = this.__context.measureText(this.options.text);
+    this.__width = measure.width;
+    this.__height =
+      measure.actualBoundingBoxAscent + measure.actualBoundingBoxDescent;
+  }
+
   __draw() {
     this.__context.clearRect(0, 0, this.__canvas.width, this.__canvas.height);
     this.__updateStyle();
@@ -75,7 +86,11 @@ class IrText extends IrObject {
   }
 
   draw() {
-    this.targetContext.drawImage(this.__canvas, this.__x, this.__y);
+    this.targetContext.drawImage(
+      this.__canvas,
+      this.__x - this.width / 2,
+      this.__y - this.height
+    );
   }
 }
 export { IrText };

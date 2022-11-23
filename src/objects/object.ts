@@ -112,6 +112,8 @@ class IrObject {
 
   set color(val: number) {
     this.options.color = val;
+    this.__updateStyle();
+    this.__draw();
   }
 
   get visible() {
@@ -155,6 +157,8 @@ class IrObject {
       this.options.posY = "naka";
     }
   }
+  __updateStyle() {}
+  __draw() {}
 
   draw() {}
 }

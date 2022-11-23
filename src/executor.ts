@@ -1,7 +1,7 @@
 import typeGuard from "@/typeGuard";
 import { rand } from "@/functions/rand";
 import { IrText } from "@/objects/text";
-import { assign, getGlobalScope, resolve } from "@/utils/utils";
+import { getGlobalScope, resolve } from "@/utils/utils";
 import { IrShape } from "@/objects/shape";
 
 let context: CanvasRenderingContext2D;
@@ -387,4 +387,21 @@ const getName = (target: A_ANY, scopes: T_scope[]) => {
 const setContext = (input: CanvasRenderingContext2D) => {
   context = input;
 };
+
+const assign = (target: A_ANY, value: unknown, scopes: T_scope[]) => {
+  if (scopes.length < 1) return;
+  if (typeGuard.Identifier(target)) {
+    for (const scope of scopes) {
+      if (scope[target.name] !== undefined) {
+        scope[target.name] = value;
+        return;
+      }
+    }
+    if (scopes[0]) scopes[0][target.name] = value;
+  } else if (typeGuard.MemberExpression(target)) {
+    const left = execute(target.object, scopes);
+    left[getName(target.property, scopes)] = value;
+  }
+};
+
 export { execute, setContext, getName };
