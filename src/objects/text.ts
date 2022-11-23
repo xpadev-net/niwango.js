@@ -25,7 +25,7 @@ class IrText extends IrObject {
     _options: ITextOptionsNullable
   ) {
     super(_context, _options);
-    this.options = { ...Object.assign(defaultOptions, _options) };
+    this.options = Object.assign({ ...defaultOptions }, _options);
     this.__parsePos();
     this.__updateStyle();
     this.__draw();
@@ -69,6 +69,7 @@ class IrText extends IrObject {
   }
 
   __draw() {
+    this.__context.clearRect(0, 0, this.__canvas.width, this.__canvas.height);
     this.__updateStyle();
     this.__context.fillText(this.text, 0, this.size);
   }

@@ -18,9 +18,9 @@ class IrObject {
   protected readonly targetContext: CanvasRenderingContext2D;
   protected readonly __canvas: HTMLCanvasElement;
   protected readonly __context: CanvasRenderingContext2D;
-  options: IObjectOptions;
-  private __width: number;
-  private __height: number;
+  protected options: IObjectOptions;
+  protected __width: number;
+  protected __height: number;
 
   constructor(
     context: CanvasRenderingContext2D,
@@ -65,7 +65,7 @@ class IrObject {
 
   get __x() {
     if (this.options.posX === "migi") {
-      return config.canvasWidth - this.options.x + this.width;
+      return config.canvasWidth - this.options.x - this.width;
     } else if (this.options.posX === "hidari") {
       return this.options.x;
     }
@@ -84,7 +84,7 @@ class IrObject {
     if (this.options.posY === "ue") {
       return this.options.y;
     } else if (this.options.posY === "shita") {
-      return config.canvasHeight - this.options.y + this.height;
+      return config.canvasHeight - this.options.y - this.height;
     }
     return config.canvasHeight / 2 + this.options.y;
   }
@@ -139,7 +139,7 @@ class IrObject {
   }
 
   __parsePos() {
-    const pos = this.options.pos.split("s");
+    const pos = this.options.pos.split(/\s/);
     if (pos.includes("hidari")) {
       this.options.posX = "hidari";
     } else if (pos.includes("migi")) {

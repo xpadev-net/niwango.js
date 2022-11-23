@@ -2,8 +2,7 @@ import typeGuard from "@/typeGuard";
 import { rand } from "@/functions/rand";
 import { IrText } from "@/objects/text";
 import { assign, getGlobalScope, resolve } from "@/utils/utils";
-import { register } from "@/utils/objectManager";
-//import {argumentParser} from "@/utils/argumentParser";
+import { IrShape } from "@/objects/shape";
 
 let context: CanvasRenderingContext2D;
 
@@ -193,6 +192,25 @@ const execute = (script: A_ANY, scopes: T_scope[]) => {
         ]);
         const text = new IrText(context, args);
         return text;
+      } else if (callee === "drawShape") {
+        const args = argumentParser(script.arguments, scopes, [
+          "x",
+          "y",
+          "z",
+          "shape",
+          "width",
+          "height",
+          "color",
+          "visible",
+          "pos",
+          "mask",
+          "commentmask",
+          "alpha",
+          "rotation",
+          "mover",
+        ]);
+        const shape = new IrShape(context, args);
+        return shape;
       } else {
         console.log("%cCallExpression:", "background:red;", script, scopes);
       }

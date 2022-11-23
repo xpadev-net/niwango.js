@@ -1,4 +1,4 @@
 const number2color = (input: number) => {
-  return `#${input.toString(16)}`;
+  return `#${("000000" + input.toString(16)).slice(-6)}`;
 };
 export { number2color };
