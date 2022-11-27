@@ -129,6 +129,7 @@ type A_MemberExpression = {
   type: "MemberExpression";
   object: A_ANY;
   property: A_ANY;
+  computed: boolean;
 } & A_ANY;
 type A_LogicalExpression = {
   type: "LogicalExpression";

@@ -165,8 +165,13 @@ const execute = (script: A_ANY, scopes: T_scope[]) => {
         if (typeof functionName !== "string") return;
         object[functionName] = script;
       } else if (object && object[callee]) {
+        const args: { [key: string]: unknown } = {};
+        script.arguments.forEach(
+          (val, index) => (args[`$${index + 1}`] = execute(val, scopes))
+        );
+        console.log(args);
         return execute((object[callee] as A_CallExpression).arguments[1], [
-          {},
+          args,
           ...scopes,
         ]);
       } else if (callee === "times" && !isNaN(Number(object))) {
@@ -233,7 +238,13 @@ const execute = (script: A_ANY, scopes: T_scope[]) => {
       }
     } else if (typeGuard.MemberExpression(script)) {
       const left = execute(script.object, scopes);
-      const right = getName(script.property, scopes);
+      if (left === undefined) {
+        console.error(`[member expression] left is undefined`, script, scopes);
+        return;
+      }
+      const right = script.computed
+        ? execute(script.property, scopes)
+        : getName(script.property, scopes);
       if (typeof right === "string") {
         if (right === "clone") {
           if (typeof left === "object") {
@@ -390,17 +401,23 @@ const setContext = (input: CanvasRenderingContext2D) => {
 
 const assign = (target: A_ANY, value: unknown, scopes: T_scope[]) => {
   if (scopes.length < 1) return;
-  if (typeGuard.Identifier(target)) {
-    for (const scope of scopes) {
-      if (scope[target.name] !== undefined) {
-        scope[target.name] = value;
-        return;
+  try {
+    if (typeGuard.Identifier(target)) {
+      for (const scope of scopes) {
+        if (scope[target.name] !== undefined) {
+          scope[target.name] = value;
+          return;
+        }
       }
+      if (scopes[0]) scopes[0][target.name] = value;
+    } else if (typeGuard.MemberExpression(target)) {
+      const left = execute(target.object, scopes);
+      left[getName(target.property, scopes)] = value;
     }
-    if (scopes[0]) scopes[0][target.name] = value;
-  } else if (typeGuard.MemberExpression(target)) {
-    const left = execute(target.object, scopes);
-    left[getName(target.property, scopes)] = value;
+  } catch (e) {
+    if (e instanceof Error) {
+      console.error(`[assign] ${e.name}: ${e.message}`, target, value, scopes);
+    }
   }
 };
 
