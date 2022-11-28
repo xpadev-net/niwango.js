@@ -124,7 +124,7 @@ Identifier "identifier"
   = !ReservedWord "\\"? name:IdentifierName { return name; }
 
 IdentifierName "identifier"
-  = head:IdentifierStart tail:IdentifierPart* {
+  = __ "/"? __ head:IdentifierStart tail:IdentifierPart* {
       return {
         type: "Identifier",
         name: head + tail.join("")
