@@ -121,7 +121,7 @@ SingleLineComment
   = "#" (!LineTerminator SourceCharacter)*
 
 Identifier "identifier"
-  = !ReservedWord "\\"? name:IdentifierName { return name; }
+  = !ReservedWord name:IdentifierName { return name; }
 
 IdentifierName "identifier"
   = __ "/"? __ head:IdentifierStart tail:IdentifierPart* {
@@ -137,6 +137,7 @@ IdentifierStart
   / "_"
   / "@"
   / "\\" sequence:UnicodeEscapeSequence { return sequence; }
+  / "\\"
 
 IdentifierPart
   = IdentifierStart
@@ -458,8 +459,6 @@ GetToken        = "get"        !IdentifierPart
 ImportToken     = "import"     !IdentifierPart
 InstanceofToken = "instanceof" !IdentifierPart
 InToken         = "in"         !IdentifierPart
-LambdaToken     = "lambda"     !IdentifierPart
-                / "\\"         !IdentifierPart
 NewToken        = "new"        !IdentifierPart
 NullToken       = "null"       !IdentifierPart
 ReturnToken     = "return"     !IdentifierPart
@@ -709,7 +708,6 @@ LeftHandSideExpression
   = CallExpression
   / NewExpression
   / VariableStatement
-  / LambdaDeclaration
 
 PostfixExpression
   = argument:LeftHandSideExpression _ operator:PostfixOperator {
@@ -929,7 +927,7 @@ AssignmentExpression
         right: right
       };
     }
-  / id:Identifier __ init:Initialiser
+  / id:Identifier __ init:initializer
     {
       return {
         type: "VariableDeclaration",
@@ -1055,7 +1053,7 @@ VariableDeclarationListNoIn
     }
 
 VariableDeclaration
-  = id:Identifier init:(__ Initialiser)? {
+  = id:Identifier init:(__ initializer)? {
       return {
         type: "VariableDeclarator",
         id: id,
@@ -1064,7 +1062,7 @@ VariableDeclaration
     }
 
 VariableDeclarationNoIn
-  = id:Identifier init:(__ InitialiserNoIn)? {
+  = id:Identifier init:(__ initializerNoIn)? {
       return {
         type: "VariableDeclarator",
         id: id,
@@ -1072,10 +1070,10 @@ VariableDeclarationNoIn
       };
     }
 
-Initialiser
+initializer
   = ":=" __ expression:AssignmentExpression { return expression; }
 
-InitialiserNoIn
+initializerNoIn
   = "=" !"=" __ expression:AssignmentExpressionNoIn { return expression; }
 
 EmptyStatement
@@ -1300,15 +1298,6 @@ FunctionDeclaration
       };
     }
 
-LambdaDeclaration
-  = LambdaToken __ "(" __ body:FunctionBody __ ")"
-    {
-      return {
-        type: "LambdaDeclaration",
-        body: body
-      };
-    }
-
 FunctionExpression
   = FunctionToken __ id:(Identifier __)?
     "(" __ params:(FormalParameterList __)? ")" __
@@ -1350,7 +1339,6 @@ SourceElements
 
 SourceElement
   = Statement
-  / LambdaDeclaration
   / FunctionDeclaration
 
 // ----- A.6 Universal Resource Identifier Character Classes -----
