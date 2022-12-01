@@ -2,7 +2,7 @@ import { IrObject } from "@/objects/object";
 import { number2color } from "@/utils/number2color";
 
 const defaultOptions: ITextOptions = {
-  text: "test",
+  text: "",
   x: 0,
   y: 0,
   z: 0,
