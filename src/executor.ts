@@ -183,14 +183,8 @@ const execute = (script: A_ANY, scopes: T_scope[]): unknown => {
           (i = execute(script.arguments[0], scopes)) &&
           loopCount++ <= 100
         ) {
-          console.log(
-            i,
-            loopCount,
-            scopes,
-            execute(script.arguments[1], scopes)
-          );
+          execute(script.arguments[1], scopes);
         }
-        console.log(script);
       } else if (callee === "times" && !isNaN(Number(object))) {
         for (let i = 0; i < Number(object); i++) {
           execute(script.arguments[0], [{ "@0": i }, ...scopes]);
