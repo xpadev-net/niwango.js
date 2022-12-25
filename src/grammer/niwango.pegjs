@@ -685,7 +685,7 @@ ArgumentList
 ArgumentWithName =identifier:ArgumentName? __ argument:AssignmentExpressions{
     return {
         ...argument,
-        NIWANGO_Identifier:identifier
+        NIWANGO_Identifier:identifier||undefined
     }
 }
 AssignmentExpressions

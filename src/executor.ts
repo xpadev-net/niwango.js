@@ -3,10 +3,11 @@ import { rand } from "@/functions/rand";
 import { IrText } from "@/objects/text";
 import { getGlobalScope, resolve } from "@/utils/utils";
 import { IrShape } from "@/objects/shape";
+import { convert2lambda } from "@/utils/convert2lambda";
 
 let context: CanvasRenderingContext2D;
 
-const execute = (script: A_ANY, scopes: T_scope[]) => {
+const execute = (script: A_ANY, scopes: T_scope[]): unknown => {
   try {
     if (!script) return;
     if (typeGuard.ExpressionStatement(script)) {
@@ -174,6 +175,22 @@ const execute = (script: A_ANY, scopes: T_scope[]) => {
           args,
           ...scopes,
         ]);
+      } else if (callee === "while_kari") {
+        if (!script.arguments[0] || !script.arguments[1]) return;
+        let i,
+          loopCount = 0;
+        while (
+          (i = execute(script.arguments[0], scopes)) &&
+          loopCount++ <= 100
+        ) {
+          console.log(
+            i,
+            loopCount,
+            scopes,
+            execute(script.arguments[1], scopes)
+          );
+        }
+        console.log(script);
       } else if (callee === "times" && !isNaN(Number(object))) {
         for (let i = 0; i < Number(object); i++) {
           execute(script.arguments[0], [{ "@0": i }, ...scopes]);
@@ -216,12 +233,27 @@ const execute = (script: A_ANY, scopes: T_scope[]) => {
         ]);
         const shape = new IrShape(context, args);
         return shape;
+      } else if (callee === "\\") {
+        return script;
+      } else if (callee.match(/^\\/)) {
+        return convert2lambda(callee, script);
+      } else if (callee === "@") {
+        assign(
+          script.arguments[0],
+          resolve({ type: "Identifier", name: "@0" }, scopes),
+          scopes
+        );
       } else {
-        console.log("%cCallExpression:", "background:red;", script, scopes);
+        console.warn(
+          "%cUnknown CallExpression:",
+          "background:red;",
+          script,
+          scopes
+        );
       }
     } else if (typeGuard.IfStatement(script)) {
       const test = execute(script.test, scopes);
-      console.log("ifstate:", script.test, test, script, scopes);
+      console.warn("ifstate:", script.test, test, script, scopes);
     } else if (typeGuard.Identifier(script)) {
       return resolve(script, scopes);
     } else if (typeGuard.Literal(script)) {
@@ -245,6 +277,9 @@ const execute = (script: A_ANY, scopes: T_scope[]) => {
       const right = script.computed
         ? execute(script.property, scopes)
         : getName(script.property, scopes);
+      if (left.type === "CallExpression" && left.callee?.name === "\\") {
+        return execute(left.arguments[0], [{ "@0": right }, ...scopes]);
+      }
       if (typeof right === "string") {
         if (right === "clone") {
           if (typeof left === "object") {
@@ -285,6 +320,10 @@ const execute = (script: A_ANY, scopes: T_scope[]) => {
             } as A_ANY,
           };
           return execute(BinaryExpression, scopes);
+        } else if (right === "size") {
+          if (Array.isArray(left) || typeof left === "string") {
+            return left.length;
+          }
         }
       }
       return left[right];
