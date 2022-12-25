@@ -28,9 +28,7 @@ const run = (niwango: string) => {
       lastVideo: "sm1", //sm1
     };
   const ast = (parse as T_parse)(niwango);
-  const data = execute(ast, [globalScope, environmentScope]);
-  console.log(data);
-  return data;
+  return execute(ast, [globalScope, environmentScope]);
 };
 
 export {};

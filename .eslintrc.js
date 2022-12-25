@@ -9,8 +9,9 @@ module.exports = {
 		sourceType: 'module',
 		ecmaVersion: 2019,
 		tsconfigRootDir: __dirname,
-		project: ['./tsconfig.eslint.json']
+		project: ['./tsconfig.eslint.json'],
 	},
+	ignorePatterns: ['*.js'],
 	plugins: [
 		'@typescript-eslint',
 	],
@@ -22,7 +23,8 @@ module.exports = {
 	rules: {
 		"@typescript-eslint/restrict-template-expressions": "off",
 		"@typescript-eslint/unbound-method": "off",
-		"@typescript-eslint/ban-ts-comment": "off",
+		"@typescript-eslint/no-unused-vars": "error",
+		"no-unused-vars": "off",
 		"no-control-regex": "off",
 	},
 };
