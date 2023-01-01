@@ -50,6 +50,7 @@ class IrShape extends IrObject {
   set width(val) {
     this.options.width = val;
     this.__width = val;
+    this.__updateStyle();
   }
 
   get height() {
@@ -59,6 +60,7 @@ class IrShape extends IrObject {
   set height(val) {
     this.options.height = val;
     this.__height = val;
+    this.__updateStyle();
   }
 
   get mask() {
@@ -87,6 +89,9 @@ class IrShape extends IrObject {
 
   __updateStyle() {
     this.__context.fillStyle = number2color(this.color);
+    console.log(this.__canvas);
+    //this.__canvas.width = this.width;
+    //this.__canvas.height = this.height;
   }
 
   __draw() {
@@ -109,6 +114,7 @@ class IrShape extends IrObject {
   }
 
   draw() {
+    //if (this.width===0||this.height===0)return;
     this.targetContext.drawImage(this.__canvas, this.__x, this.__y);
   }
 }

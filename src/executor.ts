@@ -184,6 +184,8 @@ const execute = (script: A_ANY, scopes: T_scope[]): unknown => {
         ) {
           execute(script.arguments[1], scopes);
         }
+      } else if (callee === "timer") {
+        console.info("timer:", script);
       } else if (callee === "times" && !isNaN(Number(object))) {
         for (let i = 0; i < Number(object); i++) {
           execute(script.arguments[0], [{ "@0": i }, ...scopes]);

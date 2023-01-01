@@ -71,7 +71,7 @@ class IrObject {
     } else if (this.options.posX === "hidari") {
       return this.options.x;
     }
-    return config.canvasWidth / 2 + this.options.x;
+    return config.canvasWidth / 2 + this.options.x - this.width / 2;
   }
 
   get y() {
@@ -88,7 +88,7 @@ class IrObject {
     } else if (this.options.posY === "shita") {
       return config.canvasHeight - this.options.y - this.height;
     }
-    return config.canvasHeight / 2 + this.options.y;
+    return config.canvasHeight / 2 + this.options.y - this.height / 2;
   }
 
   get z() {

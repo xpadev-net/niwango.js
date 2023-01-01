@@ -70,6 +70,7 @@ class IrText extends IrObject {
   __updateStyle() {
     this.__context.font = `normal 600 ${this.size}px Arial, "ＭＳ Ｐゴシック", "MS PGothic", MSPGothic, MS-PGothic`;
     this.__context.fillStyle = number2color(this.color);
+    this.__measure();
   }
 
   __measure() {
@@ -86,11 +87,7 @@ class IrText extends IrObject {
   }
 
   draw() {
-    this.targetContext.drawImage(
-      this.__canvas,
-      this.__x - this.width / 2,
-      this.__y - this.height
-    );
+    this.targetContext.drawImage(this.__canvas, this.__x, this.__y);
   }
 }
 export { IrText };
