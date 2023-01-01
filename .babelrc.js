@@ -1,7 +1,7 @@
 /**
  * Babel Configuration
  */
-module.exports = {
+export default {
   presets: [
     [
       "@babel/preset-env",
