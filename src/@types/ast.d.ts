@@ -37,10 +37,26 @@ type A_ExpressionStatement = {
 };
 type A_AssignmentExpression = {
   type: "AssignmentExpression";
-  operator: "=";
+  operator: AssignmentExpressionOperator;
   left: A_ANY;
   right: A_ANY;
 };
+type AssignmentExpressionOperator =
+  | "="
+  | "+="
+  | "-="
+  | "*="
+  | "/="
+  | "%="
+  | "**="
+  | "<<="
+  | ">>="
+  | "&="
+  | "^="
+  | "|="
+  | "&&="
+  | "||="
+  | "??=";
 type A_ArrayExpression = {
   type: "ArrayExpression";
   elements: A_ANY[];
@@ -51,10 +67,31 @@ type A_ArrowFunctionExpression = {
 };
 type A_BinaryExpression = {
   type: "BinaryExpression";
-  operator: string;
+  operator: BinaryExpressionOperator;
   left: A_ANY;
   right: A_ANY;
 };
+type BinaryExpressionOperator =
+  | ">="
+  | "<="
+  | ">"
+  | "<"
+  | "!="
+  | "!=="
+  | "=="
+  | "==="
+  | "+"
+  | "-"
+  | "*"
+  | "/"
+  | "%"
+  | "**"
+  | "&"
+  | "|"
+  | "^"
+  | "<<"
+  | ">>"
+  | ">>>";
 type A_BlockStatement = {
   type: "BlockStatement";
   body: A_ANY[];

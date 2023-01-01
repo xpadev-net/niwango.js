@@ -144,10 +144,9 @@ const execute = (script: A_ANY, scopes: T_scope[]): unknown => {
           : script.callee,
         scopes
       );
-      let object = getGlobalScope(scopes); //global scope
-      if (typeGuard.MemberExpression(script.callee)) {
-        object = execute(script.callee.object, scopes);
-      }
+      const object = typeGuard.MemberExpression(script.callee)
+        ? execute(script.callee.object, scopes) //local scope
+        : getGlobalScope(scopes); //global scope
       if (callee === "dump") {
         for (const argument of script.arguments) {
           console.debug(
@@ -271,7 +270,7 @@ const execute = (script: A_ANY, scopes: T_scope[]): unknown => {
       const right = script.computed
         ? execute(script.property, scopes)
         : getName(script.property, scopes);
-      if (left.type === "CallExpression" && left.callee?.name === "\\") {
+      if (typeGuard.CallExpression(left) && left.callee?.name === "\\") {
         return execute(left.arguments[0], [{ "@0": right }, ...scopes]);
       }
       if (typeof right === "string") {
@@ -390,6 +389,7 @@ const execute = (script: A_ANY, scopes: T_scope[]): unknown => {
   } catch (e) {
     console.error(e.name + ": " + e.message, script);
   }
+  return;
 };
 
 const argumentParser = (
