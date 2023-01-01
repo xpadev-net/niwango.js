@@ -43,7 +43,9 @@ class IrObject {
   }
 
   get x() {
-    return this.options.x;
+    return this.options.posX === "naka"
+      ? this.options.x - this.width / 2
+      : this.options.x;
   }
 
   set x(val: number) {
