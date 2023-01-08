@@ -1,49 +1,52 @@
 <div class="wrapper">
-	<textarea id="input" spellcheck="false"></textarea>
-	<div class="right">
-		<canvas id="canvas" width="640" height="360"></canvas>
-		<textarea id="output" spellcheck="false"></textarea>
-	</div>
+  <textarea id="input" spellcheck="false"></textarea>
+  <div class="right">
+    <canvas id="canvas" width="640" height="360"></canvas>
+    <textarea id="output" spellcheck="false"></textarea>
+  </div>
 </div>
 <script src="../src/parser/parser.js"></script>
 <script src="../dist/bundle.js"></script>
 <script>
-	const input = document.getElementById("input"),
-		output = document.getElementById("output"),
-			context = document.getElementById("canvas"),
-		niwa = new Niwango(context);
-	input.onchange = () => {
-		const AST = parser.parse(input.value);
-		output.value = JSON.stringify(AST,undefined," ");
-		niwa.execute(input.value)
-	  niwa.clear();
-      niwa.draw()
-	}
-	input.onclick = () => {
-		const AST = parser.parse(input.value);
-		output.value = JSON.stringify(AST,undefined," ");
-		niwa.execute(input.value)
-      niwa.clear();
-	  niwa.draw()
-	}
+  const input = document.getElementById("input"),
+      output = document.getElementById("output"),
+      context = document.getElementById("canvas"),
+      niwa = new Niwango(context);
+  input.onchange = () => {
+    const AST = parser.parse(input.value);
+    output.value = JSON.stringify(AST, undefined, " ");
+    niwa.execute(input.value)
+    niwa.clear();
+    niwa.draw()
+  }
+  input.onclick = () => {
+    const AST = parser.parse(input.value);
+    output.value = JSON.stringify(AST, undefined, " ");
+    niwa.execute(input.value)
+    niwa.clear();
+    niwa.draw()
+  }
 
 </script>
 <style>
-	.wrapper{
-		display: flex;
-		flex-direction: row;
-		height: 100%;
-	}
-	.right{
-		display: flex;
-		flex-direction: column;
-		width: 50vw;
-	}
-	#canvas{
-		border: solid 1px black;
-	}
-	textarea{
-		height: 100%;
-		flex: 1;
-	}
+    .wrapper {
+        display: flex;
+        flex-direction: row;
+        height: 100%;
+    }
+
+    .right {
+        display: flex;
+        flex-direction: column;
+        width: 50vw;
+    }
+
+    #canvas {
+        border: solid 1px black;
+    }
+
+    textarea {
+        height: 100%;
+        flex: 1;
+    }
 </style>

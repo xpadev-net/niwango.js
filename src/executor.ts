@@ -185,7 +185,13 @@ const execute = (script: A_ANY, scopes: T_scope[]): unknown => {
           execute(script.arguments[1], scopes);
         }
       } else if (callee === "timer") {
-        console.info("timer:", script);
+        const args = argumentParser(
+          script.arguments,
+          scopes,
+          ["timer", "then"],
+          false
+        );
+        console.info("timer:", script, args);
       } else if (callee === "times" && !isNaN(Number(object))) {
         for (let i = 0; i < Number(object); i++) {
           execute(script.arguments[0], [{ "@0": i }, ...scopes]);
@@ -397,7 +403,8 @@ const execute = (script: A_ANY, scopes: T_scope[]): unknown => {
 const argumentParser = (
   inputs: Argument<A_ANY>[],
   scopes: T_scope[],
-  keys: string[]
+  keys: string[],
+  compute: boolean = true
 ) => {
   const result: { [key: string]: any } = {};
   const nonKeyValues: Argument<A_ANY>[] = [];
@@ -407,7 +414,7 @@ const argumentParser = (
     if (item.NIWANGO_Identifier) {
       const key = getName(item.NIWANGO_Identifier, scopes);
       if (keys.includes(key)) {
-        result[key] = execute(item, scopes);
+        result[key] = compute ? execute(item, scopes) : item;
         continue;
       }
     }
@@ -417,7 +424,7 @@ const argumentParser = (
   for (const key of keys) {
     const value = nonKeyValues[i];
     if (!result[key] && value) {
-      result[key] = execute(value, scopes);
+      result[key] = compute ? execute(value, scopes) : value;
       i++;
     }
   }
