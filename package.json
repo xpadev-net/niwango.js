@@ -15,7 +15,7 @@
     "check-types": "npx tsc --noEmit --jsx react",
     "eslint": "eslint src/**/*.ts*",
     "eslint:fix": "eslint src/**/*.ts* --fix",
-    "format": "prettier --write \"src/**/*.{tsx,ts,js,json,css,scss}\"",
+    "format": "prettier --write \"src/**/*.{tsx,ts,json,css,scss}\"",
     "lint": "npm run eslint&&npm run check-types",
     "lint:fix": "npm run format&&npm run eslint:fix&&npm run check-types",
     "prepare": "husky install",
