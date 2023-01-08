@@ -28,5 +28,9 @@ test("rand", () => {
 test("lambda", () => {
   expect(run(`i=0;lmd=\\(i+=@0);return lmd[10]`)).toBe(10);
 });
+test("sequence", () => {
+  expect(run(`return 0,12,5`)).toBe(5);
+  expect(run(`return "hoge","fuga","piyo"`)).toBe("piyo");
+});
 
 export {};

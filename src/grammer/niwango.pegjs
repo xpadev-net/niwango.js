@@ -604,45 +604,7 @@ PropertySetParameterList
   = id:Identifier { return [id]; }
 
 MemberExpression
-  = "\\" head:(
-        PrimaryExpression
-      / FunctionExpression
-      / value:$(UnicodeDigit+){return {
-            "type": "Literal",
-            "value": value
-         }}
-      / NewToken __ callee:MemberExpression __ args:Arguments {
-          return { type: "NewExpression", callee: callee, arguments: args };
-        }
-    )
-    tail:(
-        __ "[" __ property:Expression __ "]" {
-          return { property: property, computed: true };
-        }
-      / __ "." __ property:IdentifierName {
-          return { property: property, computed: false };
-        }
-    )*
-    {
-      return {
-        type: "CallExpression",
-        callee: {
-          type: "Identifier",
-          name: "\\",
-        },
-        arguments: [
-          tail.reduce(function(result, element) {
-            return {
-              type: "MemberExpression",
-              object: result,
-              property: element.property,
-              computed: element.computed
-            };
-          }, head)
-        ],
-      };
-    }
-  / head:(
+  = head:(
         PrimaryExpression
       / FunctionExpression
       / value:$(UnicodeDigit+){return {
@@ -681,7 +643,10 @@ NewExpression
 
 CallExpression
   = head:(
-      callee:MemberExpression __ args:Arguments {
+      "\\" callee:MemberExpression __ args:Arguments {
+        return { type: "CallExpression", callee: {type: "Identifier",name:"\\"}, arguments:[{ type: "CallExpression", callee: callee, arguments: args }]};
+      }
+      / callee:MemberExpression __ args:Arguments {
         return { type: "CallExpression", callee: callee, arguments: args };
       }
     )

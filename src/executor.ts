@@ -279,6 +279,14 @@ const execute = (script: A_ANY, scopes: T_scope[]): unknown => {
         ? execute(script.property, scopes)
         : getName(script.property, scopes);
       if (typeGuard.CallExpression(left) && left.callee?.name === "\\") {
+        if (typeGuard.SequenceExpression(script.property)) {
+          const args = {};
+          let index = 0;
+          for (const arg of script.property.expressions) {
+            args[`@${index++}`] = execute(arg);
+          }
+          return execute(left.arguments[0], [args, ...scopes]);
+        }
         return execute(left.arguments[0], [{ "@0": right }, ...scopes]);
       }
       if (typeof right === "string") {
@@ -345,6 +353,12 @@ const execute = (script: A_ANY, scopes: T_scope[]): unknown => {
       }
     } else if (typeGuard.ReturnStatement(script)) {
       return execute(script.argument, scopes);
+    } else if (typeGuard.SequenceExpression(script)) {
+      let lastResult;
+      for (const arg of script.expressions) {
+        lastResult = execute(arg, scopes);
+      }
+      return lastResult;
     } else if (typeGuard.UnaryExpression(script)) {
       const left = execute(script.argument, scopes);
       if (script.operator === "-") {

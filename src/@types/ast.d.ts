@@ -17,8 +17,9 @@ type A_ANY =
   | A_LogicalExpression
   | A_ObjectExpression
   | A_Program
-  | A_ReturnStatement
   | A_Property
+  | A_ReturnStatement
+  | A_SequenceExpression
   | A_UnaryExpression
   | A_UpdateExpression
   | A_VariableDeclarator
@@ -131,14 +132,18 @@ type A_Program = {
   type: "Program";
   body: A_ANY[];
 };
-type A_ReturnStatement = {
-  type: "ReturnStatement";
-  argument: A_ANY[];
-};
 type A_Property = {
   type: "Property";
   key: A_ANY;
   value: A_ANY;
+};
+type A_ReturnStatement = {
+  type: "ReturnStatement";
+  argument: A_ANY[];
+};
+type A_SequenceExpression = {
+  type: "SequenceExpression";
+  expressions: A_ANY[];
 };
 type A_UnaryExpression = {
   type: "UnaryExpression";

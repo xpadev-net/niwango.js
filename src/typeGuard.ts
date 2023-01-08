@@ -29,6 +29,8 @@ const typeGuard = {
     typeof i === "object" && (i as A_ANY).type === "Program",
   ReturnStatement: (i: unknown): i is A_ReturnStatement =>
     typeof i === "object" && (i as A_ANY).type === "ReturnStatement",
+  SequenceExpression: (i: unknown): i is A_SequenceExpression =>
+    typeof i === "object" && (i as A_ANY).type === "SequenceExpression",
   UnaryExpression: (i: unknown): i is A_UnaryExpression =>
     typeof i === "object" && (i as A_ANY).type === "UnaryExpression",
   UpdateExpression: (i: unknown): i is A_UpdateExpression =>
