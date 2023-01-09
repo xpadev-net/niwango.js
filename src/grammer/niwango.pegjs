@@ -137,7 +137,6 @@ IdentifierStart
   / "_"
   / "@"
   / "\\" sequence:UnicodeEscapeSequence { return sequence; }
-  / "\\"
 
 IdentifierPart
   = IdentifierStart
@@ -455,6 +454,8 @@ FalseToken      = "false"      !IdentifierPart
 FinallyToken    = "finally"    !IdentifierPart
 ForToken        = "for"        !IdentifierPart
 FunctionToken   = "function"   !IdentifierPart
+LambdaToken1    = "lambda"     !IdentifierPart
+LambdaToken2    = "\\"
 GetToken        = "get"        !IdentifierPart
 ImportToken     = "import"     !IdentifierPart
 InstanceofToken = "instanceof" !IdentifierPart
@@ -606,11 +607,12 @@ PropertySetParameterList
 MemberExpression
   = head:(
         PrimaryExpression
+      / LambdaExpression
       / FunctionExpression
       / value:$(UnicodeDigit+){return {
             "type": "Literal",
             "value": value
-         }}
+        }}
       / NewToken __ callee:MemberExpression __ args:Arguments {
           return { type: "NewExpression", callee: callee, arguments: args };
         }
@@ -643,10 +645,7 @@ NewExpression
 
 CallExpression
   = head:(
-      "\\" callee:MemberExpression __ args:Arguments {
-        return { type: "CallExpression", callee: {type: "Identifier",name:"\\"}, arguments:[{ type: "CallExpression", callee: callee, arguments: args }]};
-      }
-      / callee:MemberExpression __ args:Arguments {
+      callee:MemberExpression __ args:Arguments {
         return { type: "CallExpression", callee: callee, arguments: args };
       }
     )
@@ -1314,6 +1313,26 @@ FunctionExpression
         body: body
       };
     }
+
+LambdaExpression
+  = LambdaToken2 __ body:FunctionBody {
+    return {
+      type: "LambdaExpression",
+      body
+    }
+  }
+  / LambdaToken2 __ "(" __ body:FunctionBody __ ")"{
+    return {
+      type: "LambdaExpression",
+      body
+    }
+  }
+  / LambdaToken1 __ "(" __ body:FunctionBody __ ")"{
+    return {
+      type: "LambdaExpression",
+      body
+    }
+  }
 
 FormalParameterList
   = head:Identifier tail:(__ "," __ Identifier)* {
