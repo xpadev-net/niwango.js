@@ -1,6 +1,7 @@
 import { run } from "@/testUtils";
 
 test("sample from wiki", () => {
+  //source: https://web.archive.org/web/20161026165155id_/http://nicowiki.com/?%E3%83%8B%E3%83%AF%E3%83%B3%E8%AA%9E
   expect(run(`a = 2525; a += "動画";return a`)).toBe("2525動画");
   expect(run(`a = 2525; a += ""; a += 1;return a`)).toBe("25251");
   expect(run(`a = "2525"; a += 1; return a`)).toBe("25251");
