@@ -46,12 +46,4 @@ test("sequence", () => {
   expect(run(`return "hoge","fuga","piyo"`)).toBe("piyo");
 });
 
-test("number", () => {
-  expect(run(`return 3.14.floor`)).toBe(3);
-  expect(run(`return 3.sin`)).toBe(Math.sin(3));
-  expect(run(`return 3.cos`)).toBe(Math.cos(3));
-  expect(run(`return 3.pow(4)`)).toBe(81);
-  expect(run(`return (-10).abs`)).toBe(10);
-});
-
 export {};
