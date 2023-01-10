@@ -473,7 +473,7 @@
         peg$c245 = function(id) { return [id]; },
         peg$c246 = function(value) {return {
                     "type": "Literal",
-                    "value": value
+                    "value": Number(value)
                 }},
         peg$c247 = function(callee, args) {
                   return { type: "NewExpression", callee: callee, arguments: args };

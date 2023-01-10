@@ -611,7 +611,7 @@ MemberExpression
       / FunctionExpression
       / value:$(UnicodeDigit+){return {
             "type": "Literal",
-            "value": value
+            "value": Number(value)
         }}
       / NewToken __ callee:MemberExpression __ args:Arguments {
           return { type: "NewExpression", callee: callee, arguments: args };

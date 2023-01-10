@@ -240,6 +240,13 @@ const execute = (script: A_ANY, scopes: T_scope[]): unknown => {
           resolve({ type: "Identifier", name: "@0" }, scopes),
           scopes
         );
+      } else if (
+        callee === "pow" &&
+        typeGuard.MemberExpression(script.callee)
+      ) {
+        const left = execute(script.callee.object, scopes);
+        const right = execute(script.arguments[0], scopes);
+        return Math.pow(left, right);
       } else {
         console.warn(
           "%cUnknown CallExpression:",
@@ -330,6 +337,16 @@ const execute = (script: A_ANY, scopes: T_scope[]): unknown => {
         } else if (right === "size") {
           if (Array.isArray(left) || typeof left === "string") {
             return left.length;
+          }
+        } else if (typeof left === "number") {
+          if (right === "floor") {
+            return Math.floor(left);
+          } else if (right === "sin") {
+            return Math.sin(left);
+          } else if (right === "cos") {
+            return Math.cos(left);
+          } else if (right === "abs") {
+            return Math.abs(left);
           }
         }
       }
