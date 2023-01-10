@@ -170,7 +170,6 @@ const execute = (script: A_ANY, scopes: T_scope[]): unknown => {
         script.arguments.forEach(
           (val, index) => (args[`$${index + 1}`] = execute(val, scopes))
         );
-        console.log(args);
         return execute((object[callee] as A_CallExpression).arguments[1], [
           args,
           ...scopes,
@@ -266,7 +265,7 @@ const execute = (script: A_ANY, scopes: T_scope[]): unknown => {
       } else if (script.operator === "||") {
         return left || right;
       } else {
-        console.log(script);
+        console.error(`[logical expression] unknown operator`, script, scopes);
       }
     } else if (typeGuard.MemberExpression(script)) {
       const left = execute(script.object, scopes);
@@ -340,7 +339,6 @@ const execute = (script: A_ANY, scopes: T_scope[]): unknown => {
       for (const item of script.properties) {
         object[getName(item.key, scopes)] = execute(item.value, scopes);
       }
-      console.log(object);
       return object;
     } else if (typeGuard.Program(script)) {
       let lastValue;
@@ -368,7 +366,7 @@ const execute = (script: A_ANY, scopes: T_scope[]): unknown => {
       } else if (script.operator === "!") {
         return !left;
       }
-      console.log("UnaryExpression:", script, scopes);
+      console.error(`[unary expression] unknown operator`, script, scopes);
     } else if (typeGuard.UpdateExpression(script)) {
       const left = execute(script.argument, scopes);
       if (script.operator === "--") {
@@ -386,7 +384,7 @@ const execute = (script: A_ANY, scopes: T_scope[]): unknown => {
           return left;
         }
       }
-      console.log("UpdateExpression:", script, scopes);
+      console.error(`[update expression] unknown operator`, script, scopes);
     } else if (typeGuard.VariableDeclaration(script)) {
       for (const item of script.declarations) {
         if (item.init === null) {
@@ -404,7 +402,7 @@ const execute = (script: A_ANY, scopes: T_scope[]): unknown => {
         }
       }
     } else {
-      console.log("unknown", script, scopes);
+      console.error(`[unknown]`, script, scopes);
     }
   } catch (e) {
     console.error(e.name + ": " + e.message, script);
