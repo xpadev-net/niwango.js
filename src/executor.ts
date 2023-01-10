@@ -232,7 +232,8 @@ const execute = (script: A_ANY, scopes: T_scope[]): unknown => {
       } else if (callee === "index") {
         const left = execute(script.callee.object, scopes);
         const right = execute(script.arguments[0], scopes);
-        return left.charAt(Number(right));
+        if (typeof left === "string") return left.charAt(Number(right));
+        if (Array.isArray(left)) return left[right];
       } else if (callee === "indexOf") {
         const left = execute(script.callee.object, scopes);
         const right = execute(script.arguments[0], scopes);
@@ -245,6 +246,20 @@ const execute = (script: A_ANY, scopes: T_scope[]): unknown => {
           return left.slice(arg1, arg1 + arg2);
         }
         return left.slice(arg1);
+      } else if (callee === "unshift") {
+        const left = execute(script.callee.object, scopes);
+        if (!Array.isArray(left)) return left;
+        const args = script.arguments.map((arg) => execute(arg, scopes));
+        return left.unshift(...args);
+      } else if (callee === "push") {
+        const left = execute(script.callee.object, scopes);
+        if (!Array.isArray(left)) return left;
+        const args = script.arguments.map((arg) => execute(arg, scopes));
+        return left.push(...args);
+      } else if (callee === "join") {
+        const left = execute(script.callee.object, scopes);
+        const arg1 = execute(script.arguments[0], scopes);
+        return left.join(arg1);
       }
     } else if (object && object[callee]) {
       const args: { [key: string]: unknown } = {};
@@ -372,6 +387,18 @@ const execute = (script: A_ANY, scopes: T_scope[]): unknown => {
             script,
             scopes
           ); //todo: feat string.eval
+        }
+      } else if (Array.isArray(left)) {
+        if (right === "shift") {
+          return left.shift();
+        } else if (right === "pop") {
+          return left.pop();
+        } else if (right === "sort") {
+          return left.sort();
+        } else if (right === "sum") {
+          return left.reduce((sum, num) => sum + num, 0);
+        } else if (right === "product") {
+          return left.reduce((sum, num) => sum * num, 1);
         }
       }
     }
