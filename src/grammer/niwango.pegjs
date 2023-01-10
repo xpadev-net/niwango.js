@@ -1315,19 +1315,19 @@ FunctionExpression
     }
 
 LambdaExpression
-  = LambdaToken2 __ body:FunctionBody {
-    return {
-      type: "LambdaExpression",
-      body
-    }
-  }
-  / LambdaToken2 __ "(" __ body:FunctionBody __ ")"{
+  = LambdaToken2 __ "(" __ body:FunctionBody __ ")"{
     return {
       type: "LambdaExpression",
       body
     }
   }
   / LambdaToken1 __ "(" __ body:FunctionBody __ ")"{
+    return {
+      type: "LambdaExpression",
+      body
+    }
+  }
+  / LambdaToken2 __ body:SourceElement {
     return {
       type: "LambdaExpression",
       body

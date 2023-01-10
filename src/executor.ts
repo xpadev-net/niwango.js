@@ -3,7 +3,6 @@ import { rand } from "@/functions/rand";
 import { IrText } from "@/objects/text";
 import { getGlobalScope, resolve } from "@/utils/utils";
 import { IrShape } from "@/objects/shape";
-import { convert2lambda } from "@/utils/convert2lambda";
 
 let context: CanvasRenderingContext2D;
 
@@ -11,7 +10,7 @@ const execute = (script: A_ANY, scopes: T_scope[]): unknown => {
   try {
     if (!script) return;
     if (typeGuard.ExpressionStatement(script)) {
-      execute(script.expression, scopes);
+      return execute(script.expression, scopes);
     } else if (typeGuard.AssignmentExpression(script)) {
       const left = execute(script.left, scopes);
       if (script.operator === "=") {
@@ -133,9 +132,11 @@ const execute = (script: A_ANY, scopes: T_scope[]): unknown => {
         console.warn("unknown binary expression:", script, scopes);
       }
     } else if (typeGuard.BlockStatement(script)) {
+      let lastValue;
       for (const item of script.body) {
-        execute(item, scopes);
+        lastValue = execute(item, scopes);
       }
+      return lastValue;
     } else if (typeGuard.CallExpression(script)) {
       const isMemberExpression = typeGuard.MemberExpression(script.callee);
       const callee = getName(
@@ -234,10 +235,6 @@ const execute = (script: A_ANY, scopes: T_scope[]): unknown => {
         ]);
         const shape = new IrShape(context, args);
         return shape;
-      } else if (callee === "\\") {
-        return script;
-      } else if (callee.match(/^\\/)) {
-        return convert2lambda(callee, script);
       } else if (callee === "@") {
         assign(
           script.arguments[0],
@@ -257,6 +254,8 @@ const execute = (script: A_ANY, scopes: T_scope[]): unknown => {
       console.warn("ifstate:", script.test, test, script, scopes);
     } else if (typeGuard.Identifier(script)) {
       return resolve(script, scopes);
+    } else if (typeGuard.LambdaExpression(script)) {
+      return script;
     } else if (typeGuard.Literal(script)) {
       return script.value;
     } else if (typeGuard.LogicalExpression(script)) {
@@ -278,16 +277,16 @@ const execute = (script: A_ANY, scopes: T_scope[]): unknown => {
       const right = script.computed
         ? execute(script.property, scopes)
         : getName(script.property, scopes);
-      if (typeGuard.CallExpression(left) && left.callee?.name === "\\") {
+      if (typeGuard.LambdaExpression(left)) {
         if (typeGuard.SequenceExpression(script.property)) {
           const args = {};
           let index = 0;
           for (const arg of script.property.expressions) {
             args[`@${index++}`] = execute(arg);
           }
-          return execute(left.arguments[0], [args, ...scopes]);
+          return execute(left.body, [args, ...scopes]);
         }
-        return execute(left.arguments[0], [{ "@0": right }, ...scopes]);
+        return execute(left.body, [{ "@0": right }, ...scopes]);
       }
       if (typeof right === "string") {
         if (right === "clone") {
@@ -344,13 +343,12 @@ const execute = (script: A_ANY, scopes: T_scope[]): unknown => {
       console.log(object);
       return object;
     } else if (typeGuard.Program(script)) {
+      let lastValue;
       for (const i in script.body) {
         const item = script.body[i];
-        const res = execute(item, scopes);
-        if (script.body.length - 1 === Number(i)) {
-          return res;
-        }
+        lastValue = execute(item, scopes);
       }
+      return lastValue;
     } else if (typeGuard.ReturnStatement(script)) {
       return execute(script.argument, scopes);
     } else if (typeGuard.SequenceExpression(script)) {

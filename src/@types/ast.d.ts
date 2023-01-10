@@ -13,6 +13,7 @@ type A_ANY =
   | A_CallExpression
   | A_IfStatement
   | A_Lambda
+  | A_LambdaExpression
   | A_MemberExpression
   | A_LogicalExpression
   | A_ObjectExpression
@@ -111,6 +112,10 @@ type A_Lambda = {
   type: "CallExpression";
   callee: { type: "Identifier"; name: "\\" };
   arguments: [A_CallExpression];
+};
+type A_LambdaExpression = {
+  type: "LambdaExpression";
+  body: A_BlockStatement;
 };
 type A_MemberExpression = {
   type: "MemberExpression";
