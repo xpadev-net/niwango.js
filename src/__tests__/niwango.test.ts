@@ -33,7 +33,7 @@ test("times", () => {
 test("rand", () => {
   const rand1 = run(`return rand("hoge")`);
   const rand2 = run(`return rand("hoge")`);
-  expect(rand1 === rand2).toBe(true);
+  expect(rand1).toBe(rand2);
 });
 test("lambda", () => {
   expect(run(`i=0;lmd=\\(i+=@0);return lmd[10]`)).toBe(10);
