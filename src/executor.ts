@@ -293,6 +293,15 @@ const execute = (script: A_ANY, scopes: T_scope[]): unknown => {
         const left = execute(script.callee.object, scopes);
         const arg1 = execute(script.arguments[0], scopes);
         return left.join(arg1);
+      } else if (callee === "setSlot") {
+        const left = execute(script.callee.object, scopes);
+        const key = execute(script.arguments[0], scopes);
+        const value = execute(script.arguments[1], scopes);
+        return (left[key] = value);
+      } else if (callee === "getSlot") {
+        const left = execute(script.callee.object, scopes);
+        const key = execute(script.arguments[0], scopes);
+        return left[key];
       }
     }
     if (object && object[callee]) {
