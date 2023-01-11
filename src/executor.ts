@@ -3,6 +3,7 @@ import { rand } from "@/functions/rand";
 import { IrText } from "@/objects/text";
 import { getGlobalScope, resolve } from "@/utils/utils";
 import { IrShape } from "@/objects/shape";
+import { definedFunction } from "@/@types/function";
 
 let context: CanvasRenderingContext2D;
 
@@ -152,37 +153,66 @@ const execute = (script: A_ANY, scopes: T_scope[]): unknown => {
       for (const argument of script.arguments) {
         console.debug("%cdump", "background:green;", execute(argument, scopes));
       }
-    } else if (callee === "def" && typeof object === "object") {
+      return;
+    }
+    if (callee === "def" && typeof object === "object") {
+      if (typeGuard.Identifier(script.arguments[0])) {
+        script.arguments[0] = {
+          type: "CallExpression",
+          callee: script.arguments[0],
+          arguments: [],
+        } as A_CallExpression;
+      }
       if (!typeGuard.CallExpression(script.arguments[0])) return;
+
       const functionName = getName(script.arguments[0].callee, scopes);
-      object[functionName] = script;
-    } else if (callee === "def_kari" && typeof object === "object") {
+      object[functionName] = {
+        type: "definedFunction",
+        isKari: false,
+        script,
+      } as definedFunction;
+      return;
+    }
+    if (callee === "def_kari" && typeof object === "object") {
       if (!script.arguments[0]) return;
       const functionName = execute(script.arguments[0], scopes);
       if (typeof functionName !== "string") return;
-      object[functionName] = script;
-    } else if (callee === "while_kari") {
+      object[functionName] = {
+        type: "definedFunction",
+        isKari: true,
+        script,
+      } as definedFunction;
+      return;
+    }
+    if (callee === "while_kari") {
       if (!script.arguments[0] || !script.arguments[1]) return;
       let i,
         loopCount = 0;
       while ((i = execute(script.arguments[0], scopes)) && loopCount++ <= 100) {
         execute(script.arguments[1], scopes);
       }
-    } else if (callee === "timer") {
+      return;
+    }
+    if (callee === "timer") {
       const args = argumentParser(
         script.arguments,
         scopes,
         ["timer", "then"],
         false
       );
-      console.info("timer:", script, args);
-    } else if (callee === "times" && !isNaN(Number(object))) {
+      return console.info("timer:", script, args);
+    }
+    if (callee === "times" && !isNaN(Number(object))) {
+      let lastResult;
       for (let i = 0; i < Number(object); i++) {
-        execute(script.arguments[0], [{ "@0": i }, ...scopes]);
+        lastResult = execute(script.arguments[0], [{ "@0": i }, ...scopes]);
       }
-    } else if (callee === "rand") {
+      return lastResult;
+    }
+    if (callee === "rand") {
       return rand(execute(script.arguments[0], scopes));
-    } else if (callee === "dt" || callee === "drawText") {
+    }
+    if (callee === "dt" || callee === "drawText") {
       const args = argumentParser(script.arguments, scopes, [
         "text",
         "x",
@@ -199,7 +229,8 @@ const execute = (script: A_ANY, scopes: T_scope[]): unknown => {
       ]);
       const text = new IrText(context, args);
       return text;
-    } else if (callee === "drawShape") {
+    }
+    if (callee === "drawShape") {
       const args = argumentParser(script.arguments, scopes, [
         "x",
         "y",
@@ -218,13 +249,15 @@ const execute = (script: A_ANY, scopes: T_scope[]): unknown => {
       ]);
       const shape = new IrShape(context, args);
       return shape;
-    } else if (callee === "@") {
+    }
+    if (callee === "@") {
       assign(
         script.arguments[0],
         resolve({ type: "Identifier", name: "@0" }, scopes),
         scopes
       );
-    } else if (typeGuard.MemberExpression(script.callee)) {
+    }
+    if (typeGuard.MemberExpression(script.callee)) {
       if (callee === "pow") {
         const left = execute(script.callee.object, scopes);
         const right = execute(script.arguments[0], scopes);
@@ -261,28 +294,54 @@ const execute = (script: A_ANY, scopes: T_scope[]): unknown => {
         const arg1 = execute(script.arguments[0], scopes);
         return left.join(arg1);
       }
-    } else if (object && object[callee]) {
-      const args: { [key: string]: unknown } = {};
-      script.arguments.forEach(
-        (val, index) => (args[`$${index + 1}`] = execute(val, scopes))
-      );
-      return execute((object[callee] as A_CallExpression).arguments[1], [
-        args,
-        ...scopes,
-      ]);
-    } else {
-      console.warn(
-        "%cUnknown CallExpression:",
-        "background:red;",
-        script,
-        scopes
-      );
     }
+    if (object && object[callee]) {
+      const func = object[callee] as definedFunction;
+      if (func.type !== "definedFunction") return;
+      if (func.isKari) {
+        const args: { [key: string]: unknown } = {};
+        let count = 1;
+        script.arguments.forEach((val, index) => {
+          if (val.NIWANGO_Identifier) {
+            args[getName(val.NIWANGO_Identifier, scopes)] = execute(
+              val,
+              scopes
+            );
+          } else {
+            args[`$${count++}`] = execute(val, scopes);
+          }
+        });
+        return execute(func.script.arguments[1], [args, ...scopes]);
+      } else {
+        const argNames = func.script.arguments[0].arguments.map((arg) =>
+          getName(arg, scopes)
+        );
+        const args = argumentParser(script.arguments, scopes, argNames);
+        return execute(func.script.arguments[1], [
+          { ...args, self: object },
+          ...scopes,
+        ]);
+      }
+    }
+    console.warn(
+      "%cUnknown CallExpression:",
+      "background:red;",
+      script,
+      scopes
+    );
   } else if (typeGuard.IfStatement(script)) {
     const test = execute(script.test, scopes);
     console.warn("ifstate:", script.test, test, script, scopes);
   } else if (typeGuard.Identifier(script)) {
-    return resolve(script, scopes);
+    const value = resolve(script, scopes);
+    if (typeGuard.definedFunction(value)) {
+      if (value.isKari) {
+        return execute(value.script.arguments[1], [{}, ...scopes]);
+      } else {
+        return execute(value.script.arguments[1], [{}, ...scopes]);
+      }
+    }
+    return value;
   } else if (typeGuard.LambdaExpression(script)) {
     return script;
   } else if (typeGuard.Literal(script)) {
@@ -306,6 +365,10 @@ const execute = (script: A_ANY, scopes: T_scope[]): unknown => {
     const right = script.computed
       ? execute(script.property, scopes)
       : getName(script.property, scopes);
+    if (typeGuard.definedFunction(left[right])) {
+      const func = left[right] as definedFunction;
+      return execute(func.script.arguments[1], [{ self: left }, ...scopes]);
+    }
     if (typeGuard.LambdaExpression(left)) {
       if (typeGuard.SequenceExpression(script.property)) {
         const args = {};
@@ -457,7 +520,7 @@ const execute = (script: A_ANY, scopes: T_scope[]): unknown => {
   } else if (typeGuard.VariableDeclaration(script)) {
     for (const item of script.declarations) {
       if (item.init === null) {
-        execute(
+        return execute(
           {
             type: "CallExpression",
             callee: item.id,

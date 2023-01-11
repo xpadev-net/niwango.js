@@ -1,3 +1,5 @@
+import { definedFunction } from "@/@types/function";
+
 const typeGuard = {
   Literal: (i: unknown): i is A_Literal =>
     typeof i === "object" && (i as A_ANY).type === "Literal",
@@ -39,6 +41,8 @@ const typeGuard = {
     typeof i === "object" && (i as A_ANY).type === "UpdateExpression",
   VariableDeclaration: (i: unknown): i is A_VariableDeclaration =>
     typeof i === "object" && (i as A_ANY).type === "VariableDeclaration",
+  definedFunction: (i: unknown): i is definedFunction =>
+    typeof i === "object" && (i as definedFunction).type === "definedFunction",
   comment: {
     comment: (i: unknown): i is formattedComment =>
       objectVerify(i, [
