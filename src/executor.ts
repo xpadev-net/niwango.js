@@ -188,7 +188,10 @@ const execute = (script: A_ANY, scopes: T_scope[]): unknown => {
       if (!script.arguments[0] || !script.arguments[1]) return;
       let i,
         loopCount = 0;
-      while ((i = execute(script.arguments[0], scopes)) && loopCount++ <= 100) {
+      while (
+        (i = execute(script.arguments[0], scopes)) &&
+        loopCount++ <= 10000
+      ) {
         execute(script.arguments[1], scopes);
       }
       return;
