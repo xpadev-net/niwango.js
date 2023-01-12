@@ -2,47 +2,53 @@ import { definedFunction } from "@/@types/function";
 
 const typeGuard = {
   Literal: (i: unknown): i is A_Literal =>
-    typeof i === "object" && (i as A_ANY).type === "Literal",
+    !!i && typeof i === "object" && (i as A_ANY).type === "Literal",
   Identifier: (i: unknown): i is A_Identifier =>
-    typeof i === "object" && (i as A_ANY).type === "Identifier",
+    !!i && typeof i === "object" && (i as A_ANY).type === "Identifier",
   ExpressionStatement: (i: unknown): i is A_ExpressionStatement =>
-    typeof i === "object" && (i as A_ANY).type === "ExpressionStatement",
+    !!i && typeof i === "object" && (i as A_ANY).type === "ExpressionStatement",
   AssignmentExpression: (i: unknown): i is A_AssignmentExpression =>
-    typeof i === "object" && (i as A_ANY).type === "AssignmentExpression",
+    !!i &&
+    typeof i === "object" &&
+    (i as A_ANY).type === "AssignmentExpression",
   ArrayExpression: (i: unknown): i is A_ArrayExpression =>
-    typeof i === "object" && (i as A_ANY).type === "ArrayExpression",
+    !!i && typeof i === "object" && (i as A_ANY).type === "ArrayExpression",
   ArrowFunctionExpression: (i: unknown): i is A_ArrowFunctionExpression =>
-    typeof i === "object" && (i as A_ANY).type === "ArrowFunctionExpression",
+    !!i &&
+    typeof i === "object" &&
+    (i as A_ANY).type === "ArrowFunctionExpression",
   BinaryExpression: (i: unknown): i is A_BinaryExpression =>
-    typeof i === "object" && (i as A_ANY).type === "BinaryExpression",
+    !!i && typeof i === "object" && (i as A_ANY).type === "BinaryExpression",
   BlockStatement: (i: unknown): i is A_BlockStatement =>
-    typeof i === "object" && (i as A_ANY).type === "BlockStatement",
+    !!i && typeof i === "object" && (i as A_ANY).type === "BlockStatement",
   CallExpression: (i: unknown): i is A_CallExpression =>
-    typeof i === "object" && (i as A_ANY).type === "CallExpression",
+    !!i && typeof i === "object" && (i as A_ANY).type === "CallExpression",
   IfStatement: (i: unknown): i is A_IfStatement =>
-    typeof i === "object" && (i as A_ANY).type === "IfStatement",
+    !!i && typeof i === "object" && (i as A_ANY).type === "IfStatement",
   LogicalExpression: (i: unknown): i is A_LogicalExpression =>
-    typeof i === "object" && (i as A_ANY).type === "LogicalExpression",
+    !!i && typeof i === "object" && (i as A_ANY).type === "LogicalExpression",
   LambdaExpression: (i: unknown): i is A_LambdaExpression =>
-    typeof i === "object" && (i as A_ANY).type === "LambdaExpression",
+    !!i && typeof i === "object" && (i as A_ANY).type === "LambdaExpression",
   MemberExpression: (i: unknown): i is A_MemberExpression =>
-    typeof i === "object" && (i as A_ANY).type === "MemberExpression",
+    !!i && typeof i === "object" && (i as A_ANY).type === "MemberExpression",
   ObjectExpression: (i: unknown): i is A_ObjectExpression =>
-    typeof i === "object" && (i as A_ANY).type === "ObjectExpression",
+    !!i && typeof i === "object" && (i as A_ANY).type === "ObjectExpression",
   Program: (i: unknown): i is A_Program =>
-    typeof i === "object" && (i as A_ANY).type === "Program",
+    !!i && typeof i === "object" && (i as A_ANY).type === "Program",
   ReturnStatement: (i: unknown): i is A_ReturnStatement =>
-    typeof i === "object" && (i as A_ANY).type === "ReturnStatement",
+    !!i && typeof i === "object" && (i as A_ANY).type === "ReturnStatement",
   SequenceExpression: (i: unknown): i is A_SequenceExpression =>
-    typeof i === "object" && (i as A_ANY).type === "SequenceExpression",
+    !!i && typeof i === "object" && (i as A_ANY).type === "SequenceExpression",
   UnaryExpression: (i: unknown): i is A_UnaryExpression =>
-    typeof i === "object" && (i as A_ANY).type === "UnaryExpression",
+    !!i && typeof i === "object" && (i as A_ANY).type === "UnaryExpression",
   UpdateExpression: (i: unknown): i is A_UpdateExpression =>
-    typeof i === "object" && (i as A_ANY).type === "UpdateExpression",
+    !!i && typeof i === "object" && (i as A_ANY).type === "UpdateExpression",
   VariableDeclaration: (i: unknown): i is A_VariableDeclaration =>
-    typeof i === "object" && (i as A_ANY).type === "VariableDeclaration",
+    !!i && typeof i === "object" && (i as A_ANY).type === "VariableDeclaration",
   definedFunction: (i: unknown): i is definedFunction =>
-    typeof i === "object" && (i as definedFunction).type === "definedFunction",
+    !!i &&
+    typeof i === "object" &&
+    (i as definedFunction).type === "definedFunction",
   comment: {
     comment: (i: unknown): i is formattedComment =>
       objectVerify(i, [

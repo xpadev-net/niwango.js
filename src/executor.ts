@@ -196,24 +196,12 @@ const execute = (script: A_ANY, scopes: T_scope[]): unknown => {
       }
       return;
     }
-    if (callee === "timer") {
-      const args = argumentParser(
-        script.arguments,
-        scopes,
-        ["timer", "then"],
-        false
-      );
-      return console.info("timer:", script, args);
-    }
     if (callee === "times" && !isNaN(Number(object))) {
       let lastResult;
       for (let i = 0; i < Number(object); i++) {
         lastResult = execute(script.arguments[0], [{ "@0": i }, ...scopes]);
       }
       return lastResult;
-    }
-    if (callee === "rand") {
-      return rand(execute(script.arguments[0], scopes));
     }
     if (callee === "dt" || callee === "drawText") {
       const args = argumentParser(script.arguments, scopes, [
@@ -253,6 +241,183 @@ const execute = (script: A_ANY, scopes: T_scope[]): unknown => {
       const shape = new IrShape(context, args);
       return shape;
     }
+    if (callee === "commentTrigger" || callee === "ctrig") {
+      const args = argumentParser(script.arguments, scopes, ["then", "timer"]);
+      console.warn("[call expression] commentTrigger", script, args, scopes); //todo: feat commentTrigger
+      return;
+    }
+    if (callee === "if") {
+      const args = argumentParser(
+        script.arguments,
+        scopes,
+        ["when", "then", "else"],
+        false
+      );
+      console.warn("[call expression] if", script, args, scopes); //todo: feat if
+      return;
+    }
+    if (callee === "timer") {
+      const args = argumentParser(
+        script.arguments,
+        scopes,
+        ["timer", "then"],
+        false
+      );
+      return console.warn("[call expression] timer:", script, args); //todo: feat timer
+    }
+    if (callee === "jump") {
+      const args = argumentParser(script.arguments, scopes, [
+        "id",
+        "msg",
+        "from",
+        "length",
+        "return",
+        "returnmsg",
+        "newwindow",
+      ]);
+      return console.warn("[call expression] jump:", script, args); //todo: feat jump
+    }
+    if (callee === "jumpCancel") {
+      return console.warn("[call expression] jumpCancel:", script); //todo: feat jumpCancel
+    }
+    if (callee === "seek") {
+      const args = argumentParser(script.arguments, scopes, ["vpos", "msg"]);
+      return console.warn("[call expression] seek:", script, args); //todo: feat seek
+    }
+    if (callee === "addMarker") {
+      const args = argumentParser(script.arguments, scopes, ["name", "vpos"]);
+      return console.warn("[call expression] addMarker:", script, args); //todo: feat addMarker
+    }
+    if (callee === "getMarker") {
+      const args = argumentParser(script.arguments, scopes, ["name"]);
+      return console.warn("[call expression] getMarker:", script, args); //todo: feat getMarker
+    }
+    if (callee === "sum") {
+      const args = argumentParser(script.arguments, scopes, [
+        "x",
+        "y",
+        "size",
+        "color",
+        "visible",
+        "enabled",
+        "pos",
+        "asc",
+        "unit",
+        "buttononly",
+        "words",
+        "partial",
+      ]);
+      return console.warn("[call expression] sum:", script, args); //todo: feat sum
+    }
+    if (callee === "showResult") {
+      const args = argumentParser(script.arguments, scopes, [
+        "x",
+        "y",
+        "size",
+        "color",
+        "visible",
+        "pos",
+        "unit",
+        "asc",
+        "sum",
+      ]);
+      return console.warn("[call expression] showResult:", script, args); //todo: feat showResult
+    }
+    if (callee === "replace") {
+      const args = argumentParser(script.arguments, scopes, [
+        "src",
+        "dest",
+        "enabled",
+        "target",
+        "fill",
+        "partial",
+        "color",
+        "size",
+        "pos",
+      ]);
+      return console.warn("[call expression] replace:", script, args); //todo: feat replace
+    }
+    if (callee === "rand") {
+      return rand(execute(script.arguments[0], scopes));
+    }
+    if (callee === "distance") {
+      const args = argumentParser(script.arguments, scopes, [
+        "x1",
+        "y1",
+        "x2",
+        "y2",
+      ]);
+      return console.warn("[call expression] distance:", script, args); //todo: feat distance
+    }
+    if (callee === "screenWidth") {
+      return console.warn("[call expression] screenWidth:", script); //todo: feat screenWidth
+    }
+    if (callee === "screenHeight") {
+      return console.warn("[call expression] screenHeight:", script); //todo: feat screenWidth
+    }
+    if (callee === "addButton") {
+      const args = argumentParser(script.arguments, scopes, [
+        "message",
+        "mail",
+        "vpos",
+        "commes",
+        "commail",
+        "comvisible",
+        "limit",
+        "hidden",
+      ]);
+      return console.warn("[call expression] addButton:", script, args); //todo: feat addButton
+    }
+    if (callee === "playStartTime") {
+      return new Date().getTime();
+    }
+    if (callee === "BGM") {
+      const args = argumentParser(script.arguments, scopes, [
+        "id",
+        "x",
+        "y",
+        "width",
+        "height",
+        "visual",
+        "volume",
+      ]);
+      return console.warn("[call expression] BGM:", script, args); //todo: feat BGM
+    }
+    if (callee === "playBGM") {
+      const args = argumentParser(script.arguments, scopes, ["id"]);
+      return console.warn("[call expression] playBGM:", script, args); //todo: feat playBGM
+    }
+    if (callee === "stopBGM") {
+      const args = argumentParser(script.arguments, scopes, ["id"]);
+      return console.warn("[call expression] stopBGM:", script, args); //todo: feat stopBGM
+    }
+    if (callee === "addAtPausePoint") {
+      const args = argumentParser(script.arguments, scopes, ["vpos", "wait"]);
+      return console.warn("[call expression] addAtPausePoint:", script, args); //todo: feat addAtPausePoint
+    }
+    if (callee === "addPostRoute") {
+      const args = argumentParser(script.arguments, scopes, [
+        "match",
+        "id",
+        "button",
+      ]);
+      return console.warn("[call expression] addPostRoute:", script, args); //todo: feat addPostRoute
+    }
+    if (callee === "CM") {
+      const args = argumentParser(script.arguments, scopes, [
+        "id",
+        "time",
+        "pause",
+        "link",
+        "volume",
+      ]);
+      return console.warn("[call expression] CM:", script, args); //todo: feat CM
+    }
+    if (callee === "playCM") {
+      const args = argumentParser(script.arguments, scopes, ["id"]);
+      return console.warn("[call expression] playCM:", script, args); //todo: feat playCM
+    }
+
     if (callee === "@") {
       assign(
         script.arguments[0],
