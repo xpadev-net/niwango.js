@@ -607,7 +607,6 @@ PropertySetParameterList
 MemberExpression
   = head:(
         PrimaryExpression
-      / LambdaExpression
       / FunctionExpression
       / value:$(UnicodeDigit+){return {
             "type": "Literal",
@@ -708,7 +707,8 @@ AssignmentExpressions
 
 ArgumentName = identifier:Identifier":"!"="{return identifier}
 LeftHandSideExpression
-  = CallExpression
+  = LambdaExpression
+  / CallExpression
   / NewExpression
   / VariableStatement
 
@@ -1315,19 +1315,29 @@ FunctionExpression
     }
 
 LambdaExpression
+  = LambdaExpression1
+  / LambdaExpression2
+  / LambdaExpression3
+
+LambdaExpression1
   = LambdaToken2 __ "(" __ body:FunctionBody __ ")"{
     return {
       type: "LambdaExpression",
       body
     }
   }
-  / LambdaToken1 __ "(" __ body:FunctionBody __ ")"{
+
+
+LambdaExpression2
+  = LambdaToken1 __ "(" __ body:FunctionBody __ ")"{
     return {
       type: "LambdaExpression",
       body
     }
   }
-  / LambdaToken2 __ body:SourceElement {
+
+LambdaExpression3
+  = LambdaToken2 body:LeftHandSideExpression{
     return {
       type: "LambdaExpression",
       body
