@@ -14,71 +14,44 @@ const execute = (script: A_ANY, scopes: T_scope[]): unknown => {
     return execute(script.expression, scopes);
   } else if (typeGuard.AssignmentExpression(script)) {
     const left = execute(script.left, scopes);
-    if (script.operator === "=") {
-      const result = execute(script.right, scopes);
-      assign(script.left, result, scopes);
-      return result;
-    } else if (script.operator === "+=") {
-      const result = left + execute(script.right, scopes);
-      assign(script.left, result, scopes);
-      return result;
-    } else if (script.operator === "-=") {
-      const result = left - execute(script.right, scopes);
-      assign(script.left, result, scopes);
-      return result;
-    } else if (script.operator === "*=") {
-      const result = left * execute(script.right, scopes);
-      assign(script.left, result, scopes);
-      return result;
-    } else if (script.operator === "/=") {
-      const result = left / execute(script.right, scopes);
-      assign(script.left, result, scopes);
-      return result;
-    } else if (script.operator === "%=") {
-      const result = left % execute(script.right, scopes);
-      assign(script.left, result, scopes);
-      return result;
-    } else if (script.operator === "**=") {
-      const result = left ** execute(script.right, scopes);
-      assign(script.left, result, scopes);
-      return result;
-    } else if (script.operator === "<<=") {
-      const result = left << execute(script.right, scopes);
-      assign(script.left, result, scopes);
-      return result;
-    } else if (script.operator === ">>=") {
-      const result = left >> execute(script.right, scopes);
-      assign(script.left, result, scopes);
-      return result;
-    } else if (script.operator === ">>>=") {
-      const result = left >>> execute(script.right, scopes);
-      assign(script.left, result, scopes);
-      return result;
-    } else if (script.operator === "&=") {
-      const result = left & execute(script.right, scopes);
-      assign(script.left, result, scopes);
-      return result;
-    } else if (script.operator === "^=") {
-      const result = left ^ execute(script.right, scopes);
-      assign(script.left, result, scopes);
-      return result;
-    } else if (script.operator === "|=") {
-      const result = left | execute(script.right, scopes);
-      assign(script.left, result, scopes);
-      return result;
-    } else if (script.operator === "&&=") {
-      const result = left && execute(script.right, scopes);
-      assign(script.left, result, scopes);
-      return result;
-    } else if (script.operator === "||=") {
-      const result = left || execute(script.right, scopes);
-      assign(script.left, result, scopes);
-      return result;
-    } else if (script.operator === "??=") {
-      const result = left ?? execute(script.right, scopes);
-      assign(script.left, result, scopes);
-      return result;
-    }
+    const right = execute(script.right, scopes);
+    const result = (() => {
+      if (script.operator === "=") {
+        return right;
+      } else if (script.operator === "+=") {
+        return left + right;
+      } else if (script.operator === "-=") {
+        return left - right;
+      } else if (script.operator === "*=") {
+        return left * right;
+      } else if (script.operator === "/=") {
+        return left / right;
+      } else if (script.operator === "%=") {
+        return left % right;
+      } else if (script.operator === "**=") {
+        return left ** right;
+      } else if (script.operator === "<<=") {
+        return left << right;
+      } else if (script.operator === ">>=") {
+        return left >> right;
+      } else if (script.operator === ">>>=") {
+        return left >>> right;
+      } else if (script.operator === "&=") {
+        return left & right;
+      } else if (script.operator === "^=") {
+        return left ^ right;
+      } else if (script.operator === "|=") {
+        return left | right;
+      } else if (script.operator === "&&=") {
+        return left && right;
+      } else if (script.operator === "||=") {
+        return left || right;
+      } else if (script.operator === "??=") {
+        return left ?? right;
+      }
+    })();
+    assign(script.left, result, scopes);
+    return result;
   } else if (typeGuard.ArrayExpression(script)) {
     return script.elements.reduce((pv, value) => {
       pv.push(execute(value, scopes));
@@ -253,8 +226,12 @@ const execute = (script: A_ANY, scopes: T_scope[]): unknown => {
         ["when", "then", "else"],
         false
       );
-      console.warn("[call expression] if", script, args, scopes); //todo: feat if
-      return;
+      const condition = execute(args.when, scopes);
+      if (condition) {
+        return execute(args.then, scopes);
+      } else {
+        return execute(args.else, scopes);
+      }
     }
     if (callee === "timer") {
       const args = argumentParser(
@@ -417,6 +394,12 @@ const execute = (script: A_ANY, scopes: T_scope[]): unknown => {
       const args = argumentParser(script.arguments, scopes, ["id"]);
       return console.warn("[call expression] playCM:", script, args); //todo: feat playCM
     }
+    if (callee === "timethis") {
+      console.time("timethis");
+      const result = execute(script.arguments[0], scopes);
+      console.timeEnd("timethis");
+      return result;
+    }
 
     if (callee === "@") {
       assign(
@@ -471,6 +454,20 @@ const execute = (script: A_ANY, scopes: T_scope[]): unknown => {
         const left = execute(script.callee.object, scopes);
         const key = execute(script.arguments[0], scopes);
         return left[key];
+      } else if (callee === "alternative" || callee === "alt") {
+        const args = argumentParser(
+          script.arguments,
+          scopes,
+          ["then", "else"],
+          false
+        );
+        const left = execute(script.callee.object, scopes);
+        if (left && args.then) {
+          return execute(args.then, scopes);
+        } else if (!left && args.else) {
+          return execute(args.else, scopes);
+        }
+        return;
       }
     }
     if (object && object[callee]) {

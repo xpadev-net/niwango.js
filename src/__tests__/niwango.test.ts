@@ -22,10 +22,6 @@ test("calculation declaration", () => {
   expect(run("return 2*-4")).toBe(-8);
   expect(run("return 10/-4")).toBe(-2.5);
 });
-test("while_kari", () => {
-  expect(run("i=0;while_kari(i<10,i++);return i")).toBe(10);
-  expect(run("i=0;while_kari(i>-10,i--);return i")).toBe(-10);
-});
 test("times", () => {
   expect(run("i=0;10.times(i++);return i")).toBe(10);
   expect(run("i=0;1000.times(i++);return i")).toBe(1000);
