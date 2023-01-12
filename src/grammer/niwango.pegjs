@@ -681,7 +681,7 @@ Arguments
     }
 
 ArgumentList
-  = head:ArgumentWithName tail:(__ "," __ ArgumentWithName)* {
+  = head:ArgumentWithName tail:(__ "," __ ArgumentWithName?)* {
       return buildList(head, tail, 3);
     }
 ArgumentWithName =identifier:ArgumentName? __ argument:AssignmentExpressions{

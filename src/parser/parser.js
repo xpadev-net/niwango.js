@@ -7901,6 +7901,9 @@
             s6 = peg$parse__();
             if (s6 !== peg$FAILED) {
               s7 = peg$parseArgumentWithName();
+              if (s7 === peg$FAILED) {
+                s7 = null;
+              }
               if (s7 !== peg$FAILED) {
                 s4 = [s4, s5, s6, s7];
                 s3 = s4;
@@ -7936,6 +7939,9 @@
               s6 = peg$parse__();
               if (s6 !== peg$FAILED) {
                 s7 = peg$parseArgumentWithName();
+                if (s7 === peg$FAILED) {
+                  s7 = null;
+                }
                 if (s7 !== peg$FAILED) {
                   s4 = [s4, s5, s6, s7];
                   s3 = s4;
