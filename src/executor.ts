@@ -424,6 +424,7 @@ const execute = (script: A_ANY, scopes: T_scope[]): unknown => {
         resolve({ type: "Identifier", name: "@0" }, scopes),
         scopes
       );
+      return;
     }
     if (typeGuard.MemberExpression(script.callee)) {
       if (callee === "pow") {
