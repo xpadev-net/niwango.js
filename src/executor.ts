@@ -4,6 +4,24 @@ import { IrText } from "@/objects/text";
 import { getGlobalScope, resolve } from "@/utils/utils";
 import { IrShape } from "@/objects/shape";
 import { definedFunction } from "@/@types/function";
+import {
+  Addition,
+  BitwiseAND,
+  BitwiseOR,
+  BitwiseXOR,
+  Division,
+  Exponentiation,
+  GreaterThan,
+  GreaterThanOrEqual,
+  LeftShift,
+  LessThan,
+  LessThanOrEqual,
+  Multiplication,
+  Remainder,
+  RightShift,
+  Subtraction,
+  UnsignedRightShift,
+} from "@/operators";
 
 let context: CanvasRenderingContext2D;
 
@@ -19,29 +37,29 @@ const execute = (script: A_ANY, scopes: T_scope[]): unknown => {
         if (script.operator === "=") {
           return right;
         } else if (script.operator === "+=") {
-          return left + right;
+          return Addition(left, right);
         } else if (script.operator === "-=") {
-          return left - right;
+          return Subtraction(left, right);
         } else if (script.operator === "*=") {
-          return left * right;
+          return Multiplication(left, right);
         } else if (script.operator === "/=") {
-          return left / right;
+          return Division(left, right);
         } else if (script.operator === "%=") {
-          return left % right;
+          return Remainder(left, right);
         } else if (script.operator === "**=") {
-          return left ** right;
+          return Exponentiation(left, right);
         } else if (script.operator === "<<=") {
-          return left << right;
+          return LeftShift(left, right);
         } else if (script.operator === ">>=") {
-          return left >> right;
+          return RightShift(left, right);
         } else if (script.operator === ">>>=") {
-          return left >>> right;
+          return UnsignedRightShift(left, right);
         } else if (script.operator === "&=") {
-          return left & right;
+          return BitwiseAND(left, right);
         } else if (script.operator === "^=") {
-          return left ^ right;
+          return BitwiseXOR(left, right);
         } else if (script.operator === "|=") {
-          return left | right;
+          return BitwiseOR(left, right);
         } else if (script.operator === "&&=") {
           return left && right;
         } else if (script.operator === "||=") {
@@ -63,13 +81,13 @@ const execute = (script: A_ANY, scopes: T_scope[]): unknown => {
       const left = execute(script.left, scopes),
         right = execute(script.right, scopes);
       if (script.operator === ">=") {
-        return left >= right;
+        return GreaterThanOrEqual(left, right);
       } else if (script.operator === "<=") {
-        return left <= right;
+        return LessThanOrEqual(left, right);
       } else if (script.operator === ">") {
-        return left > right;
+        return GreaterThan(left, right);
       } else if (script.operator === "<") {
-        return left < right;
+        return LessThan(left, right);
       } else if (script.operator === "!=") {
         return left != right;
       } else if (script.operator === "!==") {
@@ -79,31 +97,31 @@ const execute = (script: A_ANY, scopes: T_scope[]): unknown => {
       } else if (script.operator === "===") {
         return left === right;
       } else if (script.operator === "+") {
-        return left + right;
+        return Addition(left, right);
       } else if (script.operator === "-") {
-        return left - right;
+        return Subtraction(left, right);
       } else if (script.operator === "*") {
-        return left * right;
+        return Multiplication(left, right);
       } else if (script.operator === "/") {
-        return left / right;
+        return Division(left, right);
       } else if (script.operator === "%") {
-        return left % right;
+        return Remainder(left, right);
       } else if (script.operator === "**") {
-        return left ** right;
+        return Exponentiation(left, right);
       } else if (script.operator === "&") {
-        return left & right;
+        return BitwiseAND(left, right);
       } else if (script.operator === "|") {
-        return left | right;
+        return BitwiseOR(left, right);
       } else if (script.operator === "^") {
-        return left ^ right;
+        return BitwiseXOR(left, right);
       } else if (script.operator === "<<") {
-        return left << right;
+        return LeftShift(left, right);
       } else if (script.operator === ">>") {
-        return left >> right;
+        return RightShift(left, right);
       } else if (script.operator === ">>>") {
-        return left >>> right;
+        return UnsignedRightShift(left, right);
       } else {
-        console.warn("unknown binary expression:", script, scopes);
+        console.warn("[binary expression] unknown operator", script, scopes);
       }
     } else if (typeGuard.BlockStatement(script)) {
       let lastValue;
@@ -516,8 +534,7 @@ const execute = (script: A_ANY, scopes: T_scope[]): unknown => {
       console.trace();
       return;
     } else if (typeGuard.IfStatement(script)) {
-      const test = execute(script.test, scopes);
-      console.warn("ifstate:", script.test, test, script, scopes);
+      return console.error("niwascript doesnt support if statement");
     } else if (typeGuard.Identifier(script)) {
       const value = resolve(script, scopes);
       if (typeGuard.definedFunction(value)) {

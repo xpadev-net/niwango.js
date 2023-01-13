@@ -3,6 +3,7 @@ import { execute, setContext } from "@/executor";
 import { parse } from "./parser/parser";
 import { draw } from "@/utils/objectManager";
 import { config } from "@/definition/config";
+import { resetQueue } from "@/queue";
 
 class Niwango {
   private readonly globalScope: T_scope;
@@ -17,6 +18,7 @@ class Niwango {
     this.drawCanvas = drawCanvas;
     this.drawContext = drawContext;
     setContext(drawContext);
+    resetQueue();
     this.globalScope = {
       Object: {},
     };
