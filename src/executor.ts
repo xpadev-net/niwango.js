@@ -25,7 +25,7 @@ import {
 
 let context: CanvasRenderingContext2D;
 
-const execute = (script: A_ANY, scopes: T_scope[]): unknown => {
+const execute = (script: A_ANY | undefined, scopes: T_scope[]): unknown => {
   try {
     if (!script) return;
     if (typeGuard.ExpressionStatement(script)) {
@@ -136,10 +136,12 @@ const execute = (script: A_ANY, scopes: T_scope[]): unknown => {
           ? (script.callee as A_MemberExpression).property
           : script.callee,
         scopes
-      );
-      const object = typeGuard.MemberExpression(script.callee)
-        ? execute(script.callee.object, scopes) //local scope
-        : getGlobalScope(scopes); //global scope
+      ) as string;
+      const object = (
+        typeGuard.MemberExpression(script.callee)
+          ? execute(script.callee.object, scopes) //local scope
+          : getGlobalScope(scopes)
+      ) as { [key: string]: unknown }; //global scope
       if (callee === "dump") {
         for (const argument of script.arguments) {
           console.debug(
@@ -436,6 +438,10 @@ const execute = (script: A_ANY, scopes: T_scope[]): unknown => {
       }
 
       if (callee === "@") {
+        if (!script.arguments[0]) {
+          console.error("[call expression] @: at least 1 argument required");
+          return;
+        }
         assign(
           script.arguments[0],
           resolve({ type: "Identifier", name: "@0" }, scopes),
@@ -447,21 +453,33 @@ const execute = (script: A_ANY, scopes: T_scope[]): unknown => {
         if (callee === "pow") {
           const left = execute(script.callee.object, scopes);
           const right = execute(script.arguments[0], scopes);
-          return Math.pow(left, right);
+          return Exponentiation(left, right);
         } else if (callee === "index") {
           const left = execute(script.callee.object, scopes);
           const right = execute(script.arguments[0], scopes);
           if (typeof left === "string") return left.charAt(Number(right));
-          if (Array.isArray(left)) return left[right];
+          if (Array.isArray(left)) return left[Number(right)];
         } else if (callee === "indexOf") {
           const left = execute(script.callee.object, scopes);
           const right = execute(script.arguments[0], scopes);
-          return left.indexOf(right);
+          if (typeof left !== "string") {
+            console.error(
+              "[call expression] String.indexOf: indexOf cannot be used for anything other than String"
+            );
+            return;
+          }
+          return left.indexOf(`${right}`);
         } else if (callee === "slice") {
           const left = execute(script.callee.object, scopes);
-          const arg1 = execute(script.arguments[0], scopes);
+          const arg1 = Number(execute(script.arguments[0], scopes));
+          if (typeof left !== "string") {
+            console.error(
+              "[call expression] String.slice: slice cannot be used for anything other than String"
+            );
+            return;
+          }
           if (script.arguments[1]) {
-            const arg2 = execute(script.arguments[1], scopes);
+            const arg2 = Number(execute(script.arguments[1], scopes));
             return left.slice(arg1, arg1 + arg2);
           }
           return left.slice(arg1);
@@ -477,16 +495,34 @@ const execute = (script: A_ANY, scopes: T_scope[]): unknown => {
           return left.push(...args);
         } else if (callee === "join") {
           const left = execute(script.callee.object, scopes);
+          if (!Array.isArray(left)) {
+            console.error(
+              "[call expression] Array.join: join cannot be used for anything other than Array"
+            );
+            return;
+          }
           const arg1 = execute(script.arguments[0], scopes);
-          return left.join(arg1);
+          return left.join(`${arg1}`);
         } else if (callee === "setSlot") {
           const left = execute(script.callee.object, scopes);
-          const key = execute(script.arguments[0], scopes);
+          if (!typeGuard.object(left)) {
+            console.error(
+              "[call expression] Object.setSlot: setSlot cannot be used for anything other than Object"
+            );
+            return;
+          }
+          const key = execute(script.arguments[0], scopes) as string;
           const value = execute(script.arguments[1], scopes);
           return (left[key] = value);
         } else if (callee === "getSlot") {
           const left = execute(script.callee.object, scopes);
-          const key = execute(script.arguments[0], scopes);
+          if (!typeGuard.object(left)) {
+            console.error(
+              "[call expression] Object.setSlot: setSlot cannot be used for anything other than Object"
+            );
+            return;
+          }
+          const key = execute(script.arguments[0], scopes) as string;
           return left[key];
         } else if (callee === "alternative" || callee === "alt") {
           const args = argumentParser(
@@ -510,9 +546,9 @@ const execute = (script: A_ANY, scopes: T_scope[]): unknown => {
         if (func.isKari) {
           const args: { [key: string]: unknown } = {};
           let count = 1;
-          script.arguments.forEach((val, index) => {
+          script.arguments.forEach((val) => {
             if (val.NIWANGO_Identifier) {
-              args[getName(val.NIWANGO_Identifier, scopes)] = execute(
+              args[getName(val.NIWANGO_Identifier, scopes) as string] = execute(
                 val,
                 scopes
               );
@@ -522,8 +558,8 @@ const execute = (script: A_ANY, scopes: T_scope[]): unknown => {
           });
           return execute(func.script.arguments[1], [args, ...scopes]);
         } else {
-          const argNames = func.script.arguments[0].arguments.map((arg) =>
-            getName(arg, scopes)
+          const argNames = func.script.arguments[0].arguments.map(
+            (arg) => getName(arg, scopes) as string
           );
           const args = argumentParser(script.arguments, scopes, argNames);
           return execute(func.script.arguments[1], [

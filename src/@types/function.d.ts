@@ -1,5 +1,15 @@
-export type definedFunction = {
-  type: "definedFunction";
-  isKari: boolean;
-  script: A_ANY;
-};
+export type definedFunction =
+  | {
+      type: "definedFunction";
+      isKari: true;
+      script: A_CallExpression;
+    }
+  | {
+      type: "definedFunction";
+      isKari: false;
+      script: {
+        type: "CallExpression";
+        callee: A_ANY;
+        arguments: [A_CallExpression, A_ANY];
+      };
+    };
