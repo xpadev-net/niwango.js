@@ -102,7 +102,7 @@ type A_BlockStatement = {
 type A_CallExpression = {
   type: "CallExpression";
   callee: A_ANY;
-  arguments: A_ANY[];
+  arguments: Argument<A_ANY>[];
   NIWANGO_Identifier?: A_ANY;
 };
 type A_IfStatement = {

@@ -150,17 +150,26 @@ const execute = (script: A_ANY, scopes: T_scope[]): unknown => {
         }
         return;
       }
-      if (callee === "def" && typeof object === "object") {
-        if (typeGuard.Identifier(script.arguments[0])) {
-          script.arguments[0] = {
-            type: "CallExpression",
-            callee: script.arguments[0],
-            arguments: [],
-          } as A_CallExpression;
+      if (callee === "def" && typeGuard.object(object)) {
+        const func = (() => {
+          if (typeGuard.Identifier(script.arguments[0])) {
+            return {
+              type: "CallExpression",
+              callee: script.arguments[0],
+              arguments: [],
+            } as A_CallExpression;
+          }
+          if (typeGuard.CallExpression(script.arguments[0])) {
+            return script.arguments[0];
+          }
+          return;
+        })();
+        if (!func) return;
+        const functionName = getName(func.callee, scopes);
+        if (typeof functionName !== "string") {
+          console.error();
+          return;
         }
-        if (!typeGuard.CallExpression(script.arguments[0])) return;
-
-        const functionName = getName(script.arguments[0].callee, scopes);
         object[functionName] = {
           type: "definedFunction",
           isKari: false,
@@ -168,7 +177,7 @@ const execute = (script: A_ANY, scopes: T_scope[]): unknown => {
         } as definedFunction;
         return;
       }
-      if (callee === "def_kari" && typeof object === "object") {
+      if (callee === "def_kari" && typeGuard.object(object)) {
         if (!script.arguments[0]) return;
         const functionName = execute(script.arguments[0], scopes);
         if (typeof functionName !== "string") return;
@@ -181,17 +190,13 @@ const execute = (script: A_ANY, scopes: T_scope[]): unknown => {
       }
       if (callee === "while_kari") {
         if (!script.arguments[0] || !script.arguments[1]) return;
-        let i,
-          loopCount = 0;
-        while (
-          (i = execute(script.arguments[0], scopes)) &&
-          loopCount++ <= 10000
-        ) {
+        let loopCount = 0;
+        while (execute(script.arguments[0], scopes) && loopCount++ <= 10000) {
           execute(script.arguments[1], scopes);
         }
         return;
       }
-      if (callee === "times" && !isNaN(Number(object))) {
+      if (callee === "times" && !isNaN(Number(object)) && script.arguments[0]) {
         let lastResult;
         for (let i = 0; i < Number(object); i++) {
           lastResult = execute(script.arguments[0], [{ "@0": i }, ...scopes]);
@@ -342,7 +347,9 @@ const execute = (script: A_ANY, scopes: T_scope[]): unknown => {
         return console.warn("[call expression] replace:", script, args); //todo: feat replace
       }
       if (callee === "rand") {
-        return rand(execute(script.arguments[0], scopes));
+        if (script.arguments[0])
+          return rand(execute(script.arguments[0], scopes));
+        return rand();
       }
       if (callee === "distance") {
         const args = argumentParser(script.arguments, scopes, [

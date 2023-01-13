@@ -3,7 +3,7 @@ import { mt19937 } from "@/utils/mt19937";
 
 let randCalledCount = 0;
 const onload = new Date().getTime();
-const rand = (value: unknown) => {
+const rand = (value?: unknown) => {
   let seed = 0;
   if (typeof value === "undefined") {
     seed = onload + randCalledCount++;
