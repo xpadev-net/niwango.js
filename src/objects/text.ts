@@ -19,7 +19,7 @@ const defaultOptions: ITextOptions = {
 };
 
 class IrText extends IrObject {
-  options: ITextOptions;
+  override options: ITextOptions;
   constructor(
     _context: CanvasRenderingContext2D,
     _options: ITextOptionsNullable
@@ -67,7 +67,7 @@ class IrText extends IrObject {
     this.options.filter = val;
   }
 
-  __updateStyle() {
+  override __updateStyle() {
     this.__context.font = `normal 600 ${this.size}px Arial, "ＭＳ Ｐゴシック", "MS PGothic", MSPGothic, MS-PGothic`;
     this.__context.fillStyle = number2color(this.color);
     this.__measure();
@@ -80,13 +80,13 @@ class IrText extends IrObject {
       measure.actualBoundingBoxAscent + measure.actualBoundingBoxDescent;
   }
 
-  __draw() {
+  override __draw() {
     this.__context.clearRect(0, 0, this.__canvas.width, this.__canvas.height);
     this.__updateStyle();
     this.__context.fillText(this.text, 0, this.size);
   }
 
-  draw() {
+  override draw() {
     this.targetContext.drawImage(this.__canvas, this.__x, this.__y);
   }
 }

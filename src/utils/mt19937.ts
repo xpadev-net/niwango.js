@@ -61,7 +61,7 @@ const __init_by_array = (seed: number[], length: number) => {
   mt[0] = 0x80000000;
 };
 const __genrand_int32 = (): number => {
-  let result: number = NaN;
+  let result: number;
 
   if (mti >= N) {
     if (mti == N + 1) __init_genrand(5489);

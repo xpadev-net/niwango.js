@@ -21,7 +21,7 @@ const defaultOptions: IShapeOptions = {
 };
 
 class IrShape extends IrObject {
-  options: IShapeOptions;
+  override options: IShapeOptions;
   constructor(
     _context: CanvasRenderingContext2D,
     _options: IShapeOptionsNullable
@@ -43,21 +43,21 @@ class IrShape extends IrObject {
     this.options.shape = val;
   }
 
-  get width() {
+  override get width() {
     return this.options.width;
   }
 
-  set width(val) {
+  override set width(val) {
     this.options.width = val;
     this.__width = val;
     this.__updateStyle();
   }
 
-  get height() {
+  override get height() {
     return this.options.height;
   }
 
-  set height(val) {
+  override set height(val) {
     this.options.height = val;
     this.__height = val;
     this.__updateStyle();
@@ -87,14 +87,14 @@ class IrShape extends IrObject {
     this.options.rotation = val;
   }
 
-  __updateStyle() {
+  override __updateStyle() {
     this.__context.fillStyle = number2color(this.color);
     console.log(this.__canvas);
     //this.__canvas.width = this.width;
     //this.__canvas.height = this.height;
   }
 
-  __draw() {
+  override __draw() {
     this.__context.clearRect(0, 0, this.__canvas.width, this.__canvas.height);
     if (this.shape === "rect") {
       this.__context.fillRect(0, 0, this.width, this.height);
@@ -113,7 +113,7 @@ class IrShape extends IrObject {
     }
   }
 
-  draw() {
+  override draw() {
     //if (this.width===0||this.height===0)return;
     this.targetContext.drawImage(this.__canvas, this.__x, this.__y);
   }

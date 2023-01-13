@@ -14,7 +14,7 @@ const defaultOptions: IObjectOptions = {
   mover: "",
 };
 
-class IrObject {
+abstract class IrObject {
   protected readonly targetContext: CanvasRenderingContext2D;
   protected readonly __canvas: HTMLCanvasElement;
   protected readonly __context: CanvasRenderingContext2D;
@@ -22,7 +22,7 @@ class IrObject {
   protected __width: number;
   protected __height: number;
 
-  constructor(
+  protected constructor(
     context: CanvasRenderingContext2D,
     options: Partial<IObjectOptions>
   ) {
@@ -142,7 +142,7 @@ class IrObject {
     this.options.mover = val;
   }
 
-  __parsePos() {
+  protected __parsePos() {
     const pos = this.options.pos.split(/\s/);
     if (pos.includes("hidari")) {
       this.options.posX = "hidari";
@@ -159,9 +159,15 @@ class IrObject {
       this.options.posY = "naka";
     }
   }
-  __updateStyle() {}
-  __draw() {}
+  protected __updateStyle() {
+    console.debug("please override this method");
+  }
+  protected __draw() {
+    console.debug("please override this method");
+  }
 
-  draw() {}
+  public draw() {
+    console.debug("please override this method");
+  }
 }
 export { IrObject };
