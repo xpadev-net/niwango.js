@@ -7,7 +7,7 @@ import { definedFunction } from "@/@types/function";
 import {
   Addition,
   BitwiseAND,
-  BitwiseNot,
+  BitwiseNOT,
   BitwiseOR,
   BitwiseXOR,
   Division,
@@ -749,7 +749,7 @@ const execute = (script: A_ANY | undefined, scopes: T_scope[]): unknown => {
       } else if (script.operator === "+") {
         return UnaryPlus(value);
       } else if (script.operator === "~") {
-        return BitwiseNot(value);
+        return BitwiseNOT(value);
       } else if (script.operator === "!") {
         return LogicalNot(value);
       }

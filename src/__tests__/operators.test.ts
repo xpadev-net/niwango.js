@@ -1,6 +1,7 @@
 import {
   Addition,
   BitwiseAND,
+  BitwiseNOT,
   BitwiseOR,
   BitwiseXOR,
   Division,
@@ -10,10 +11,13 @@ import {
   LeftShift,
   LessThan,
   LessThanOrEqual,
+  LogicalNot,
   Multiplication,
   Remainder,
   RightShift,
   Subtraction,
+  UnaryNegation,
+  UnaryPlus,
   UnsignedRightShift,
 } from "@/operators";
 
@@ -216,6 +220,15 @@ test("BitwiseXOR", () => {
   expect(BitwiseXOR(14, 9)).toBe(7);
 });
 
+test("BitwiseNOT", () => {
+  expect(BitwiseNOT(5)).toBe(-6);
+  expect(BitwiseNOT(-3)).toBe(2);
+  expect(BitwiseNOT(9)).toBe(-10);
+  expect(BitwiseNOT(0)).toBe(-1);
+  expect(BitwiseNOT(-1)).toBe(0);
+  expect(BitwiseNOT(1)).toBe(-2);
+});
+
 test("LeftShift", () => {
   expect(LeftShift(5, 2)).toBe(20);
   expect(LeftShift(9, 2)).toBe(36);
@@ -234,4 +247,28 @@ test("UnsignedRightShift", () => {
   expect(UnsignedRightShift(-5, 2)).toBe(1073741822);
   expect(UnsignedRightShift(9, 2)).toBe(2);
   expect(UnsignedRightShift(-9, 2)).toBe(1073741821);
+});
+
+test("UnaryNegation", () => {
+  expect(UnaryNegation(3)).toBe(-3);
+  expect(UnaryNegation("4")).toBe(-4);
+  expect(UnaryNegation(-1)).toBe(1);
+});
+
+test("UnaryPlus", () => {
+  expect(UnaryPlus(1)).toBe(1);
+  expect(UnaryPlus(-1)).toBe(-1);
+  expect(UnaryPlus("")).toBe(0);
+  expect(UnaryPlus(true)).toBe(1);
+  expect(UnaryPlus(false)).toBe(0);
+  expect(UnaryPlus("hello")).toBe(NaN);
+});
+
+test("LogicalNot", () => {
+  expect(LogicalNot(true)).toBe(false);
+  expect(LogicalNot(false)).toBe(true);
+  expect(LogicalNot("")).toBe(true);
+  expect(LogicalNot("Cat")).toBe(false);
+  expect(LogicalNot({})).toBe(false);
+  expect(LogicalNot(new Boolean(false))).toBe(false);
 });
