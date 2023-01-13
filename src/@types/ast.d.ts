@@ -145,7 +145,7 @@ type A_Property = {
 };
 type A_ReturnStatement = {
   type: "ReturnStatement";
-  argument: A_ANY[];
+  argument: A_ANY;
 };
 type A_SequenceExpression = {
   type: "SequenceExpression";

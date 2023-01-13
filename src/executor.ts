@@ -7,6 +7,7 @@ import { definedFunction } from "@/@types/function";
 import {
   Addition,
   BitwiseAND,
+  BitwiseNot,
   BitwiseOR,
   BitwiseXOR,
   Division,
@@ -16,10 +17,13 @@ import {
   LeftShift,
   LessThan,
   LessThanOrEqual,
+  LogicalNot,
   Multiplication,
   Remainder,
   RightShift,
   Subtraction,
+  UnaryNegation,
+  UnaryPlus,
   UnsignedRightShift,
 } from "@/operators";
 
@@ -608,19 +612,21 @@ const execute = (script: A_ANY | undefined, scopes: T_scope[]): unknown => {
         console.error(`[member expression] left is undefined`, script, scopes);
         return;
       }
-      const right = script.computed
-        ? execute(script.property, scopes)
-        : getName(script.property, scopes);
-      if (typeGuard.definedFunction(left[right])) {
+      const right = (
+        script.computed
+          ? execute(script.property, scopes)
+          : getName(script.property, scopes)
+      ) as string;
+      if (typeGuard.object(left) && typeGuard.definedFunction(left[right])) {
         const func = left[right] as definedFunction;
         return execute(func.script.arguments[1], [{ self: left }, ...scopes]);
       }
       if (typeGuard.LambdaExpression(left)) {
         if (typeGuard.SequenceExpression(script.property)) {
-          const args = {};
+          const args: { [key: string]: unknown } = {};
           let index = 0;
           for (const arg of script.property.expressions) {
-            args[`@${index++}`] = execute(arg);
+            args[`@${index++}`] = execute(arg, scopes);
           }
           return execute(left.body, [args, ...scopes]);
         }
@@ -658,7 +664,7 @@ const execute = (script: A_ANY | undefined, scopes: T_scope[]): unknown => {
           const operator = { increase: "+", decrease: "-" };
           const BinaryExpression: A_BinaryExpression = {
             type: "BinaryExpression",
-            operator: operator[right],
+            operator: operator[right] as "+" | "-",
             left: script.object,
             right: {
               type: "Literal",
@@ -711,11 +717,14 @@ const execute = (script: A_ANY | undefined, scopes: T_scope[]): unknown => {
           }
         }
       }
-      return left[right];
+      return (left as { [key: string]: unknown })[right];
     } else if (typeGuard.ObjectExpression(script)) {
       const object: { [key: string | number | symbol]: unknown } = {};
       for (const item of script.properties) {
-        object[getName(item.key, scopes)] = execute(item.value, scopes);
+        object[getName(item.key, scopes) as string] = execute(
+          item.value,
+          scopes
+        );
       }
       return object;
     } else if (typeGuard.Program(script)) {
@@ -734,32 +743,34 @@ const execute = (script: A_ANY | undefined, scopes: T_scope[]): unknown => {
       }
       return lastResult;
     } else if (typeGuard.UnaryExpression(script)) {
-      const left = execute(script.argument, scopes);
+      const value = execute(script.argument, scopes);
       if (script.operator === "-") {
-        return left * -1;
+        return UnaryNegation(value);
       } else if (script.operator === "+") {
-        return left + 1;
+        return UnaryPlus(value);
       } else if (script.operator === "~") {
-        return ~left;
+        return BitwiseNot(value);
       } else if (script.operator === "!") {
-        return !left;
+        return LogicalNot(value);
       }
       console.error(`[unary expression] unknown operator`, script, scopes);
     } else if (typeGuard.UpdateExpression(script)) {
-      const left = execute(script.argument, scopes);
+      const value = execute(script.argument, scopes);
       if (script.operator === "--") {
-        assign(script.argument, left - 1, scopes);
+        const result = Subtraction(value, 1);
+        assign(script.argument, result, scopes);
         if (script.prefix) {
-          return left - 1;
+          return result;
         } else {
-          return left;
+          return value;
         }
       } else if (script.operator === "++") {
-        assign(script.argument, left + 1, scopes);
+        const result = Addition(value, 1);
+        assign(script.argument, result, scopes);
         if (script.prefix) {
-          return left + 1;
+          return result;
         } else {
-          return left;
+          return value;
         }
       }
       console.error(`[update expression] unknown operator`, script, scopes);
@@ -776,14 +787,19 @@ const execute = (script: A_ANY | undefined, scopes: T_scope[]): unknown => {
           );
         } else {
           if (scopes[0])
-            scopes[0][getName(item.id)] = execute(item.init, scopes);
+            scopes[0][getName(item.id, scopes) as string] = execute(
+              item.init,
+              scopes
+            );
         }
       }
     } else {
       console.error(`[unknown]`, script, scopes);
     }
-  } catch (e) {
-    console.error(e.name + ": " + e.message, script, scopes);
+  } catch (e: unknown) {
+    if (e instanceof Error) {
+      console.error(e.name + ": " + e.message, script, scopes);
+    }
     console.trace();
   }
   return;
@@ -801,7 +817,7 @@ const argumentParser = (
     const item = inputs[i];
     if (!item) continue;
     if (item.NIWANGO_Identifier) {
-      const key = getName(item.NIWANGO_Identifier, scopes);
+      const key = getName(item.NIWANGO_Identifier, scopes) as string;
       if (keys.includes(key)) {
         result[key] = compute ? execute(item, scopes) : item;
         continue;
@@ -843,7 +859,11 @@ const assign = (target: A_ANY, value: unknown, scopes: T_scope[]) => {
       if (scopes[0]) scopes[0][target.name] = value;
     } else if (typeGuard.MemberExpression(target)) {
       const left = execute(target.object, scopes);
-      left[getName(target.property, scopes)] = value;
+      if (!typeGuard.object(left)) {
+        console.error("[assign] left is not object");
+        return;
+      }
+      left[getName(target.property, scopes) as string] = value;
     }
   } catch (e) {
     if (e instanceof Error) {

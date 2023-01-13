@@ -60,6 +60,10 @@ const BitwiseXOR = (left: unknown, right: unknown) => {
   return Number(left) ^ Number(right);
 };
 
+const BitwiseNot = (value: unknown) => {
+  return ~Number(value);
+};
+
 const LeftShift = (left: unknown, right: unknown) => {
   return Number(left) << Number(right);
 };
@@ -70,6 +74,18 @@ const RightShift = (left: unknown, right: unknown) => {
 
 const UnsignedRightShift = (left: unknown, right: unknown) => {
   return Number(left) >>> Number(right);
+};
+
+const UnaryNegation = (value: unknown) => {
+  return -Number(value);
+};
+
+const UnaryPlus = (value: unknown) => {
+  return +Number(value);
+};
+
+const LogicalNot = (value: unknown) => {
+  return !value;
 };
 
 export {
@@ -86,7 +102,11 @@ export {
   BitwiseAND,
   BitwiseOR,
   BitwiseXOR,
+  BitwiseNot,
   LeftShift,
   RightShift,
   UnsignedRightShift,
+  UnaryNegation,
+  UnaryPlus,
+  LogicalNot,
 };
