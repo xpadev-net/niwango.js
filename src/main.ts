@@ -3,13 +3,14 @@ import { execute, setContext } from "@/executor";
 import { parse } from "./parser/parser";
 import { draw } from "@/utils/objectManager";
 import { config } from "@/definition/config";
-import { resetQueue } from "@/queue";
+import { getQueue, resetQueue, setCurrentTime } from "@/queue";
 
 class Niwango {
   private readonly globalScope: T_scope;
   private readonly environmentScope: T_environment;
   private readonly drawContext: CanvasRenderingContext2D;
   public readonly drawCanvas: HTMLCanvasElement;
+  static default = Niwango;
   constructor(drawCanvas: HTMLCanvasElement) {
     drawCanvas.width = config.canvasWidth;
     drawCanvas.height = config.canvasHeight;
@@ -19,6 +20,7 @@ class Niwango {
     this.drawContext = drawContext;
     setContext(drawContext);
     resetQueue();
+    setCurrentTime(0);
     this.globalScope = {
       Object: {},
     };
@@ -38,7 +40,19 @@ class Niwango {
     };
   }
 
-  public execute(script: string) {
+  public processComment(comment: formattedComment) {
+    if (comment.content.startsWith("/")) {
+      this.execute(comment.content, comment.vpos);
+    } else {
+    }
+  }
+
+  public execute(script: string, vpos: number) {
+    setCurrentTime(vpos);
+    getQueue(vpos).forEach((queue) =>
+      execute(queue.script, [this.globalScope, this.environmentScope])
+    );
+
     const ast = (parse as T_parse)(script);
     return execute(ast, [this.globalScope, this.environmentScope]);
   }

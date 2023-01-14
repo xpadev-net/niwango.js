@@ -26,6 +26,7 @@ import {
   UnaryPlus,
   UnsignedRightShift,
 } from "@/operators";
+import { addQueue } from "@/queue";
 
 let context: CanvasRenderingContext2D;
 
@@ -278,6 +279,7 @@ const execute = (script: A_ANY | undefined, scopes: T_scope[]): unknown => {
           ["timer", "then"],
           false
         );
+        addQueue(args.then, Number(execute(args.timer, scopes)));
         return console.warn("[call expression] timer:", script, args); //todo: feat timer
       }
       if (callee === "jump") {
