@@ -1337,7 +1337,7 @@ LambdaExpression2
   }
 
 LambdaExpression3
-  = LambdaToken2 body:LeftHandSideExpression{
+  = LambdaToken2 body:FunctionBody{
     return {
       type: "LambdaExpression",
       body
@@ -1372,6 +1372,7 @@ SourceElements
 
 SourceElement
   = Statement
+  / LambdaExpression
   / FunctionDeclaration
 
 // ----- A.6 Universal Resource Identifier Character Classes -----

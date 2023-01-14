@@ -14829,7 +14829,7 @@
       s0 = peg$currPos;
       s1 = peg$parseLambdaToken2();
       if (s1 !== peg$FAILED) {
-        s2 = peg$parseLeftHandSideExpression();
+        s2 = peg$parseFunctionBody();
         if (s2 !== peg$FAILED) {
           peg$savedPos = s0;
           s1 = peg$c391(s2);
@@ -15088,7 +15088,10 @@
 
       s0 = peg$parseStatement();
       if (s0 === peg$FAILED) {
-        s0 = peg$parseFunctionDeclaration();
+        s0 = peg$parseLambdaExpression();
+        if (s0 === peg$FAILED) {
+          s0 = peg$parseFunctionDeclaration();
+        }
       }
 
       peg$resultsCache[key] = { nextPos: peg$currPos, result: s0 };
