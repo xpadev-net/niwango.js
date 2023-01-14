@@ -1,5 +1,4 @@
 import { execute, setContext } from "@/executor";
-// @ts-ignore
 import { parse } from "./parser/parser";
 import { draw } from "@/utils/objectManager";
 import { config } from "@/definition/config";
@@ -53,7 +52,7 @@ class Niwango {
       execute(queue.script, [this.globalScope, this.environmentScope])
     );
 
-    const ast = (parse as T_parse)(script);
+    const ast = parse(script);
     return execute(ast, [this.globalScope, this.environmentScope]);
   }
 

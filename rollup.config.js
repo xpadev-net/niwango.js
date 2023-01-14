@@ -2,7 +2,6 @@ import babel from "@rollup/plugin-babel";
 import typescript from "@rollup/plugin-typescript";
 import commonjs from '@rollup/plugin-commonjs';
 import {nodeResolve} from "@rollup/plugin-node-resolve";
-import json from "@rollup/plugin-json";
 import pkg from "./package.json" assert {type: 'json'};
 import * as path from "path";
 import {fileURLToPath} from "url";
@@ -24,12 +23,11 @@ export default {
     },
     plugins: [
         typescript(),
-        json(),
         commonjs(),
-        nodeResolve(),
         babel({
             babelHelpers: "bundled",
             configFile: path.resolve(__dirname, ".babelrc.js"),
         }),
+        nodeResolve(),
     ]
 }

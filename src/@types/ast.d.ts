@@ -203,7 +203,6 @@ type T_chat = {
 };
 type T_commentPos = "ue" | "naka" | "shita";
 type T_commentSize = "big" | "medium" | "small";
-type T_parse = (script: string) => A_ANY;
 type Argument<T> = T & {
   NIWANGO_Identifier: null | A_ANY;
 };
