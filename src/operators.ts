@@ -1,4 +1,5 @@
 const Multiplication = (left: unknown, right: unknown) => {
+  if (typeof left === "string") return left.repeat(Number(right));
   return Number(left) * Number(right);
 };
 

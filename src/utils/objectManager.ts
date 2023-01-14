@@ -2,7 +2,6 @@ import { IrObject } from "@/objects/object";
 
 const drawObjects: IrObject[] = [];
 const draw = () => {
-  console.log(drawObjects);
   for (const object of drawObjects) {
     object.draw();
   }

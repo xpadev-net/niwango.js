@@ -20,7 +20,7 @@ const run = (niwango: string) => {
       isWide: null, //false
       lastVideo: "sm1", //sm1
     };
-  const ast = (parse as T_parse)(niwango);
+  const ast = parse(niwango);
   return execute(ast, [globalScope, environmentScope]);
 };
 export { run };

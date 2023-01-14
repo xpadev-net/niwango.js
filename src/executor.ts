@@ -279,7 +279,7 @@ const execute = (script: A_ANY | undefined, scopes: T_scope[]): unknown => {
           ["timer", "then"],
           false
         );
-        addQueue(args.then, Number(execute(args.timer, scopes)));
+        addQueue(args.then, Number(execute(args.timer, scopes)), scopes);
         return console.warn("[call expression] timer:", script, args); //todo: feat timer
       }
       if (callee === "jump") {
@@ -448,6 +448,7 @@ const execute = (script: A_ANY | undefined, scopes: T_scope[]): unknown => {
           console.error("[call expression] @: at least 1 argument required");
           return;
         }
+        console.log(script, scopes);
         assign(
           script.arguments[0],
           resolve({ type: "Identifier", name: "@0" }, scopes),

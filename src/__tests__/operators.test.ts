@@ -24,12 +24,12 @@ import {
 test("Multiplication", () => {
   expect(Multiplication(3, 4)).toBe(12);
   expect(Multiplication(-3, 4)).toBe(-12);
-  expect(Multiplication("3", 2)).toBe(6);
+  expect(Multiplication("3", 2)).toBe("33");
   expect(Multiplication(2, 2)).toBe(4);
   expect(Multiplication(-2, 2)).toBe(-4);
   expect(Multiplication(Infinity, 0)).toBe(NaN);
   expect(Multiplication(Infinity, Infinity)).toBe(Infinity);
-  expect(Multiplication("foo", 2)).toBe(NaN);
+  expect(Multiplication("foo", 2)).toBe("foofoo");
 });
 
 test("Subtraction", () => {

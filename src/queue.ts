@@ -1,4 +1,4 @@
-let queue: { script: A_ANY; time: number }[] = [];
+let queue: { script: A_ANY; time: number; scopes: T_scope[] }[] = [];
 let currentTime: number = 0;
 const resetQueue = () => {
   queue = [];
@@ -6,8 +6,8 @@ const resetQueue = () => {
 const setCurrentTime = (time: number) => {
   currentTime = time;
 };
-const addQueue = (script: A_ANY, offset: number) => {
-  queue.push({ script, time: currentTime + offset });
+const addQueue = (script: A_ANY, offset: number, scopes: T_scope[]) => {
+  queue.push({ script, time: currentTime + offset, scopes });
 };
 const getQueue = (time: number) => {
   const result = [],
