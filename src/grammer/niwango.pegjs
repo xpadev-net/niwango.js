@@ -479,7 +479,7 @@ WithToken       = "with"       !IdentifierPart
 // Skipped
 
 __
-  = (WhiteSpace / LineTerminatorSequence / Comment)*
+  = (WhiteSpace / LineTerminatorSequence/Comment)*
 
 _
   = WhiteSpace*
@@ -488,7 +488,7 @@ _
 
 EOS
   = __ ";"
-  / _ SingleLineComment? LineTerminatorSequence
+  / _ SingleLineComment? &LineTerminatorSequence
   / _ &"}"
   / __ EOF
   / _ &")"
@@ -1337,7 +1337,7 @@ LambdaExpression2
   }
 
 LambdaExpression3
-  = LambdaToken2 body:FunctionBody{
+  = LambdaToken2 body:SourceElement !{console.log(location())}{
     return {
       type: "LambdaExpression",
       body
