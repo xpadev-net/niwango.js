@@ -89,7 +89,6 @@ class IrShape extends IrObject {
 
   override __updateStyle() {
     this.__context.fillStyle = number2color(this.color);
-    console.log(this.__canvas);
     //this.__canvas.width = this.width;
     //this.__canvas.height = this.height;
   }

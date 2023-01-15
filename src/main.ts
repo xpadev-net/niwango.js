@@ -1,7 +1,7 @@
 import { execute, setContext } from "@/executor";
 import { parse } from "./parser/parser";
 import { draw } from "@/utils/objectManager";
-import { config } from "@/definition/config";
+import { config, initConfig } from "@/definition/config";
 import { getQueue, resetQueue, setCurrentTime } from "@/queue";
 
 class Niwango {
@@ -15,12 +15,17 @@ class Niwango {
   constructor(targetCanvas: HTMLCanvasElement) {
     this.targetCanvas = targetCanvas;
     this.drawCanvas = document.createElement("canvas");
-    this.drawCanvas.width = config.canvasWidth;
-    this.drawCanvas.height = config.canvasHeight;
+    initConfig();
+    this.drawCanvas.width = 1920;
+    this.drawCanvas.height = 1080;
     const drawContext = this.drawCanvas.getContext("2d");
     this.targetContext = this.targetCanvas.getContext("2d")!;
     if (!drawContext) throw new Error();
     this.drawContext = drawContext;
+    this.drawContext.scale(
+      1920 / config.canvasWidth,
+      1080 / config.canvasHeight
+    );
     setContext(drawContext);
     resetQueue();
     setCurrentTime(0);
@@ -53,9 +58,12 @@ class Niwango {
   public execute(script: string, vpos: number) {
     setCurrentTime(vpos);
     getQueue(vpos).forEach((queue) => execute(queue.script, queue.scopes));
-
-    const ast = parse(script);
-    return execute(ast, [this.globalScope, this.environmentScope]);
+    try {
+      const ast = parse(script);
+      execute(ast, [this.globalScope, this.environmentScope]);
+    } catch (e: unknown) {
+      console.log(e, script);
+    }
   }
 
   public draw() {
@@ -64,8 +72,8 @@ class Niwango {
       this.drawCanvas,
       0,
       0,
-      config.canvasWidth,
-      config.canvasHeight,
+      1920,
+      1080,
       0,
       0,
       this.targetCanvas.width,

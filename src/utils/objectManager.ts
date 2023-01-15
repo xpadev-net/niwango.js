@@ -7,7 +7,6 @@ const draw = () => {
   }
 };
 const register = (item: IrObject) => {
-  console.log([...drawObjects]);
   drawObjects.push(item);
 };
 export { draw, register };

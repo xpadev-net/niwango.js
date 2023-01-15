@@ -1,4 +1,6 @@
 import typeGuard from "@/typeGuard";
+import { config } from "@/definition/config";
+import { commentFont } from "@/@types/IrText";
 
 const resolve = (script: A_ANY, scopes: T_scope[]) => {
   try {
@@ -23,4 +25,21 @@ const getGlobalScope = (scopes: T_scope[]): T_scope | undefined => {
     return scopes[scopes.length - 2];
   }
 };
-export { resolve, getGlobalScope };
+
+/**
+ * フォント名とサイズをもとにcontextで使えるフォントを生成する
+ * @param {string} font
+ * @param {string|number} size
+ * @returns {string}
+ */
+const parseFont = (font: commentFont, size: string | number): string => {
+  switch (font) {
+    case "gulim":
+    case "simsun":
+      return config.font[font].replace("[size]", `${size}`);
+    default:
+      return `${config.fonts.defont.weight} ${size}px ${config.fonts.defont.font}`;
+  }
+};
+
+export { resolve, getGlobalScope, parseFont };

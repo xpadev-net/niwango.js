@@ -7,7 +7,7 @@ const setCurrentTime = (time: number) => {
   currentTime = time;
 };
 const addQueue = (script: A_ANY, offset: number, scopes: T_scope[]) => {
-  queue.push({ script, time: currentTime + offset, scopes });
+  queue.push({ script, time: currentTime + offset * 100, scopes });
 };
 const getQueue = (time: number) => {
   const result = [],
