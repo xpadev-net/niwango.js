@@ -114,6 +114,7 @@ class IrShape extends IrObject {
 
   override draw() {
     //if (this.width===0||this.height===0)return;
+    //this.targetContext.scale(1,1);
     this.targetContext.drawImage(this.__canvas, this.__x, this.__y);
   }
 }

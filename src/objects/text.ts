@@ -31,6 +31,12 @@ class IrText extends IrObject {
   ) {
     super(_context, _options);
     this.options = Object.assign({ ...defaultOptions }, _options);
+    /*if (this.options.size < 10){
+      this.scale = this.options.size/10;
+      this.options.size = 10;
+    }else{
+      this.scale = 1;
+    }*/
     this.parsedComment = parse(this.text);
     this.__updateContent();
     this.__parsePos();
@@ -91,6 +97,7 @@ class IrText extends IrObject {
       ...this.parsedComment,
       size: this.size,
     });
+    console.log(result);
     this.__width = result.width;
     this.__height = result.height;
     if (this.__canvas.width < this.__width) {
@@ -102,10 +109,9 @@ class IrText extends IrObject {
   }
 
   override __draw() {
-    console.log(this.parsedComment);
-    this.__context.clearRect(0, 0, this.__canvas.width, this.__canvas.height);
+    console.log(this);
     this.__updateStyle();
-    console.log(this.__canvas.width, this.__canvas.height);
+    this.__context.clearRect(0, 0, this.__canvas.width, this.__canvas.height);
     this.__context.strokeStyle = "rgba(0,0,0,0.4)";
     this.__context.font = parseFont(this.parsedComment.font, this.size);
     this.__context.fillStyle = ("000000" + this.color.toString(16)).slice(-6);
@@ -120,7 +126,7 @@ class IrText extends IrObject {
         lastFont = item.font || this.parsedComment.font;
         this.__context.font = parseFont(lastFont, this.size);
       }
-      const lines = item.content.split("\n");
+      const lines = item.content.split(/[\n\r]/g);
       for (let j = 0; j < lines.length; j++) {
         const line = lines[j];
         if (line === undefined) continue;
@@ -128,7 +134,7 @@ class IrText extends IrObject {
           (lineOffset + lineCount + 1) * (this.size * config.lineHeight) +
           config.commentYPaddingTop +
           this.size * config.lineHeight * config.commentYOffset;
-        this.__context.strokeText(line, leftOffset, posY);
+        //this.__context.strokeText(line, leftOffset, posY);
         this.__context.fillText(line, leftOffset, posY);
         if (j < lines.length - 1) {
           leftOffset = 0;
@@ -141,6 +147,8 @@ class IrText extends IrObject {
   }
 
   override draw() {
+    //this.targetContext.scale(this.scale,this.scale);
+    console.log(this.__x, this.__y, this.width, this.height);
     this.targetContext.drawImage(this.__canvas, this.__x, this.__y);
   }
 }

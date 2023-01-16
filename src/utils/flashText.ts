@@ -9,7 +9,7 @@ import { parseFont } from "@/utils/utils";
 
 const parse = (string: string): parsedComment => {
   const content: commentContentItem[] = [];
-  const parts = (string.match(/\n|[^\n]+/g) || []).map((val) =>
+  const parts = (string.match(/[\n\r]|[^\n\r]+/g) || []).map((val) =>
     Array.from(val.match(/[ -~｡-ﾟ]+|[^ -~｡-ﾟ]+/g) || [])
   );
   const regex = {
@@ -116,7 +116,7 @@ const parse = (string: string): parsedComment => {
       content.push(...lineContent);
     }
   }
-  const lineCount = Array.from(string.match(/\n/g) || []).length + 1;
+  const lineCount = Array.from(string.match(/[\n\r]/g) || []).length + 1;
   const font = content[0]?.font || "defont";
   const lineOffset =
     (string.match(new RegExp(config.flashScriptChar.super, "g"))?.length || 0) *
@@ -138,7 +138,7 @@ const measure = (
   for (let i = 0; i < comment.content.length; i++) {
     const item = comment.content[i];
     if (item === undefined) continue;
-    const lines = item.content.split("\n");
+    const lines = item.content.split(/[\n\r]/);
     const widths = [];
 
     context.font = parseFont(item.font || comment.font, comment.size);
@@ -147,6 +147,7 @@ const measure = (
       if (value === undefined) continue;
       const measure = context.measureText(value);
       currentWidth += measure.width;
+      console.log(value, measure.width);
       spacedWidth +=
         measure.width + Math.max(value.length - 1, 0) * config.letterSpacing;
       widths.push(measure.width);
@@ -173,10 +174,9 @@ const measure = (
     }
     return { max, index };
   })();
-  const width = leadLine.max;
   const scaleX = leadLine.max / (width_arr[leadLine.index] || 1);
   const height =
     comment.size * 1.22 * comment.lineCount + config.commentYPaddingTop;
-  return { width, scaleX, height };
+  return { width: Math.max(...width_arr, 0), scaleX, height };
 };
 export { parse, measure };

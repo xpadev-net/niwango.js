@@ -67,6 +67,7 @@ class Niwango {
   }
 
   public draw() {
+    this.clear();
     draw();
     this.targetContext.drawImage(
       this.drawCanvas,

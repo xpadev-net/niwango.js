@@ -69,7 +69,7 @@ const initConfig = () => {
     lineHeight: 1.22,
     commentYPaddingTop: 4,
     commentYOffset: -0.2,
-    letterSpacing: 1,
+    letterSpacing: 0,
   };
 };
 
