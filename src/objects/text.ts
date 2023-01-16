@@ -41,7 +41,6 @@ class IrText extends IrObject {
     } else {
       this.scale = 1;
     }
-    document.body.append(this.__canvas);
     this.parsedComment = parse(this.text);
     this.__updateContent();
     this.__parsePos();
