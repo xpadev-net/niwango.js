@@ -25,18 +25,23 @@ const defaultOptions: ITextOptions = {
 class IrText extends IrObject {
   override options: ITextOptions;
   private parsedComment: parsedComment;
+  private __actualWidth: number;
+  private __actualHeight: number;
+  private scale: number;
   constructor(
     _context: CanvasRenderingContext2D,
     _options: ITextOptionsNullable
   ) {
     super(_context, _options);
     this.options = Object.assign({ ...defaultOptions }, _options);
-    /*if (this.options.size < 10){
-      this.scale = this.options.size/10;
+    this.__actualHeight = this.__actualWidth = 0;
+    if (this.options.size < 10) {
+      this.scale = this.options.size / 10;
       this.options.size = 10;
-    }else{
+    } else {
       this.scale = 1;
-    }*/
+    }
+    document.body.append(this.__canvas);
     this.parsedComment = parse(this.text);
     this.__updateContent();
     this.__parsePos();
@@ -49,7 +54,13 @@ class IrText extends IrObject {
   }
 
   set size(val) {
-    this.options.size = val;
+    if (this.options.size < 10) {
+      this.scale = val / 10;
+      this.options.size = 10;
+    } else {
+      this.options.size = val;
+      this.scale = 1;
+    }
     this.__updateStyle();
     this.__measure();
     this.__draw();
@@ -98,13 +109,15 @@ class IrText extends IrObject {
       size: this.size,
     });
     console.log(result);
-    this.__width = result.width;
-    this.__height = result.height;
-    if (this.__canvas.width < this.__width) {
-      this.__canvas.width = this.__width;
+    this.__actualWidth = result.width;
+    this.__actualHeight = result.height;
+    this.__width = this.__actualWidth * this.scale;
+    this.__height = this.__actualHeight * this.scale;
+    if (this.__canvas.width < this.__actualWidth) {
+      this.__canvas.width = this.__actualWidth;
     }
-    if (this.__canvas.height < this.__height) {
-      this.__canvas.height = this.__height;
+    if (this.__canvas.height < this.__actualHeight) {
+      this.__canvas.height = this.__actualHeight;
     }
   }
 
@@ -147,9 +160,17 @@ class IrText extends IrObject {
   }
 
   override draw() {
-    //this.targetContext.scale(this.scale,this.scale);
-    console.log(this.__x, this.__y, this.width, this.height);
-    this.targetContext.drawImage(this.__canvas, this.__x, this.__y);
+    this.targetContext.drawImage(
+      this.__canvas,
+      0,
+      0,
+      this.__actualWidth,
+      this.__actualHeight,
+      this.__x,
+      this.__y,
+      this.__width,
+      this.__height
+    );
   }
 }
 export { IrText };
