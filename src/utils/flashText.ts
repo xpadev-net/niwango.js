@@ -147,7 +147,6 @@ const measure = (
       if (value === undefined) continue;
       const measure = context.measureText(value);
       currentWidth += measure.width;
-      console.log(value, measure.width);
       spacedWidth +=
         measure.width + Math.max(value.length - 1, 0) * config.letterSpacing;
       widths.push(measure.width);

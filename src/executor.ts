@@ -444,7 +444,6 @@ const execute = (script: A_ANY | undefined, scopes: T_scope[]): unknown => {
         console.error("[call expression] @: at least 1 argument required");
         return;
       }
-      console.log(script, scopes);
       assign(
         script.arguments[0],
         resolve({ type: "Identifier", name: "@0" }, scopes),
@@ -545,7 +544,6 @@ const execute = (script: A_ANY | undefined, scopes: T_scope[]): unknown => {
     }
     if (object && object[callee]) {
       const func = object[callee] as definedFunction;
-      console.log(func);
       if (func.type !== "definedFunction") return;
       if (func.isKari) {
         const args: { [key: string]: unknown } = {};

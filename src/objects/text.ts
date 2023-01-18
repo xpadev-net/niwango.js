@@ -111,7 +111,6 @@ class IrText extends IrObject {
       ...this.parsedComment,
       size: this.__size,
     });
-    console.log(result);
     this.__actualWidth = result.width;
     this.__actualHeight = result.height;
     this.__width = this.__actualWidth * this.__scale * this.scale;
@@ -125,7 +124,6 @@ class IrText extends IrObject {
   }
 
   override __draw() {
-    console.log(this);
     this.__updateStyle();
     this.__context.clearRect(0, 0, this.__canvas.width, this.__canvas.height);
     const lineOffset = this.parsedComment.lineOffset;
