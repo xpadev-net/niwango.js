@@ -15,6 +15,7 @@ const defaultOptions: IShapeOptions = {
   visible: true,
   mask: false,
   commentmask: false,
+  scale: 1,
   alpha: 0,
   rotation: 0,
   mover: "",
@@ -89,6 +90,7 @@ class IrShape extends IrObject {
 
   override __updateStyle() {
     this.__context.fillStyle = number2color(this.color);
+    console.log("color", this.color);
     //this.__canvas.width = this.width;
     //this.__canvas.height = this.height;
   }

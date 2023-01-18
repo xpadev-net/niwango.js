@@ -17,6 +17,7 @@ const defaultOptions: ITextOptions = {
   color: 0,
   bold: false,
   visible: true,
+  scale: 1,
   filter: "",
   alpha: 0,
   mover: "",
@@ -27,7 +28,8 @@ class IrText extends IrObject {
   private parsedComment: parsedComment;
   private __actualWidth: number;
   private __actualHeight: number;
-  private scale: number;
+  private __scale: number;
+  private __size: number;
   constructor(
     _context: CanvasRenderingContext2D,
     _options: ITextOptionsNullable
@@ -36,10 +38,11 @@ class IrText extends IrObject {
     this.options = Object.assign({ ...defaultOptions }, _options);
     this.__actualHeight = this.__actualWidth = 0;
     if (this.options.size < 10) {
-      this.scale = this.options.size / 10;
-      this.options.size = 10;
+      this.__scale = this.options.size / 10;
+      this.__size = 10;
     } else {
-      this.scale = 1;
+      this.__scale = 1;
+      this.__size = this.options.size;
     }
     this.parsedComment = parse(this.text);
     this.__updateContent();
@@ -53,13 +56,14 @@ class IrText extends IrObject {
   }
 
   set size(val) {
-    if (this.options.size < 10) {
-      this.scale = val / 10;
-      this.options.size = 10;
+    if (val < 10) {
+      this.__scale = val / 10;
+      this.__size = 10;
     } else {
-      this.options.size = val;
-      this.scale = 1;
+      this.__scale = 1;
+      this.__size = val;
     }
+    this.options.size = val;
     this.__updateStyle();
     this.__measure();
     this.__draw();
@@ -97,7 +101,7 @@ class IrText extends IrObject {
   }
 
   override __updateStyle() {
-    this.__context.font = `normal 600 ${this.size}px Arial, "ＭＳ Ｐゴシック", "MS PGothic", MSPGothic, MS-PGothic`;
+    this.__context.font = `normal 600 ${this.__size}px Arial, "ＭＳ Ｐゴシック", "MS PGothic", MSPGothic, MS-PGothic`;
     this.__context.fillStyle = number2color(this.color);
     this.__measure();
   }
@@ -105,13 +109,13 @@ class IrText extends IrObject {
   __measure() {
     const result = measure(this.__context, {
       ...this.parsedComment,
-      size: this.size,
+      size: this.__size,
     });
     console.log(result);
     this.__actualWidth = result.width;
     this.__actualHeight = result.height;
-    this.__width = this.__actualWidth * this.scale;
-    this.__height = this.__actualHeight * this.scale;
+    this.__width = this.__actualWidth * this.__scale * this.scale;
+    this.__height = this.__actualHeight * this.__scale * this.scale;
     if (this.__canvas.width < this.__actualWidth) {
       this.__canvas.width = this.__actualWidth;
     }
@@ -124,9 +128,6 @@ class IrText extends IrObject {
     console.log(this);
     this.__updateStyle();
     this.__context.clearRect(0, 0, this.__canvas.width, this.__canvas.height);
-    this.__context.strokeStyle = "rgba(0,0,0,0.4)";
-    this.__context.font = parseFont(this.parsedComment.font, this.size);
-    this.__context.fillStyle = ("000000" + this.color.toString(16)).slice(-6);
     const lineOffset = this.parsedComment.lineOffset;
     let lastFont = this.parsedComment.font,
       leftOffset = 0,
@@ -136,16 +137,16 @@ class IrText extends IrObject {
       if (!item) continue;
       if (lastFont !== (item.font || this.parsedComment.font)) {
         lastFont = item.font || this.parsedComment.font;
-        this.__context.font = parseFont(lastFont, this.size);
+        this.__context.font = parseFont(lastFont, this.__size);
       }
       const lines = item.content.split(/[\n\r]/g);
       for (let j = 0; j < lines.length; j++) {
         const line = lines[j];
         if (line === undefined) continue;
         const posY =
-          (lineOffset + lineCount + 1) * (this.size * config.lineHeight) +
+          (lineOffset + lineCount + 1) * (this.__size * config.lineHeight) +
           config.commentYPaddingTop +
-          this.size * config.lineHeight * config.commentYOffset;
+          this.__size * config.lineHeight * config.commentYOffset;
         //this.__context.strokeText(line, leftOffset, posY);
         this.__context.fillText(line, leftOffset, posY);
         if (j < lines.length - 1) {

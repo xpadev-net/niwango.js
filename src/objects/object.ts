@@ -11,6 +11,7 @@ const defaultOptions: IObjectOptions = {
   color: 0,
   visible: true,
   alpha: 0,
+  scale: 1,
   mover: "",
 };
 
@@ -33,6 +34,7 @@ abstract class IrObject {
     canvas.height = config.canvasHeight;
     const __context = canvas.getContext("2d");
     if (!__context) throw new Error("Fail to get CanvasRenderingContext2D");
+    document.body.append(canvas);
     this.__canvas = canvas;
     this.__context = __context;
     this.__context.textAlign = "start";
@@ -61,6 +63,12 @@ abstract class IrObject {
   }
   set height(val: number) {
     this.__height = val;
+  }
+  get scale() {
+    return this.options.scale;
+  }
+  set scale(val: number) {
+    this.options.scale = val;
   }
 
   get __x() {

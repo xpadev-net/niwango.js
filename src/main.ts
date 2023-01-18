@@ -56,8 +56,11 @@ class Niwango {
   }
 
   public execute(script: string, vpos: number) {
+    getQueue(vpos).forEach((queue) => {
+      setCurrentTime(queue.time);
+      execute(queue.script, queue.scopes);
+    });
     setCurrentTime(vpos);
-    getQueue(vpos).forEach((queue) => execute(queue.script, queue.scopes));
     try {
       const ast = parse(script);
       execute(ast, [this.globalScope, this.environmentScope]);
@@ -73,8 +76,8 @@ class Niwango {
       this.drawCanvas,
       0,
       0,
-      1920,
-      1080,
+      this.drawCanvas.width,
+      this.drawCanvas.height,
       0,
       0,
       this.targetCanvas.width,

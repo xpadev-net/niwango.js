@@ -24,6 +24,7 @@ type IObjectOptions = {
   posY: IObjectPosY;
   color: number;
   visible: boolean;
+  scale: number;
   alpha: number;
   mover: IObjectMover;
 };
