@@ -691,7 +691,7 @@ ArgumentWithName =identifier:ArgumentName? __ argument:AssignmentExpressions{
     }
 }
 AssignmentExpressions
-  = ";"? __ head:AssignmentExpression tail:( __ ";"?__ AssignmentExpression)*
+  = ";"? __ head:AssignmentExpression tail:( __ ";"?__ AssignmentExpression)* ";"?
 {
     let list = buildList(head, tail, 3);
     if(list.length>1){
@@ -710,6 +710,7 @@ LeftHandSideExpression
   = LambdaExpression
   / CallExpression
   / NewExpression
+  / EmptyStatement
   / VariableStatement
 
 PostfixExpression
@@ -921,7 +922,7 @@ ConditionalExpressionNoIn
 AssignmentExpression
   = left:LeftHandSideExpression __
     "=" !"=" __
-    right:AssignmentExpression
+    right:AssignmentExpression?
     {
       return {
         type: "AssignmentExpression",
@@ -946,7 +947,7 @@ AssignmentExpression
     }
   / left:LeftHandSideExpression __
     operator:AssignmentOperator __
-    right:AssignmentExpression
+    right:AssignmentExpression?
     {
       return {
         type: "AssignmentExpression",
