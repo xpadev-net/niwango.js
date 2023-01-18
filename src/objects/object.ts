@@ -34,7 +34,6 @@ abstract class IrObject {
     canvas.height = config.canvasHeight;
     const __context = canvas.getContext("2d");
     if (!__context) throw new Error("Fail to get CanvasRenderingContext2D");
-    document.body.append(canvas);
     this.__canvas = canvas;
     this.__context = __context;
     this.__context.textAlign = "start";
