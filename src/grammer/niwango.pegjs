@@ -1338,7 +1338,7 @@ LambdaExpression2
   }
 
 LambdaExpression3
-  = LambdaToken2 body:SourceElement !{console.log(location())}{
+  = LambdaToken2 body:SourceElement {
     return {
       type: "LambdaExpression",
       body
