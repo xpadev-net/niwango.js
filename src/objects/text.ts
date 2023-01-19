@@ -24,7 +24,7 @@ const defaultOptions: ITextOptions = {
 };
 
 class IrText extends IrObject {
-  override options: ITextOptions;
+  protected override options: ITextOptions;
   private parsedComment: parsedComment;
   private __actualWidth: number;
   private __actualHeight: number;
@@ -37,12 +37,13 @@ class IrText extends IrObject {
     super(_context, _options);
     this.options = Object.assign({ ...defaultOptions }, _options);
     this.__actualHeight = this.__actualWidth = 0;
-    if (this.options.size < 10) {
-      this.__scale = this.options.size / 10;
+    const size = this.options.size * this.options.scale;
+    if (size < 10) {
+      this.__scale = size / 10;
       this.__size = 10;
     } else {
       this.__scale = 1;
-      this.__size = this.options.size;
+      this.__size = size;
     }
     this.parsedComment = parse(this.text);
     this.__updateContent();
@@ -56,12 +57,13 @@ class IrText extends IrObject {
   }
 
   set size(val) {
-    if (val < 10) {
-      this.__scale = val / 10;
+    const size = val * this.options.scale;
+    if (size < 10) {
+      this.__scale = size / 10;
       this.__size = 10;
     } else {
       this.__scale = 1;
-      this.__size = val;
+      this.__size = size;
     }
     this.options.size = val;
     this.__updateStyle();
@@ -77,6 +79,18 @@ class IrText extends IrObject {
     this.options.text = string;
     this.__updateContent();
     this.__draw();
+  }
+
+  override set scale(val: number) {
+    const size = val * this.options.size;
+    if (size < 10) {
+      this.__scale = size / 10;
+      this.__size = 10;
+    } else {
+      this.__scale = 1;
+      this.__size = size;
+    }
+    this.options.scale = val;
   }
 
   get bold() {
@@ -113,8 +127,8 @@ class IrText extends IrObject {
     });
     this.__actualWidth = result.width;
     this.__actualHeight = result.height;
-    this.__width = this.__actualWidth * this.__scale * this.scale;
-    this.__height = this.__actualHeight * this.__scale * this.scale;
+    this.__width = this.__actualWidth * this.__scale;
+    this.__height = this.__actualHeight * this.__scale;
     if (this.__canvas.width < this.__actualWidth) {
       this.__canvas.width = this.__actualWidth;
     }
