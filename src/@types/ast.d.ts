@@ -117,6 +117,7 @@ type A_Lambda = {
 type A_LambdaExpression = {
   type: "LambdaExpression";
   body: A_BlockStatement;
+  scopes: T_scope[];
 };
 type A_MemberExpression = {
   type: "MemberExpression";

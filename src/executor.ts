@@ -591,7 +591,7 @@ const execute = (script: A_ANY | undefined, scopes: T_scope[]): unknown => {
     }
     return value;
   } else if (typeGuard.LambdaExpression(script)) {
-    return script;
+    return { ...script, scopes } as A_LambdaExpression;
   } else if (typeGuard.Literal(script)) {
     return script.value;
   } else if (typeGuard.LogicalExpression(script)) {
@@ -626,9 +626,9 @@ const execute = (script: A_ANY | undefined, scopes: T_scope[]): unknown => {
         for (const arg of script.property.expressions) {
           args[`@${index++}`] = execute(arg, scopes);
         }
-        return execute(left.body, [args, ...scopes]);
+        return execute(left.body, [args, ...left.scopes]);
       }
-      return execute(left.body, [{ "@0": right }, ...scopes]);
+      return execute(left.body, [{ "@0": right }, ...left.scopes]);
     }
     if (typeof right === "string") {
       if (right === "clone") {
@@ -855,7 +855,7 @@ const assign = (target: A_ANY, value: unknown, scopes: T_scope[]) => {
     } else if (typeGuard.MemberExpression(target)) {
       const left = execute(target.object, scopes);
       if (!typeGuard.object(left)) {
-        console.error("[assign] left is not object");
+        console.error("[assign] left is not object", target, value, scopes);
         return;
       }
       const key = (
