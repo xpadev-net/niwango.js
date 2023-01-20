@@ -3,6 +3,10 @@ import { parse } from "./parser/parser";
 import { draw } from "@/utils/objectManager";
 import { config, initConfig } from "@/definition/config";
 import { getQueue, resetQueue, setCurrentTime } from "@/queue";
+import { addScript, getScripts } from "@/scripts";
+import { formattedComment } from "@/@types/types";
+
+//let comments = [];
 
 class Niwango {
   private readonly globalScope: T_scope;
@@ -12,15 +16,24 @@ class Niwango {
   private readonly drawCanvas: HTMLCanvasElement;
   private readonly drawContext: CanvasRenderingContext2D;
   static default = Niwango;
-  constructor(targetCanvas: HTMLCanvasElement) {
+  constructor(
+    targetCanvas: HTMLCanvasElement,
+    formattedComments: formattedComment[]
+  ) {
     this.targetCanvas = targetCanvas;
     this.drawCanvas = document.createElement("canvas");
     initConfig();
+    formattedComments.forEach((comment) => {
+      if (comment.content.match(/^\//) && comment.owner) {
+        addScript(parse(comment.content.slice(1)), comment.vpos);
+      }
+    });
     this.drawCanvas.width = 1920;
     this.drawCanvas.height = 1080;
     const drawContext = this.drawCanvas.getContext("2d");
     this.targetContext = this.targetCanvas.getContext("2d")!;
     if (!drawContext) throw new Error();
+    console.log(this.targetCanvas);
     this.drawContext = drawContext;
     this.drawContext.scale(
       1920 / config.canvasWidth,
@@ -48,28 +61,22 @@ class Niwango {
     };
   }
 
-  public processComment(comment: formattedComment) {
-    if (comment.content.startsWith("/")) {
-      this.execute(comment.content.slice(1), comment.vpos);
-    } else {
-    }
-  }
-
-  public execute(script: string, vpos: number) {
-    getQueue(vpos).forEach((queue) => {
-      setCurrentTime(queue.time);
-      execute(queue.script, queue.scopes);
-    });
-    setCurrentTime(vpos);
-    try {
-      const ast = parse(script);
-      execute(ast, [this.globalScope, this.environmentScope]);
-    } catch (e: unknown) {
-      console.log(e, script);
-    }
-  }
-
-  public draw() {
+  public draw(vpos: number) {
+    [...getQueue(vpos), ...getScripts(vpos)]
+      .sort((a, b) => {
+        if (a.time < b.time) return -1;
+        if (a.time > b.time) return 1;
+        return 0;
+      })
+      .forEach((queue) => {
+        setCurrentTime(queue.time);
+        execute(
+          queue.script,
+          queue.type === "queue"
+            ? queue.scopes
+            : [this.globalScope, this.environmentScope]
+        );
+      });
     this.clear();
     draw();
     this.targetContext.drawImage(

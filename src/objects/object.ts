@@ -1,5 +1,6 @@
 import { config } from "@/definition/config";
 import { register } from "@/utils/objectManager";
+import { IObjectMover, IObjectOptions } from "@/@types/types";
 
 const defaultOptions: IObjectOptions = {
   x: 0,

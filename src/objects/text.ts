@@ -4,6 +4,7 @@ import { config } from "@/definition/config";
 import { parseFont } from "@/utils/utils";
 import { measure, parse } from "@/utils/flashText";
 import { parsedComment } from "@/@types/flashText";
+import { ITextOptions, ITextOptionsNullable } from "@/@types/types";
 
 const defaultOptions: ITextOptions = {
   text: "",

@@ -44,3 +44,9 @@ type IShapeOptions = {
   rotation: number;
 } & IObjectOptions;
 type IShapeOptionsNullable = Partial<IShapeOptions>;
+
+export type Scripts = {
+  type: "script";
+  script: A_ANY;
+  time: number;
+}[];

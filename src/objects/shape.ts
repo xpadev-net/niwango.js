@@ -1,5 +1,6 @@
 import { IrObject } from "@/objects/object";
 import { number2color } from "@/utils/number2color";
+import { IShapeOptions, IShapeOptionsNullable } from "@/@types/types";
 
 const defaultOptions: IShapeOptions = {
   x: 0,
