@@ -31,6 +31,7 @@ class IrText extends IrObject {
   private __actualHeight: number;
   private __scale: number;
   private __size: number;
+  private __reverse: boolean;
   constructor(
     _context: CanvasRenderingContext2D,
     _options: ITextOptionsNullable
@@ -39,17 +40,18 @@ class IrText extends IrObject {
     this.options = Object.assign({ ...defaultOptions }, _options);
     this.__actualHeight = this.__actualWidth = 0;
     const size = this.options.size * this.options.scale;
-    if (size < 10) {
-      this.__scale = size / 10;
+    this.__reverse = size < 0;
+    if (Math.abs(size) < 10) {
+      this.__scale = Math.abs(size / 10);
       this.__size = 10;
     } else {
       this.__scale = 1;
-      this.__size = size;
+      this.__size = Math.abs(size);
     }
     this.parsedComment = parse(this.text);
-    this.__updateContent();
-    this.__parsePos();
-    this.__updateStyle();
+    this.__updateColor();
+    this.__updateFont();
+    this.__measure();
     this.__draw();
   }
 
@@ -59,15 +61,16 @@ class IrText extends IrObject {
 
   set size(val) {
     const size = val * this.options.scale;
-    if (size < 10) {
-      this.__scale = size / 10;
+    this.__reverse = size < 0;
+    if (Math.abs(size) < 10) {
+      this.__scale = Math.abs(size) / 10;
       this.__size = 10;
     } else {
       this.__scale = 1;
-      this.__size = size;
+      this.__size = Math.abs(size);
     }
     this.options.size = val;
-    this.__updateStyle();
+    this.__updateFont();
     this.__measure();
     this.__draw();
   }
@@ -78,20 +81,29 @@ class IrText extends IrObject {
 
   set text(string) {
     this.options.text = string;
-    this.__updateContent();
+    this.parsedComment = parse(this.text);
+    this.__measure();
     this.__draw();
+  }
+
+  override get scale() {
+    return this.options.scale;
   }
 
   override set scale(val: number) {
     const size = val * this.options.size;
-    if (size < 10) {
-      this.__scale = size / 10;
+    this.__reverse = size < 0;
+    if (Math.abs(size) < 10) {
+      this.__scale = Math.abs(size) / 10;
       this.__size = 10;
     } else {
       this.__scale = 1;
-      this.__size = size;
+      this.__size = Math.abs(size);
     }
     this.options.scale = val;
+    this.__updateFont();
+    this.__measure();
+    this.__draw();
   }
 
   get bold() {
@@ -110,15 +122,12 @@ class IrText extends IrObject {
     this.options.filter = val;
   }
 
-  __updateContent() {
-    this.parsedComment = parse(this.text);
-    this.__measure();
+  __updateFont() {
+    this.__context.font = `normal 600 ${this.__size}px Arial, "ＭＳ Ｐゴシック", "MS PGothic", MSPGothic, MS-PGothic`;
   }
 
-  override __updateStyle() {
-    this.__context.font = `normal 600 ${this.__size}px Arial, "ＭＳ Ｐゴシック", "MS PGothic", MSPGothic, MS-PGothic`;
+  override __updateColor() {
     this.__context.fillStyle = number2color(this.color);
-    this.__measure();
   }
 
   __measure() {
@@ -139,8 +148,13 @@ class IrText extends IrObject {
   }
 
   override __draw() {
-    this.__updateStyle();
     this.__context.clearRect(0, 0, this.__canvas.width, this.__canvas.height);
+    if (this.__reverse) {
+      this.__context.scale(-1, -1);
+    } else {
+      this.__context.scale(1, 1);
+    }
+
     const lineOffset = this.parsedComment.lineOffset;
     let lastFont = this.parsedComment.font,
       leftOffset = 0,
@@ -156,12 +170,14 @@ class IrText extends IrObject {
       for (let j = 0; j < lines.length; j++) {
         const line = lines[j];
         if (line === undefined) continue;
+        const posX = leftOffset - (this.__reverse ? this.__actualWidth : 0);
         const posY =
           (lineOffset + lineCount + 1) * (this.__size * config.lineHeight) +
           config.commentYPaddingTop +
-          this.__size * config.lineHeight * config.commentYOffset;
+          this.__size * config.lineHeight * config.commentYOffset -
+          (this.__reverse ? this.__actualHeight : 0);
         //this.__context.strokeText(line, leftOffset, posY);
-        this.__context.fillText(line, leftOffset, posY);
+        this.__context.fillText(line, posX, posY);
         if (j < lines.length - 1) {
           leftOffset = 0;
           lineCount += 1;

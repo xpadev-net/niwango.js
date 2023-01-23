@@ -41,6 +41,8 @@ abstract class IrObject {
     this.__context.textBaseline = "alphabetic";
     this.__context.lineWidth = 4;
     this.__width = this.__height = 0;
+    this.__updateColor();
+    this.__parsePos();
     register(this);
   }
 
@@ -120,7 +122,7 @@ abstract class IrObject {
 
   set color(val: number) {
     this.options.color = val;
-    this.__updateStyle();
+    this.__updateColor();
     this.__draw();
   }
 
@@ -138,6 +140,9 @@ abstract class IrObject {
 
   set alpha(val: number) {
     this.options.alpha = val;
+    console.log(val);
+    this.__context.globalAlpha = (100 - val) / 100;
+    this.__draw();
   }
 
   get mover() {
@@ -165,7 +170,7 @@ abstract class IrObject {
       this.options.posY = "naka";
     }
   }
-  protected __updateStyle() {
+  protected __updateColor() {
     console.debug("please override this method");
   }
   protected __draw() {

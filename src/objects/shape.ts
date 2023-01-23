@@ -32,8 +32,6 @@ class IrShape extends IrObject {
     this.options = Object.assign({ ...defaultOptions }, _options);
     this.__width = this.options.width;
     this.__height = this.options.height;
-    this.__parsePos();
-    this.__updateStyle();
     this.__draw();
   }
 
@@ -52,7 +50,6 @@ class IrShape extends IrObject {
   override set width(val) {
     this.options.width = val;
     this.__width = val;
-    this.__updateStyle();
   }
 
   override get height() {
@@ -62,7 +59,6 @@ class IrShape extends IrObject {
   override set height(val) {
     this.options.height = val;
     this.__height = val;
-    this.__updateStyle();
   }
 
   get mask() {
@@ -89,7 +85,7 @@ class IrShape extends IrObject {
     this.options.rotation = val;
   }
 
-  override __updateStyle() {
+  override __updateColor() {
     this.__context.fillStyle = number2color(this.color);
     //this.__canvas.width = this.width;
     //this.__canvas.height = this.height;
