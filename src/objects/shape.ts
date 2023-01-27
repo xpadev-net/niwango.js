@@ -50,6 +50,7 @@ class IrShape extends IrObject {
   override set width(val) {
     this.options.width = val;
     this.__width = val;
+    this.__draw();
   }
 
   override get height() {
@@ -59,6 +60,7 @@ class IrShape extends IrObject {
   override set height(val) {
     this.options.height = val;
     this.__height = val;
+    this.__draw();
   }
 
   get mask() {
