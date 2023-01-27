@@ -469,6 +469,7 @@ const execute = (script: A_ANY | undefined, scopes: T_scope[]): unknown => {
         } else if (callee === "indexOf") {
           const left = execute(script.callee.object, scopes);
           const right = execute(script.arguments[0], scopes);
+          const offset = execute(script.arguments[1], scopes);
           if (typeof left !== "string") {
             console.error(
               "[call expression] String.indexOf: indexOf cannot be used for anything other than String",
@@ -479,7 +480,9 @@ const execute = (script: A_ANY | undefined, scopes: T_scope[]): unknown => {
             );
             return;
           }
-          return left.indexOf(`${right}`);
+          return offset === undefined
+            ? left.indexOf(`${right}`)
+            : left.indexOf(`${right}`, Number(offset));
         } else if (callee === "slice") {
           const left = execute(script.callee.object, scopes);
           const arg1 = Number(execute(script.arguments[0], scopes));
