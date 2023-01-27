@@ -1,6 +1,6 @@
 import { IrObject } from "@/objects/object";
 
-const drawObjects: IrObject[] = [];
+let drawObjects: IrObject[] = [];
 const draw = () => {
   drawObjects.sort((a, b) => {
     if (a.z < b.z) {
@@ -17,4 +17,7 @@ const draw = () => {
 const register = (item: IrObject) => {
   drawObjects.push(item);
 };
-export { draw, register };
+const resetObjects = () => {
+  drawObjects = [];
+};
+export { draw, register, resetObjects };

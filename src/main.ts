@@ -1,6 +1,6 @@
 import { execute, setContext } from "@/executor";
 import { parse } from "./parser/parser";
-import { draw } from "@/utils/objectManager";
+import { draw, resetObjects } from "@/utils/objectManager";
 import { config, initConfig } from "@/definition/config";
 import { getQueue, resetQueue, setCurrentTime } from "@/queue";
 import { addScript, getScripts } from "@/scripts";
@@ -41,6 +41,7 @@ class Niwango {
     );
     setContext(drawContext);
     resetQueue();
+    resetObjects();
     setCurrentTime(0);
     this.globalScope = {
       Object: {},
