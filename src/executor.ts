@@ -558,7 +558,7 @@ const execute = (script: A_ANY | undefined, scopes: T_scope[]): unknown => {
           const args: { [key: string]: unknown } = {};
           let count = 1;
           script.arguments.forEach((val) => {
-            if (val.NIWANGO_Identifier) {
+            if (val?.NIWANGO_Identifier) {
               args[getName(val.NIWANGO_Identifier, scopes) as string] = execute(
                 val,
                 scopes
@@ -823,7 +823,7 @@ const argumentParser = (
   for (const i in inputs) {
     const item = inputs[i];
     if (!item) continue;
-    if (item.NIWANGO_Identifier) {
+    if (item?.NIWANGO_Identifier) {
       const key = getName(item.NIWANGO_Identifier, scopes) as string;
       if (keys.includes(key)) {
         result[key] = compute ? execute(item, scopes) : item;
