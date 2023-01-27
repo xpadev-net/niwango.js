@@ -140,7 +140,6 @@ abstract class IrObject {
 
   set alpha(val: number) {
     this.options.alpha = val;
-    console.log(val);
     this.__context.globalAlpha = (100 - val) / 100;
     this.__draw();
   }
@@ -154,7 +153,7 @@ abstract class IrObject {
   }
 
   protected __parsePos() {
-    const pos = this.options.pos.split(/\s/);
+    const pos = this.options.pos;
     if (pos.includes("hidari")) {
       this.options.posX = "hidari";
     } else if (pos.includes("migi")) {
