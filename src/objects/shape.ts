@@ -49,7 +49,7 @@ class IrShape extends IrObject {
 
   override set width(val) {
     this.options.width = val;
-    this.__width = val;
+    this.__width = val * this.options.scale;
     this.__draw();
   }
 
@@ -59,7 +59,17 @@ class IrShape extends IrObject {
 
   override set height(val) {
     this.options.height = val;
-    this.__height = val;
+    this.__height = val * this.options.scale;
+    this.__draw();
+  }
+
+  override get scale() {
+    return this.options.scale;
+  }
+
+  override set scale(val) {
+    this.options.scale = val;
+    this.__width = this.options.width * val;
     this.__draw();
   }
 
