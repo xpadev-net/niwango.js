@@ -148,13 +148,14 @@ class IrText extends IrObject {
   }
 
   override __draw() {
+    this.__updateColor();
+    this.__updateFont();
     this.__context.clearRect(0, 0, this.__canvas.width, this.__canvas.height);
     if (this.__reverse) {
       this.__context.scale(-1, -1);
     } else {
       this.__context.scale(1, 1);
     }
-
     const lineOffset = this.parsedComment.lineOffset;
     let lastFont = this.parsedComment.font,
       leftOffset = 0,
