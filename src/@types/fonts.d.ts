@@ -1,11 +1,4 @@
-export type platform =
-  | "win7"
-  | "win8_1"
-  | "win"
-  | "mac10_9"
-  | "mac10_11"
-  | "mac"
-  | "other";
+export type platform = "win7" | "win8_1" | "win" | "mac10_9" | "mac10_11" | "mac" | "other";
 export type HTML5Fonts = "defont";
 export type FontItem = {
   font: string;

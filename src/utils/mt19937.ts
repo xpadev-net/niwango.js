@@ -1,8 +1,8 @@
-const N = 624.0,
-  M = 397.0,
-  MATRIX_A = 0x9908b0df,
-  UPPER_MASK = 0x80000000,
-  LOWER_MASK = 0x7fffffff;
+const N = 624.0;
+const M = 397.0;
+const MATRIX_A = 0x9908b0df;
+const UPPER_MASK = 0x80000000;
+const LOWER_MASK = 0x7fffffff;
 let mti = N + 1;
 const mt: number[] = [];
 
@@ -11,24 +11,22 @@ const __init_genrand = (seed: number): void => {
   mti = 1;
 
   while (mti < N) {
-    mt[mti] =
-      0x6c078965 * ((mt[mti - 1] || 0) ^ ((mt[mti - 1] || 0) >>> 30)) + mti;
+    mt[mti] = 0x6c078965 * ((mt[mti - 1] || 0) ^ ((mt[mti - 1] || 0) >>> 30)) + mti;
     mt[mti] &= 0xffffffff;
     mti++;
   }
 };
 
 const __init_by_array = (seed: number[], length: number) => {
-  let key1 = 0,
-    key2 = 1,
-    range = N > length ? N : length;
+  let key1 = 0;
+  let key2 = 1;
+  let range = N > length ? N : length;
 
   __init_genrand(0x012bd6aa);
 
   for (let i = 0; i < range; i++) {
     mt[key1] =
-      ((mt[key1] || 0) ^
-        (((mt[key1 - 1] || 0) ^ ((mt[key1 - 1] || 0) >>> 30)) * 0x0019660d)) +
+      ((mt[key1] || 0) ^ (((mt[key1 - 1] || 0) ^ ((mt[key1 - 1] || 0) >>> 30)) * 0x0019660d)) +
       (seed[key2] || 0) +
       key2;
     mt[key1] &= 0xffffffff;
@@ -40,16 +38,15 @@ const __init_by_array = (seed: number[], length: number) => {
       key1 = 1;
     }
 
-    if (key2 >= length) key2 = 0;
+    if (key2 >= length) {
+      key2 = 0;
+    }
   }
 
   range = N - 1;
 
   for (let i = 0; i < range; i++) {
-    mt[key1] =
-      ((mt[key1] || 0) ^
-        (((mt[key1 - 1] || 0) ^ ((mt[key1 - 1] || 0) >>> 30)) * 0x5d588b65)) -
-      key1;
+    mt[key1] = ((mt[key1] || 0) ^ (((mt[key1 - 1] || 0) ^ ((mt[key1 - 1] || 0) >>> 30)) * 0x5d588b65)) - key1;
     mt[key1] &= 0xffffffff;
     key1++;
 
@@ -64,23 +61,22 @@ const __genrand_int32 = (): number => {
   let result: number;
 
   if (mti >= N) {
-    if (mti == N + 1) __init_genrand(5489);
+    if (mti === N + 1) {
+      __init_genrand(5489);
+    }
 
     let key = 0;
     const index: number[] = [0, MATRIX_A];
 
     while (key < N - M) {
-      result =
-        ((mt[key] || 0) & UPPER_MASK) | ((mt[key + 1] || 0) & LOWER_MASK);
+      result = ((mt[key] || 0) & UPPER_MASK) | ((mt[key + 1] || 0) & LOWER_MASK);
       mt[key] = (mt[key + M] || 0) ^ (result >>> 1) ^ (index[result & 1] || 0);
       key++;
     }
 
     while (key < N - 1) {
-      result =
-        ((mt[key] || 0) & UPPER_MASK) | ((mt[key + 1] || 0) & LOWER_MASK);
-      mt[key] =
-        (mt[key + M - N] || 0) ^ (result >>> 1) ^ (index[result & 1] || 0);
+      result = ((mt[key] || 0) & UPPER_MASK) | ((mt[key + 1] || 0) & LOWER_MASK);
+      mt[key] = (mt[key + M - N] || 0) ^ (result >>> 1) ^ (index[result & 1] || 0);
       key++;
     }
 

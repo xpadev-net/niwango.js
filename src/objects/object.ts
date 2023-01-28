@@ -24,17 +24,16 @@ abstract class IrObject {
   protected __width: number;
   protected __height: number;
 
-  protected constructor(
-    context: CanvasRenderingContext2D,
-    options: Partial<IObjectOptions>
-  ) {
+  protected constructor(context: CanvasRenderingContext2D, options: Partial<IObjectOptions>) {
     this.targetContext = context;
     this.options = Object.assign(defaultOptions, options);
     const canvas = document.createElement("canvas");
     canvas.width = config.canvasWidth;
     canvas.height = config.canvasHeight;
     const __context = canvas.getContext("2d");
-    if (!__context) throw new Error("Fail to get CanvasRenderingContext2D");
+    if (!__context) {
+      throw new Error("Fail to get CanvasRenderingContext2D");
+    }
     this.__canvas = canvas;
     this.__context = __context;
     this.__context.textAlign = "start";

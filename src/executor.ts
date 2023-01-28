@@ -32,7 +32,9 @@ let context: CanvasRenderingContext2D;
 
 const execute = (script: A_ANY | undefined, scopes: T_scope[]): unknown => {
   try {
-    if (!script) return;
+    if (!script) {
+      return;
+    }
     if (typeGuard.ExpressionStatement(script)) {
       return execute(script.expression, scopes);
     } else if (typeGuard.AssignmentExpression(script)) {
@@ -83,8 +85,8 @@ const execute = (script: A_ANY | undefined, scopes: T_scope[]): unknown => {
     } else if (typeGuard.ArrowFunctionExpression(script)) {
       return execute(script.body, scopes);
     } else if (typeGuard.BinaryExpression(script)) {
-      const left = execute(script.left, scopes),
-        right = execute(script.right, scopes);
+      const left = execute(script.left, scopes);
+      const right = execute(script.right, scopes);
       if (script.operator === ">=") {
         return GreaterThanOrEqual(left, right);
       } else if (script.operator === "<=") {
@@ -94,11 +96,11 @@ const execute = (script: A_ANY | undefined, scopes: T_scope[]): unknown => {
       } else if (script.operator === "<") {
         return LessThan(left, right);
       } else if (script.operator === "!=") {
-        return left != right;
+        return left !== right;
       } else if (script.operator === "!==") {
-        return left != right;
+        return left !== right;
       } else if (script.operator === "==") {
-        return left == right;
+        return left === right;
       } else if (script.operator === "===") {
         return left === right;
       } else if (script.operator === "+") {
@@ -137,10 +139,8 @@ const execute = (script: A_ANY | undefined, scopes: T_scope[]): unknown => {
     } else if (typeGuard.CallExpression(script)) {
       const isMemberExpression = typeGuard.MemberExpression(script.callee);
       const callee = getName(
-        isMemberExpression
-          ? (script.callee as A_MemberExpression).property
-          : script.callee,
-        scopes
+        isMemberExpression ? (script.callee as A_MemberExpression).property : script.callee,
+        scopes,
       ) as string;
       const object = (
         typeGuard.MemberExpression(script.callee)
@@ -149,11 +149,7 @@ const execute = (script: A_ANY | undefined, scopes: T_scope[]): unknown => {
       ) as { [key: string]: unknown }; //global scope
       if (callee === "dump") {
         for (const argument of script.arguments) {
-          console.debug(
-            "%cdump",
-            "background:green;",
-            execute(argument, scopes)
-          );
+          console.debug("%cdump", "background:green;", execute(argument, scopes));
         }
         return;
       }
@@ -171,7 +167,9 @@ const execute = (script: A_ANY | undefined, scopes: T_scope[]): unknown => {
           }
           return;
         })();
-        if (!func) return;
+        if (!func) {
+          return;
+        }
         const functionName = getName(func.callee, scopes);
         if (typeof functionName !== "string") {
           console.error();
@@ -185,9 +183,13 @@ const execute = (script: A_ANY | undefined, scopes: T_scope[]): unknown => {
         return;
       }
       if (callee === "def_kari" && typeGuard.object(object)) {
-        if (!script.arguments[0]) return;
+        if (!script.arguments[0]) {
+          return;
+        }
         const functionName = execute(script.arguments[0], scopes);
-        if (typeof functionName !== "string") return;
+        if (typeof functionName !== "string") {
+          return;
+        }
         object[functionName] = {
           type: "definedFunction",
           isKari: true,
@@ -196,7 +198,9 @@ const execute = (script: A_ANY | undefined, scopes: T_scope[]): unknown => {
         return;
       }
       if (callee === "while_kari") {
-        if (!script.arguments[0] || !script.arguments[1]) return;
+        if (!(script.arguments[0] && script.arguments[1])) {
+          return;
+        }
         let loopCount = 0;
         while (execute(script.arguments[0], scopes) && loopCount++ <= 10000) {
           execute(script.arguments[1], scopes);
@@ -250,22 +254,12 @@ const execute = (script: A_ANY | undefined, scopes: T_scope[]): unknown => {
         return shape;
       }
       if (callee === "commentTrigger" || callee === "ctrig") {
-        const args = argumentParser(
-          script.arguments,
-          scopes,
-          ["then", "timer"],
-          false
-        );
+        const args = argumentParser(script.arguments, scopes, ["then", "timer"], false);
         console.warn("[call expression] commentTrigger", script, args, scopes); //todo: feat commentTrigger
         return;
       }
       if (callee === "if") {
-        const args = argumentParser(
-          script.arguments,
-          scopes,
-          ["when", "then", "else"],
-          false
-        );
+        const args = argumentParser(script.arguments, scopes, ["when", "then", "else"], false);
         const condition = execute(args.when, scopes);
         if (condition) {
           return execute(args.then, scopes);
@@ -274,12 +268,7 @@ const execute = (script: A_ANY | undefined, scopes: T_scope[]): unknown => {
         }
       }
       if (callee === "timer") {
-        const args = argumentParser(
-          script.arguments,
-          scopes,
-          ["timer", "then"],
-          false
-        );
+        const args = argumentParser(script.arguments, scopes, ["timer", "then"], false);
         addQueue(args.then, Number(execute(args.timer, scopes)), scopes);
         return console.info("[call expression] timer:", script, args); //todo: feat timer
       }
@@ -356,17 +345,13 @@ const execute = (script: A_ANY | undefined, scopes: T_scope[]): unknown => {
         return console.warn("[call expression] replace:", script, args); //todo: feat replace
       }
       if (callee === "rand") {
-        if (script.arguments[0])
+        if (script.arguments[0]) {
           return rand(execute(script.arguments[0], scopes));
+        }
         return rand();
       }
       if (callee === "distance") {
-        const args = argumentParser(script.arguments, scopes, [
-          "x1",
-          "y1",
-          "x2",
-          "y2",
-        ]);
+        const args = argumentParser(script.arguments, scopes, ["x1", "y1", "x2", "y2"]);
         return console.warn("[call expression] distance:", script, args); //todo: feat distance
       }
       if (callee === "screenWidth") {
@@ -392,15 +377,7 @@ const execute = (script: A_ANY | undefined, scopes: T_scope[]): unknown => {
         return new Date().getTime();
       }
       if (callee === "BGM") {
-        const args = argumentParser(script.arguments, scopes, [
-          "id",
-          "x",
-          "y",
-          "width",
-          "height",
-          "visual",
-          "volume",
-        ]);
+        const args = argumentParser(script.arguments, scopes, ["id", "x", "y", "width", "height", "visual", "volume"]);
         return console.warn("[call expression] BGM:", script, args); //todo: feat BGM
       }
       if (callee === "playBGM") {
@@ -416,21 +393,11 @@ const execute = (script: A_ANY | undefined, scopes: T_scope[]): unknown => {
         return console.warn("[call expression] addAtPausePoint:", script, args); //todo: feat addAtPausePoint
       }
       if (callee === "addPostRoute") {
-        const args = argumentParser(script.arguments, scopes, [
-          "match",
-          "id",
-          "button",
-        ]);
+        const args = argumentParser(script.arguments, scopes, ["match", "id", "button"]);
         return console.warn("[call expression] addPostRoute:", script, args); //todo: feat addPostRoute
       }
       if (callee === "CM") {
-        const args = argumentParser(script.arguments, scopes, [
-          "id",
-          "time",
-          "pause",
-          "link",
-          "volume",
-        ]);
+        const args = argumentParser(script.arguments, scopes, ["id", "time", "pause", "link", "volume"]);
         return console.warn("[call expression] CM:", script, args); //todo: feat CM
       }
       if (callee === "playCM") {
@@ -449,11 +416,7 @@ const execute = (script: A_ANY | undefined, scopes: T_scope[]): unknown => {
           console.error("[call expression] @: at least 1 argument required");
           return;
         }
-        assign(
-          script.arguments[0],
-          resolve({ type: "Identifier", name: "@0" }, scopes),
-          scopes
-        );
+        assign(script.arguments[0], resolve({ type: "Identifier", name: "@0" }, scopes), scopes);
         return;
       }
       if (typeGuard.MemberExpression(script.callee)) {
@@ -464,8 +427,12 @@ const execute = (script: A_ANY | undefined, scopes: T_scope[]): unknown => {
         } else if (callee === "index") {
           const left = execute(script.callee.object, scopes);
           const right = execute(script.arguments[0], scopes);
-          if (typeof left === "string") return left.charAt(Number(right));
-          if (Array.isArray(left)) return left[Number(right)];
+          if (typeof left === "string") {
+            return left.charAt(Number(right));
+          }
+          if (Array.isArray(left)) {
+            return left[Number(right)];
+          }
         } else if (callee === "indexOf") {
           const left = execute(script.callee.object, scopes);
           const right = execute(script.arguments[0], scopes);
@@ -476,20 +443,16 @@ const execute = (script: A_ANY | undefined, scopes: T_scope[]): unknown => {
               left,
               right,
               script,
-              scopes
+              scopes,
             );
             return;
           }
-          return offset === undefined
-            ? left.indexOf(`${right}`)
-            : left.indexOf(`${right}`, Number(offset));
+          return offset === undefined ? left.indexOf(`${right}`) : left.indexOf(`${right}`, Number(offset));
         } else if (callee === "slice") {
           const left = execute(script.callee.object, scopes);
           const arg1 = Number(execute(script.arguments[0], scopes));
           if (typeof left !== "string") {
-            console.error(
-              "[call expression] String.slice: slice cannot be used for anything other than String"
-            );
+            console.error("[call expression] String.slice: slice cannot be used for anything other than String");
             return;
           }
           if (script.arguments[1]) {
@@ -499,20 +462,22 @@ const execute = (script: A_ANY | undefined, scopes: T_scope[]): unknown => {
           return left.slice(arg1);
         } else if (callee === "unshift") {
           const left = execute(script.callee.object, scopes);
-          if (!Array.isArray(left)) return left;
+          if (!Array.isArray(left)) {
+            return left;
+          }
           const args = script.arguments.map((arg) => execute(arg, scopes));
           return left.unshift(...args);
         } else if (callee === "push") {
           const left = execute(script.callee.object, scopes);
-          if (!Array.isArray(left)) return left;
+          if (!Array.isArray(left)) {
+            return left;
+          }
           const args = script.arguments.map((arg) => execute(arg, scopes));
           return left.push(...args);
         } else if (callee === "join") {
           const left = execute(script.callee.object, scopes);
           if (!Array.isArray(left)) {
-            console.error(
-              "[call expression] Array.join: join cannot be used for anything other than Array"
-            );
+            console.error("[call expression] Array.join: join cannot be used for anything other than Array");
             return;
           }
           const arg1 = execute(script.arguments[0], scopes);
@@ -520,9 +485,7 @@ const execute = (script: A_ANY | undefined, scopes: T_scope[]): unknown => {
         } else if (callee === "setSlot") {
           const left = execute(script.callee.object, scopes);
           if (!typeGuard.object(left)) {
-            console.error(
-              "[call expression] Object.setSlot: setSlot cannot be used for anything other than Object"
-            );
+            console.error("[call expression] Object.setSlot: setSlot cannot be used for anything other than Object");
             return;
           }
           const key = execute(script.arguments[0], scopes) as string;
@@ -531,20 +494,13 @@ const execute = (script: A_ANY | undefined, scopes: T_scope[]): unknown => {
         } else if (callee === "getSlot") {
           const left = execute(script.callee.object, scopes);
           if (!typeGuard.object(left)) {
-            console.error(
-              "[call expression] Object.setSlot: setSlot cannot be used for anything other than Object"
-            );
+            console.error("[call expression] Object.setSlot: setSlot cannot be used for anything other than Object");
             return;
           }
           const key = execute(script.arguments[0], scopes) as string;
           return left[key];
         } else if (callee === "alternative" || callee === "alt") {
-          const args = argumentParser(
-            script.arguments,
-            scopes,
-            ["then", "else"],
-            false
-          );
+          const args = argumentParser(script.arguments, scopes, ["then", "else"], false);
           const left = execute(script.callee.object, scopes);
           if (left && args.then) {
             return execute(args.then, scopes);
@@ -554,40 +510,29 @@ const execute = (script: A_ANY | undefined, scopes: T_scope[]): unknown => {
           return;
         }
       }
-      if (object && object[callee]) {
+      if (object?.[callee]) {
         const func = object[callee] as definedFunction;
-        if (func.type !== "definedFunction") return;
+        if (func.type !== "definedFunction") {
+          return;
+        }
         if (func.isKari) {
           const args: { [key: string]: unknown } = {};
           let count = 1;
           script.arguments.forEach((val) => {
             if (val?.NIWANGO_Identifier) {
-              args[getName(val.NIWANGO_Identifier, scopes) as string] = execute(
-                val,
-                scopes
-              );
+              args[getName(val.NIWANGO_Identifier, scopes) as string] = execute(val, scopes);
             } else {
               args[`$${count++}`] = execute(val, scopes);
             }
           });
           return execute(func.script.arguments[1], [args, ...scopes]);
         } else {
-          const argNames = func.script.arguments[0].arguments.map(
-            (arg) => getName(arg, scopes) as string
-          );
+          const argNames = func.script.arguments[0].arguments.map((arg) => getName(arg, scopes) as string);
           const args = argumentParser(script.arguments, scopes, argNames);
-          return execute(func.script.arguments[1], [
-            { ...args, self: object },
-            ...scopes,
-          ]);
+          return execute(func.script.arguments[1], [{ ...args, self: object }, ...scopes]);
         }
       }
-      console.warn(
-        "%cUnknown CallExpression:",
-        "background:red;",
-        script,
-        scopes
-      );
+      console.warn("%cUnknown CallExpression:", "background:red;", script, scopes);
       console.trace();
       return;
     } else if (typeGuard.IfStatement(script)) {
@@ -607,26 +552,22 @@ const execute = (script: A_ANY | undefined, scopes: T_scope[]): unknown => {
     } else if (typeGuard.Literal(script)) {
       return script.value;
     } else if (typeGuard.LogicalExpression(script)) {
-      const left = execute(script.left, scopes),
-        right = execute(script.right, scopes);
+      const left = execute(script.left, scopes);
+      const right = execute(script.right, scopes);
       if (script.operator === "&&") {
         return left && right;
       } else if (script.operator === "||") {
         return left || right;
       } else {
-        console.error(`[logical expression] unknown operator`, script, scopes);
+        console.error("[logical expression] unknown operator", script, scopes);
       }
     } else if (typeGuard.MemberExpression(script)) {
       const left = execute(script.object, scopes);
       if (left === undefined) {
-        console.error(`[member expression] left is undefined`, script, scopes);
+        console.error("[member expression] left is undefined", script, scopes);
         return;
       }
-      const right = (
-        script.computed
-          ? execute(script.property, scopes)
-          : getName(script.property, scopes)
-      ) as string;
+      const right = (script.computed ? execute(script.property, scopes) : getName(script.property, scopes)) as string;
       if (typeGuard.object(left) && typeGuard.definedFunction(left[right])) {
         const func = left[right] as definedFunction;
         return execute(func.script.arguments[1], [{ self: left }, ...scopes]);
@@ -707,11 +648,7 @@ const execute = (script: A_ANY | undefined, scopes: T_scope[]): unknown => {
           } else if (right === "toFloat") {
             return parseFloat(left);
           } else if (right === "eval") {
-            return console.error(
-              `[string] eval is currently unavailable`,
-              script,
-              scopes
-            ); //todo: feat string.eval
+            return console.error("[string] eval is currently unavailable", script, scopes); //todo: feat string.eval
           }
         } else if (Array.isArray(left)) {
           if (right === "shift") {
@@ -731,10 +668,7 @@ const execute = (script: A_ANY | undefined, scopes: T_scope[]): unknown => {
     } else if (typeGuard.ObjectExpression(script)) {
       const object: { [key: string | number | symbol]: unknown } = {};
       for (const item of script.properties) {
-        object[getName(item.key, scopes) as string] = execute(
-          item.value,
-          scopes
-        );
+        object[getName(item.key, scopes) as string] = execute(item.value, scopes);
       }
       return object;
     } else if (typeGuard.Program(script)) {
@@ -763,7 +697,7 @@ const execute = (script: A_ANY | undefined, scopes: T_scope[]): unknown => {
       } else if (script.operator === "!") {
         return LogicalNot(value);
       }
-      console.error(`[unary expression] unknown operator`, script, scopes);
+      console.error("[unary expression] unknown operator", script, scopes);
     } else if (typeGuard.UpdateExpression(script)) {
       const value = execute(script.argument, scopes);
       if (script.operator === "--") {
@@ -783,7 +717,7 @@ const execute = (script: A_ANY | undefined, scopes: T_scope[]): unknown => {
           return value;
         }
       }
-      console.error(`[update expression] unknown operator`, script, scopes);
+      console.error("[update expression] unknown operator", script, scopes);
     } else if (typeGuard.VariableDeclaration(script)) {
       for (const item of script.declarations) {
         if (item.init === null) {
@@ -793,39 +727,34 @@ const execute = (script: A_ANY | undefined, scopes: T_scope[]): unknown => {
               callee: item.id,
               arguments: [],
             } as A_CallExpression,
-            scopes
+            scopes,
           );
         } else {
-          if (scopes[0])
-            scopes[0][getName(item.id, scopes) as string] = execute(
-              item.init,
-              scopes
-            );
+          if (scopes[0]) {
+            scopes[0][getName(item.id, scopes) as string] = execute(item.init, scopes);
+          }
         }
       }
     } else {
-      console.error(`[unknown]`, script, scopes);
+      console.error("[unknown]", script, scopes);
     }
   } catch (e: unknown) {
     if (e instanceof Error) {
-      console.error(e.name + ": " + e.message, script, scopes);
+      console.error(`${e.name}: ${e.message}`, script, scopes);
     }
     console.trace();
   }
   return;
 };
 
-const argumentParser = (
-  inputs: Argument<A_ANY>[],
-  scopes: T_scope[],
-  keys: string[],
-  compute: boolean = true
-) => {
+const argumentParser = (inputs: Argument<A_ANY>[], scopes: T_scope[], keys: string[], compute: boolean = true) => {
   const result: { [key: string]: any } = {};
   const nonKeyValues: Argument<A_ANY>[] = [];
   for (const i in inputs) {
     const item = inputs[i];
-    if (!item) continue;
+    if (!item) {
+      continue;
+    }
     if (item?.NIWANGO_Identifier) {
       const key = getName(item.NIWANGO_Identifier, scopes) as string;
       if (keys.includes(key)) {
@@ -857,7 +786,9 @@ const setContext = (input: CanvasRenderingContext2D) => {
 };
 
 const assign = (target: A_ANY, value: unknown, scopes: T_scope[]) => {
-  if (scopes.length < 1) return;
+  if (scopes.length < 1) {
+    return;
+  }
   try {
     if (typeGuard.Identifier(target)) {
       for (const scope of scopes) {
@@ -866,18 +797,16 @@ const assign = (target: A_ANY, value: unknown, scopes: T_scope[]) => {
           return;
         }
       }
-      if (scopes[0]) scopes[0][target.name] = value;
+      if (scopes[0]) {
+        scopes[0][target.name] = value;
+      }
     } else if (typeGuard.MemberExpression(target)) {
       const left = execute(target.object, scopes);
       if (!typeGuard.object(left)) {
         console.error("[assign] left is not object", target, value, scopes);
         return;
       }
-      const key = (
-        target.computed
-          ? execute(target.property, scopes)
-          : getName(target.property, scopes)
-      ) as string;
+      const key = (target.computed ? execute(target.property, scopes) : getName(target.property, scopes)) as string;
       left[key] = value;
     }
   } catch (e) {

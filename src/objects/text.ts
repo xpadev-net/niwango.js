@@ -32,10 +32,7 @@ class IrText extends IrObject {
   private __scale: number;
   private __size: number;
   private __reverse: boolean;
-  constructor(
-    _context: CanvasRenderingContext2D,
-    _options: ITextOptionsNullable
-  ) {
+  constructor(_context: CanvasRenderingContext2D, _options: ITextOptionsNullable) {
     super(_context, _options);
     this.options = Object.assign({ ...defaultOptions }, _options);
     this.__actualHeight = this.__actualWidth = 0;
@@ -157,12 +154,14 @@ class IrText extends IrObject {
     }
     const lineOffset = this.parsedComment.lineOffset;
     this.__context.font = parseFont(this.parsedComment.font, this.__size);
-    let lastFont = this.parsedComment.font,
-      leftOffset = 0,
-      lineCount = 0;
+    let lastFont = this.parsedComment.font;
+    let leftOffset = 0;
+    let lineCount = 0;
     for (let i = 0; i < this.parsedComment.content.length; i++) {
       const item = this.parsedComment.content[i];
-      if (!item) continue;
+      if (!item) {
+        continue;
+      }
       if (lastFont !== (item.font || this.parsedComment.font)) {
         lastFont = item.font || this.parsedComment.font;
         this.__context.font = parseFont(lastFont, this.__size);
@@ -170,7 +169,9 @@ class IrText extends IrObject {
       const lines = item.content.split(/[\n\r]/g);
       for (let j = 0; j < lines.length; j++) {
         const line = lines[j];
-        if (line === undefined) continue;
+        if (line === undefined) {
+          continue;
+        }
         const posX = leftOffset - (this.__reverse ? this.__actualWidth : 0);
         const posY =
           (lineOffset + lineCount + 1) * (this.__size * config.lineHeight) +
@@ -199,7 +200,7 @@ class IrText extends IrObject {
       this.__x,
       this.__y,
       this.__width,
-      this.__height
+      this.__height,
     );
   }
 }

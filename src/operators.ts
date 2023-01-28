@@ -1,5 +1,7 @@
 const Multiplication = (left: unknown, right: unknown) => {
-  if (typeof left === "string") return left.repeat(Number(right));
+  if (typeof left === "string") {
+    return left.repeat(Number(right));
+  }
   return Number(left) * Number(right);
 };
 
@@ -8,32 +10,37 @@ const Subtraction = (left: unknown, right: unknown) => {
 };
 
 const Addition = (left: unknown, right: unknown) => {
-  if (typeof left === "string" || typeof right === "string")
+  if (typeof left === "string" || typeof right === "string") {
     return `${left}${right}`;
+  }
   return Number(left) + Number(right);
 };
 
 const LessThan = (left: unknown, right: unknown) => {
-  if (typeof left === "string" && typeof right === "string")
+  if (typeof left === "string" && typeof right === "string") {
     return left < right;
+  }
   return Number(left) < Number(right);
 };
 
 const GreaterThan = (left: unknown, right: unknown) => {
-  if (typeof left === "string" && typeof right === "string")
+  if (typeof left === "string" && typeof right === "string") {
     return left > right;
+  }
   return Number(left) > Number(right);
 };
 
 const LessThanOrEqual = (left: unknown, right: unknown) => {
-  if (typeof left === "string" && typeof right === "string")
+  if (typeof left === "string" && typeof right === "string") {
     return left <= right;
+  }
   return Number(left) <= Number(right);
 };
 
 const GreaterThanOrEqual = (left: unknown, right: unknown) => {
-  if (typeof left === "string" && typeof right === "string")
+  if (typeof left === "string" && typeof right === "string") {
     return left >= right;
+  }
   return Number(left) >= Number(right);
 };
 

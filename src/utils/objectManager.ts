@@ -11,7 +11,9 @@ const draw = () => {
     return 0;
   });
   for (const object of drawObjects) {
-    if (object.visible) object.draw();
+    if (object.visible) {
+      object.draw();
+    }
   }
 };
 const register = (item: IrObject) => {

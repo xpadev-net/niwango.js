@@ -6,8 +6,8 @@ test("sample from wiki", () => {
   expect(run(`a = 2525; a += ""; a += 1;return a`)).toBe("25251");
   expect(run(`a = "2525"; a += 1; return a`)).toBe("25251");
   expect(run(`a = "2525"; a -= 0; a += 1;return a`)).toBe(2526);
-  expect(run(`a = 02525; return a`)).toBe(1365);
-  expect(run(`a = 0x2525; return a`)).toBe(9509);
+  expect(run("a = 02525; return a")).toBe(1365);
+  expect(run("a = 0x2525; return a")).toBe(9509);
 });
 
 test("variable declaration", () => {
@@ -32,13 +32,13 @@ test("rand", () => {
   expect(rand1).toBe(rand2);
 });
 test("lambda", () => {
-  expect(run(`i=0;lmd=\\(i+=@0);return lmd[10]`)).toBe(10);
-  expect(run(`i=0;lmd=\\(i+=@0*@1);return lmd[10,2]`)).toBe(20);
-  expect(run(`i=10;lmd=\\(i+=@0*@1);return lmd[10,2]`)).toBe(30);
+  expect(run("i=0;lmd=\\(i+=@0);return lmd[10]")).toBe(10);
+  expect(run("i=0;lmd=\\(i+=@0*@1);return lmd[10,2]")).toBe(20);
+  expect(run("i=10;lmd=\\(i+=@0*@1);return lmd[10,2]")).toBe(30);
   expect(run(`lmd=\\(@0+@1);return lmd["hello","world"]`)).toBe("helloworld");
 });
 test("sequence", () => {
-  expect(run(`return 0,12,5`)).toBe(5);
+  expect(run("return 0,12,5")).toBe(5);
   expect(run(`return "hoge","fuga","piyo"`)).toBe("piyo");
 });
 

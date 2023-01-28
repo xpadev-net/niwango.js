@@ -1347,6 +1347,36 @@
     estree-walker "^2.0.2"
     picomatch "^2.3.1"
 
+"@rometools/cli-darwin-arm64@0.10.1":
+  version "0.10.1"
+  resolved "https://registry.yarnpkg.com/@rometools/cli-darwin-arm64/-/cli-darwin-arm64-0.10.1.tgz#e336bc255be2aedb5ab944d4120673e4ed39f894"
+  integrity sha512-+4STpdjqDf+mVJVKcpHy0y1xCNLir1Na0mcepv4XnRq1jKHda0kNh58bXq7JJwSt7wa3FxKwJXuIxGLqfYo9dg==
+
+"@rometools/cli-darwin-x64@0.10.1":
+  version "0.10.1"
+  resolved "https://registry.yarnpkg.com/@rometools/cli-darwin-x64/-/cli-darwin-x64-0.10.1.tgz#89f27cc784bb2a4c78168ab003f36ab741b41b84"
+  integrity sha512-UcjDKCor8MgadLEcdydIZ8sRQuexvHSEnae/gx65BoDRXIvKHlfxr40ylVbjn7us0kFZpIlf8A6ac1doWww3pQ==
+
+"@rometools/cli-linux-arm64@0.10.1":
+  version "0.10.1"
+  resolved "https://registry.yarnpkg.com/@rometools/cli-linux-arm64/-/cli-linux-arm64-0.10.1.tgz#a6d64378f5722ecff07f08bcb11480eae40d9198"
+  integrity sha512-1bfxul/dW22PQRrLiJAnUaqCwjZGnSztEOeIPGfRmVde/y7cFf6h+4dKEEDhK+oBJMLAWnp/BCH5HHqhLhbG8w==
+
+"@rometools/cli-linux-x64@0.10.1":
+  version "0.10.1"
+  resolved "https://registry.yarnpkg.com/@rometools/cli-linux-x64/-/cli-linux-x64-0.10.1.tgz#a36cc96404cc500ffe27c8ecfbe0b4b1cd663837"
+  integrity sha512-7+u5jAmAdWvBpG/lVKFgB6xeM9ifabRY6eptqqJkvDvoqeDv2Ce9igUmEY6lq/4jvBgRV20QGvFPO0Y3gdFtCw==
+
+"@rometools/cli-win32-arm64@0.10.1":
+  version "0.10.1"
+  resolved "https://registry.yarnpkg.com/@rometools/cli-win32-arm64/-/cli-win32-arm64-0.10.1.tgz#5f017b79a329d7750661ae5f658199c8f2e96c3f"
+  integrity sha512-VnTK2GvT9BYwzqoEezhqXwV66Fae4Xh+SYODKW2txLOLOws2QNT5GtnmThrtXIm7VFjWEu8OhIL+NrRDmwdDgA==
+
+"@rometools/cli-win32-x64@0.10.1":
+  version "0.10.1"
+  resolved "https://registry.yarnpkg.com/@rometools/cli-win32-x64/-/cli-win32-x64-0.10.1.tgz#5a2603713c034629b0f1d7b73ff86753e071839d"
+  integrity sha512-KOYG56L2i7a4h990GUDg9dh8AxAKrI2x3ZAvdimMbfNJwdexOSJuCELduwE2ChvWt3lhvSRYcP4/BazrhA8Qng==
+
 "@sinclair/typebox@^0.24.1":
   version "0.24.51"
   resolved "https://registry.yarnpkg.com/@sinclair/typebox/-/typebox-0.24.51.tgz#645f33fe4e02defe26f2f5c0410e1c094eac7f5f"
@@ -3991,6 +4021,18 @@ rollup@^3.3.0:
   integrity sha512-nGGylpmblyjTpF4lEUPgmOw6OVxRvnI6Iuuh6Lz4O/X66cVOX1XJSsqP1YamxQ+mPuFE7qJxLFDSCk8rNv5dDw==
   optionalDependencies:
     fsevents "~2.3.2"
+
+rome@^0.10.1:
+  version "0.10.1"
+  resolved "https://registry.yarnpkg.com/rome/-/rome-0.10.1.tgz#3eae68f19469e5eb8acc239efa4f4fba30c5538b"
+  integrity sha512-0XkGn7Z4DVEAtETRS1672VqYs0C3/hajPF64eVt5P3aiSy47KeyLFvIP5xrRlSD+ixW4Z7+jtgrNFeGmCo3XQQ==
+  optionalDependencies:
+    "@rometools/cli-darwin-arm64" "0.10.1"
+    "@rometools/cli-darwin-x64" "0.10.1"
+    "@rometools/cli-linux-arm64" "0.10.1"
+    "@rometools/cli-linux-x64" "0.10.1"
+    "@rometools/cli-win32-arm64" "0.10.1"
+    "@rometools/cli-win32-x64" "0.10.1"
 
 run-parallel@^1.1.9:
   version "1.2.0"

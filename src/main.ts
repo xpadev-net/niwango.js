@@ -16,10 +16,7 @@ class Niwango {
   private readonly drawCanvas: HTMLCanvasElement;
   private readonly drawContext: CanvasRenderingContext2D;
   static default = Niwango;
-  constructor(
-    targetCanvas: HTMLCanvasElement,
-    formattedComments: formattedComment[]
-  ) {
+  constructor(targetCanvas: HTMLCanvasElement, formattedComments: formattedComment[]) {
     this.targetCanvas = targetCanvas;
     this.drawCanvas = document.createElement("canvas");
     initConfig();
@@ -32,13 +29,12 @@ class Niwango {
     this.drawCanvas.height = 1080;
     const drawContext = this.drawCanvas.getContext("2d");
     this.targetContext = this.targetCanvas.getContext("2d")!;
-    if (!drawContext) throw new Error();
+    if (!drawContext) {
+      throw new Error();
+    }
     console.log(this.targetCanvas);
     this.drawContext = drawContext;
-    this.drawContext.scale(
-      1920 / config.canvasWidth,
-      1080 / config.canvasHeight
-    );
+    this.drawContext.scale(1920 / config.canvasWidth, 1080 / config.canvasHeight);
     setContext(drawContext);
     resetQueue();
     resetObjects();
@@ -65,18 +61,17 @@ class Niwango {
   public draw(vpos: number) {
     [...getQueue(vpos), ...getScripts(vpos)]
       .sort((a, b) => {
-        if (a.time < b.time) return -1;
-        if (a.time > b.time) return 1;
+        if (a.time < b.time) {
+          return -1;
+        }
+        if (a.time > b.time) {
+          return 1;
+        }
         return 0;
       })
       .forEach((queue) => {
         setCurrentTime(queue.time);
-        execute(
-          queue.script,
-          queue.type === "queue"
-            ? queue.scopes
-            : [this.globalScope, this.environmentScope]
-        );
+        execute(queue.script, queue.type === "queue" ? queue.scopes : [this.globalScope, this.environmentScope]);
       });
     this.clear();
     draw();
@@ -89,16 +84,11 @@ class Niwango {
       0,
       0,
       this.targetCanvas.width,
-      this.targetCanvas.height
+      this.targetCanvas.height,
     );
   }
   public clear() {
-    this.drawContext.clearRect(
-      0,
-      0,
-      this.drawCanvas.width,
-      this.drawCanvas.height
-    );
+    this.drawContext.clearRect(0, 0, this.drawCanvas.width, this.drawCanvas.height);
   }
 }
 

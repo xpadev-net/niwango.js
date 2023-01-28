@@ -5,8 +5,8 @@ const addScript = (script: A_ANY, time: number) => {
   scripts.push({ type: "script", script, time });
 };
 const getScripts = (time: number) => {
-  const result = [],
-    newScripts = [];
+  const result = [];
+  const newScripts = [];
   for (const item of scripts) {
     if (item.time <= time) {
       result.push(item);

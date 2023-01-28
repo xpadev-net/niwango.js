@@ -24,10 +24,7 @@ const defaultOptions: IShapeOptions = {
 
 class IrShape extends IrObject {
   override options: IShapeOptions;
-  constructor(
-    _context: CanvasRenderingContext2D,
-    _options: IShapeOptionsNullable
-  ) {
+  constructor(_context: CanvasRenderingContext2D, _options: IShapeOptionsNullable) {
     super(_context, _options);
     this.options = Object.assign({ ...defaultOptions }, _options);
     this.__width = this.options.width;
@@ -109,22 +106,15 @@ class IrShape extends IrObject {
       this.__context.fillRect(0, 0, this.width, this.height);
     } else {
       this.__context.beginPath();
-      this.__context.ellipse(
-        this.width / 2,
-        this.height / 2,
-        this.width / 2,
-        this.height / 2,
-        0,
-        0,
-        360
-      );
+      this.__context.ellipse(this.width / 2, this.height / 2, this.width / 2, this.height / 2, 0, 0, 360);
       this.__context.fill();
     }
   }
 
   override draw() {
-    if (this.width > 0 && this.height > 0)
+    if (this.width > 0 && this.height > 0) {
       this.targetContext.drawImage(this.__canvas, this.__x, this.__y);
+    }
   }
 }
 export { IrShape };

@@ -1,5 +1,4 @@
-let queue: { script: A_ANY; time: number; scopes: T_scope[]; type: "queue" }[] =
-  [];
+let queue: { script: A_ANY; time: number; scopes: T_scope[]; type: "queue" }[] = [];
 let currentTime: number = 0;
 const resetQueue = () => {
   queue = [];
@@ -16,8 +15,8 @@ const addQueue = (script: A_ANY, offset: number, scopes: T_scope[]) => {
   });
 };
 const getQueue = (time: number) => {
-  const result = [],
-    newQueue = [];
+  const result = [];
+  const newQueue = [];
   for (const item of queue) {
     if (item.time <= time) {
       result.push(item);

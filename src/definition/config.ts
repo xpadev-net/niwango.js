@@ -5,12 +5,19 @@ import { baseConfig } from "@/@types/config";
 let config: baseConfig;
 const initConfig = () => {
   const platform: platform = (function (ua) {
-    if (ua.match(/windows nt 6\.[12]/i)) return "win7";
-    else if (ua.match(/windows nt (6\.3|10\.\d+)/i)) return "win8_1";
-    else if (ua.match(/windows nt/i)) return "win";
-    else if (ua.match(/mac os x 10(.|_)(9|10)/i)) return "mac10_9";
-    else if (ua.match(/mac os x 10(.|_)\d{2}/i)) return "mac10_11";
-    else if (ua.match(/mac os x/i)) return "mac";
+    if (ua.match(/windows nt 6\.[12]/i)) {
+      return "win7";
+    } else if (ua.match(/windows nt (6\.3|10\.\d+)/i)) {
+      return "win8_1";
+    } else if (ua.match(/windows nt/i)) {
+      return "win";
+    } else if (ua.match(/mac os x 10(.|_)(9|10)/i)) {
+      return "mac10_9";
+    } else if (ua.match(/mac os x 10(.|_)\d{2}/i)) {
+      return "mac10_11";
+    } else if (ua.match(/mac os x/i)) {
+      return "mac";
+    }
     return "other";
   })(navigator.userAgent);
   config = {
@@ -58,8 +65,7 @@ const initConfig = () => {
     font: {
       gulim:
         'normal 600 [size]px gulim, "Microsoft JhengHei UI", Arial, "ＭＳ Ｐゴシック", "MS PGothic", MSPGothic, MS-PGothic',
-      simsun:
-        'normal 400 [size]px simsun, "游明朝体", "游明朝", "Yu Mincho", YuMincho, yumincho, YuMin-Medium',
+      simsun: 'normal 400 [size]px simsun, "游明朝体", "游明朝", "Yu Mincho", YuMincho, yumincho, YuMin-Medium',
     },
     /**
      * フォント @html5?
