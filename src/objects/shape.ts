@@ -101,6 +101,10 @@ class IrShape extends IrObject {
   }
 
   override __draw() {
+    this.__canvas.width = this.__width;
+    this.__canvas.height = this.__height;
+    this.__updateColor();
+    this.__context.globalAlpha = (100 - this.options.alpha) / 100;
     this.__context.clearRect(0, 0, this.__canvas.width, this.__canvas.height);
     if (this.shape === "rect") {
       this.__context.fillRect(0, 0, this.width, this.height);
@@ -112,9 +116,10 @@ class IrShape extends IrObject {
   }
 
   override draw() {
-    if (this.width > 0 && this.height > 0) {
-      this.targetContext.drawImage(this.__canvas, this.__x, this.__y);
+    if (this.width === 0 || this.height === 0) {
+      return;
     }
+    this.targetContext.drawImage(this.__canvas, this.__x, this.__y);
   }
 }
 export { IrShape };

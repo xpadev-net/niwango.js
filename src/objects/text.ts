@@ -136,12 +136,8 @@ class IrText extends IrObject {
     this.__actualHeight = result.height;
     this.__width = this.__actualWidth * this.__scale;
     this.__height = this.__actualHeight * this.__scale;
-    if (this.__canvas.width < this.__actualWidth) {
-      this.__canvas.width = this.__actualWidth;
-    }
-    if (this.__canvas.height < this.__actualHeight) {
-      this.__canvas.height = this.__actualHeight;
-    }
+    this.__canvas.width = this.__actualWidth;
+    this.__canvas.height = this.__actualHeight;
   }
 
   override __draw() {
@@ -191,6 +187,9 @@ class IrText extends IrObject {
   }
 
   override draw() {
+    if (this.width === 0 || this.height === 0) {
+      return;
+    }
     this.targetContext.drawImage(
       this.__canvas,
       0,
