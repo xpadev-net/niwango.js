@@ -93,7 +93,7 @@ abstract class IrObject {
     if (this.options.posY === "ue") {
       return this.options.y;
     } else if (this.options.posY === "shita") {
-      return config.canvasHeight - this.options.y - this.height;
+      return config.canvasHeight + this.options.y - this.height;
     }
     return config.canvasHeight / 2 + this.options.y - this.height / 2;
   }
