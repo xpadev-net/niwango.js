@@ -45,7 +45,8 @@ class IrText extends IrObject {
       this.__scale = 1;
       this.__size = Math.abs(size);
     }
-    this.parsedComment = parse(this.text);
+    this.parsedComment = parse(this.text, this.options.size < 3);
+    document.body.append(this.__canvas);
     this.__updateColor();
     this.__updateFont();
     this.__measure();
@@ -68,6 +69,7 @@ class IrText extends IrObject {
     }
     this.options.size = val;
     this.__updateFont();
+    this.parsedComment = parse(this.text, val < 3);
     this.__measure();
     this.__draw();
   }
@@ -78,7 +80,7 @@ class IrText extends IrObject {
 
   set text(string) {
     this.options.text = string;
-    this.parsedComment = parse(this.text);
+    this.parsedComment = parse(this.text, this.options.size < 3);
     this.__measure();
     this.__draw();
   }
@@ -162,24 +164,45 @@ class IrText extends IrObject {
         lastFont = item.font || this.parsedComment.font;
         this.__context.font = parseFont(lastFont, this.__size);
       }
-      const lines = item.content.split(/[\n\r]/g);
-      for (let j = 0; j < lines.length; j++) {
-        const line = lines[j];
-        if (line === undefined) {
-          continue;
+      if (item.type === "normal") {
+        const lines = item.content.split(/[\n\r]/g);
+        for (let j = 0; j < lines.length; j++) {
+          const line = lines[j];
+          if (line === undefined) {
+            continue;
+          }
+          const posX = leftOffset - (this.__reverse ? this.__actualWidth : 0);
+          const posY =
+            (lineOffset + lineCount + 1) * (this.__size * config.lineHeight) +
+            config.commentYPaddingTop +
+            this.__size * config.lineHeight * config.commentYOffset -
+            (this.__reverse ? this.__actualHeight : 0);
+          //this.__context.strokeText(line, leftOffset, posY);
+          this.__context.fillText(line, posX, posY);
+          if (j < lines.length - 1) {
+            leftOffset = 0;
+            lineCount += 1;
+          } else {
+            leftOffset += item.width?.[j] || 0;
+          }
         }
-        const posX = leftOffset - (this.__reverse ? this.__actualWidth : 0);
-        const posY =
-          (lineOffset + lineCount + 1) * (this.__size * config.lineHeight) +
-          config.commentYPaddingTop +
-          this.__size * config.lineHeight * config.commentYOffset -
-          (this.__reverse ? this.__actualHeight : 0);
-        //this.__context.strokeText(line, leftOffset, posY);
-        this.__context.fillText(line, posX, posY);
-        if (j < lines.length - 1) {
-          leftOffset = 0;
-          lineCount += 1;
-        } else {
+      } else {
+        for (let j = 0; j < item.content.length; j++) {
+          const part = item.content[j];
+          if (part === undefined) {
+            continue;
+          }
+          const posX = leftOffset - (this.__reverse ? this.__actualWidth : 0);
+          const posY =
+            (lineOffset + lineCount + 1) * (this.__size * config.lineHeight) +
+            config.commentYPaddingTop +
+            this.__size * config.lineHeight * config.commentYOffset -
+            (this.__reverse ? this.__actualHeight : 0);
+          if (part.type === "fill") {
+            this.__context.fillRect(posX, posY, part.width * this.__size, this.__size * config.lineHeight);
+          } else if (part.type === "text") {
+            this.__context.fillText(part.text, posX, posY);
+          }
           leftOffset += item.width?.[j] || 0;
         }
       }

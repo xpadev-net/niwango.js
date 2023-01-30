@@ -13,3 +13,21 @@ export type measureTextInput = {
   lineCount: number;
   size: number;
 };
+
+export type charItem = compatFillItem | normalCharItem | compatSpaceItem;
+
+export type compatFillItem = {
+  type: "fill";
+  char: string;
+  width: number;
+};
+export type normalCharItem = {
+  type: "text";
+  text: string;
+};
+
+export type compatSpaceItem = {
+  type: "space";
+  char: string;
+  width: number;
+};

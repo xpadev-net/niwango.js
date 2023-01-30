@@ -1,9 +1,10 @@
 import { commentContentIndex, commentContentItem, commentFlashFont } from "@/@types/IrText";
 import { config } from "@/definition/config";
-import { measureTextInput, parsedComment } from "@/@types/flashText";
+import { charItem, measureTextInput, parsedComment } from "@/@types/flashText";
 import { parseFont } from "@/utils/utils";
 
-const parse = (string: string): parsedComment => {
+const parse = (string: string, compat = false): parsedComment => {
+  console.log(compat);
   const content: commentContentItem[] = [];
   const parts = (string.match(/[\n\r]|[^\n\r]+/g) || []).map((val) =>
     Array.from(val.match(/[ -~｡-ﾟ]+|[^ -~｡-ﾟ]+/g) || []),
@@ -15,12 +16,59 @@ const parse = (string: string): parsedComment => {
     gothic: new RegExp(config.flashChar.gothic),
   };
   const getFontName = (font: string) =>
-    font.match("^simsun.+") ? "simsun" : font === "gothic" ? "defont" : (font as commentFlashFont);
+    font.match(/^simsun/) ? "simsun" : font === "gothic" ? "defont" : (font as commentFlashFont);
   for (const line of parts) {
     const lineContent: commentContentItem[] = [];
     for (const part of line) {
       if (part.match(/[ -~｡-ﾟ]+/g) !== null) {
-        lineContent.push({ content: part });
+        if (compat) {
+          const result: charItem[] = [];
+          let buffer = "";
+          let lastItem: charItem | undefined;
+          let lastChar = "";
+          for (const char of part) {
+            if (char === "a" && lastChar === "a") {
+              if (buffer) {
+                lastItem = { type: "text", text: buffer };
+                result.push(lastItem);
+                buffer = "";
+              }
+              lastChar = "";
+              if (lastItem?.type === "fill" && lastItem.char === "a") {
+                lastItem.width += 2;
+                continue;
+              }
+              lastItem = { type: "fill", char: "a", width: 2 };
+              result.push(lastItem);
+              continue;
+            }
+            if (char === " ") {
+              if (buffer) {
+                lastItem = { type: "text", text: buffer };
+                result.push(lastItem);
+                buffer = "";
+              }
+              if (lastItem?.type === "space" && lastItem.char === " ") {
+                lastItem.width += 1;
+                continue;
+              }
+              lastItem = { type: "space", char: " ", width: 1 };
+              result.push(lastItem);
+              continue;
+            }
+            buffer += lastChar;
+            lastChar = char;
+          }
+          if (buffer || lastChar) {
+            result.push({ type: "text", text: buffer + lastChar });
+          }
+          lineContent.push({ type: "compat", content: result });
+          continue;
+        }
+        lineContent.push({
+          type: "normal",
+          content: part,
+        });
         continue;
       }
       const index: commentContentIndex[] = [];
@@ -38,9 +86,9 @@ const parse = (string: string): parsedComment => {
         index.push({ font: "gothic", index: match.index });
       }
       if (index.length === 0) {
-        lineContent.push({ content: part });
+        lineContent.push({ type: "normal", content: part });
       } else if (index.length === 1 && index[0]) {
-        lineContent.push({ content: part, font: getFontName(index[0].font) });
+        lineContent.push({ type: "normal", content: part, font: getFontName(index[0].font) });
       } else {
         index.sort((a, b) => {
           if (a.index > b.index) {
@@ -60,6 +108,7 @@ const parse = (string: string): parsedComment => {
               continue;
             }
             lineContent.push({
+              type: "normal",
               content: part.slice(offset, currentVal.index),
               font: getFontName(lastVal.font),
             });
@@ -67,29 +116,25 @@ const parse = (string: string): parsedComment => {
           }
           const val = index[index.length - 1];
           if (val) {
-            lineContent.push({
-              content: part.slice(offset),
-              font: getFontName(val.font),
-            });
+            lineContent.push({ type: "normal", content: part.slice(offset), font: getFontName(val.font) });
           }
         } else {
           const firstVal = index[0];
           const secondVal = index[1];
           if (!(firstVal && secondVal)) {
-            lineContent.push({ content: part });
+            lineContent.push({ type: "normal", content: part });
             continue;
           }
           if (firstVal.font !== "gothic") {
-            lineContent.push({
-              content: part,
-              font: getFontName(firstVal.font),
-            });
+            lineContent.push({ type: "normal", content: part, font: getFontName(firstVal.font) });
           } else {
             lineContent.push({
+              type: "normal",
               content: part.slice(0, secondVal.index),
               font: getFontName(firstVal.font),
             });
             lineContent.push({
+              type: "normal",
               content: part.slice(secondVal.index),
               font: getFontName(secondVal.font),
             });
@@ -129,29 +174,59 @@ const measure = (context: CanvasRenderingContext2D, comment: measureTextInput) =
     if (item === undefined) {
       continue;
     }
-    const lines = item.content.split(/[\n\r]/);
-    const widths = [];
+    if (item.type === "normal") {
+      const lines = item.content.split(/[\n\r]/);
+      const widths = [];
 
-    context.font = parseFont(item.font || comment.font, comment.size);
-    for (let i = 0; i < lines.length; i++) {
-      const value = lines[i];
-      if (value === undefined) {
-        continue;
+      context.font = parseFont(item.font || comment.font, comment.size);
+      for (let i = 0; i < lines.length; i++) {
+        const value = lines[i];
+        if (value === undefined) {
+          continue;
+        }
+        const measure = context.measureText(value);
+        currentWidth += measure.width;
+        spacedWidth += measure.width + Math.max(value.length - 1, 0) * config.letterSpacing;
+        widths.push(measure.width);
+        if (i < lines.length - 1) {
+          width_arr.push(currentWidth);
+          spacedWidth_arr.push(spacedWidth);
+          spacedWidth = 0;
+          currentWidth = 0;
+        }
       }
-      const measure = context.measureText(value);
-      currentWidth += measure.width;
-      spacedWidth += measure.width + Math.max(value.length - 1, 0) * config.letterSpacing;
-      widths.push(measure.width);
-      if (i < lines.length - 1) {
-        width_arr.push(currentWidth);
-        spacedWidth_arr.push(spacedWidth);
-        spacedWidth = 0;
-        currentWidth = 0;
+      width_arr.push(currentWidth);
+      spacedWidth_arr.push(spacedWidth);
+      item.width = widths;
+    } else {
+      context.font = parseFont(item.font || comment.font, comment.size);
+      const widths = [];
+      for (let i = 0; i < item.content.length; i++) {
+        const value = item.content[i];
+        if (value === undefined) {
+          continue;
+        }
+        if (value.type === "fill" || value.type === "space") {
+          currentWidth += value.width * comment.size;
+          spacedWidth += value.width * comment.size;
+          widths.push(value.width * comment.size);
+        } else {
+          const measure = context.measureText(value.text);
+          currentWidth += measure.width;
+          spacedWidth += measure.width + Math.max(value.text.length - 1, 0) * config.letterSpacing;
+          widths.push(measure.width);
+        }
+        if (i < item.content.length - 1) {
+          width_arr.push(currentWidth);
+          spacedWidth_arr.push(spacedWidth);
+          spacedWidth = 0;
+          currentWidth = 0;
+        }
       }
+      width_arr.push(currentWidth);
+      spacedWidth_arr.push(spacedWidth);
+      item.width = widths;
     }
-    width_arr.push(currentWidth);
-    spacedWidth_arr.push(spacedWidth);
-    item.width = widths;
   }
   const leadLine = (function () {
     let max = 0;
