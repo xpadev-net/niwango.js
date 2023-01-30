@@ -35,10 +35,10 @@ const parse = (string: string, compat = false): parsedComment => {
               }
               lastChar = "";
               if (lastItem?.type === "fill" && lastItem.char === "a") {
-                lastItem.width += 2;
+                lastItem.width += 1;
                 continue;
               }
-              lastItem = { type: "fill", char: "a", width: 2 };
+              lastItem = { type: "fill", char: "a", width: 1 };
               result.push(lastItem);
               continue;
             }
@@ -49,10 +49,10 @@ const parse = (string: string, compat = false): parsedComment => {
                 buffer = "";
               }
               if (lastItem?.type === "space" && lastItem.char === " ") {
-                lastItem.width += 1;
+                lastItem.width += 0.5;
                 continue;
               }
-              lastItem = { type: "space", char: " ", width: 1 };
+              lastItem = { type: "space", char: " ", width: 0.5 };
               result.push(lastItem);
               continue;
             }
@@ -174,9 +174,9 @@ const measure = (context: CanvasRenderingContext2D, comment: measureTextInput) =
     if (item === undefined) {
       continue;
     }
+    const widths = [];
     if (item.type === "normal") {
       const lines = item.content.split(/[\n\r]/);
-      const widths = [];
 
       context.font = parseFont(item.font || comment.font, comment.size);
       for (let i = 0; i < lines.length; i++) {
@@ -195,12 +195,8 @@ const measure = (context: CanvasRenderingContext2D, comment: measureTextInput) =
           currentWidth = 0;
         }
       }
-      width_arr.push(currentWidth);
-      spacedWidth_arr.push(spacedWidth);
-      item.width = widths;
     } else {
       context.font = parseFont(item.font || comment.font, comment.size);
-      const widths = [];
       for (let i = 0; i < item.content.length; i++) {
         const value = item.content[i];
         if (value === undefined) {
@@ -216,18 +212,12 @@ const measure = (context: CanvasRenderingContext2D, comment: measureTextInput) =
           spacedWidth += measure.width + Math.max(value.text.length - 1, 0) * config.letterSpacing;
           widths.push(measure.width);
         }
-        if (i < item.content.length - 1) {
-          width_arr.push(currentWidth);
-          spacedWidth_arr.push(spacedWidth);
-          spacedWidth = 0;
-          currentWidth = 0;
-        }
       }
-      width_arr.push(currentWidth);
-      spacedWidth_arr.push(spacedWidth);
-      item.width = widths;
     }
+    item.width = widths;
   }
+  width_arr.push(currentWidth);
+  spacedWidth_arr.push(spacedWidth);
   const leadLine = (function () {
     let max = 0;
     let index = -1;
@@ -241,7 +231,7 @@ const measure = (context: CanvasRenderingContext2D, comment: measureTextInput) =
     return { max, index };
   })();
   const scaleX = leadLine.max / (width_arr[leadLine.index] || 1);
-  const height = comment.size * 1.22 * comment.lineCount + config.commentYPaddingTop;
+  const height = comment.size * config.lineHeight * comment.lineCount + config.commentYPaddingTop;
   return { width: Math.max(...width_arr, 0), scaleX, height };
 };
 export { parse, measure };

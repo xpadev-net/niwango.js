@@ -72,7 +72,7 @@ const initConfig = () => {
      */
     fonts: fonts[platform],
     scriptCharOffset: 0.12,
-    lineHeight: 1.22,
+    lineHeight: 1,
     commentYPaddingTop: 4,
     commentYOffset: -0.2,
     letterSpacing: 0,
