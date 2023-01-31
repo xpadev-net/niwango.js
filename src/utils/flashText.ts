@@ -2,153 +2,60 @@ import { commentContentIndex, commentContentItem, commentFlashFont } from "@/@ty
 import { config } from "@/definition/config";
 import { charItem, measureTextInput, parsedComment } from "@/@types/flashText";
 import { parseFont } from "@/utils/utils";
+import { navieSort } from "@/utils/sort";
 
-const parse = (string: string, compat = false): parsedComment => {
-  console.log(compat);
-  const content: commentContentItem[] = [];
-  const parts = (string.match(/[\n\r]|[^\n\r]+/g) || []).map((val) =>
+const getFontName = (font: string): commentFlashFont => {
+  if (font.match(/^simsun/)) { return "simsun"; }
+  if (font === "gothic") { return "defont"; }
+  return "gulim";
+};
+
+const splitContents = (string: string) => {
+  return Array.from(string.match(/[\n\r]|[^\n\r]+/g) || []).map((val) =>
     Array.from(val.match(/[ -~｡-ﾟ]+|[^ -~｡-ﾟ]+/g) || []),
   );
+};
+
+const getFontIndex = (string: string): commentContentIndex[] => {
   const regex = {
     simsunStrong: new RegExp(config.flashChar.simsunStrong),
     simsunWeak: new RegExp(config.flashChar.simsunWeak),
     gulim: new RegExp(config.flashChar.gulim),
     gothic: new RegExp(config.flashChar.gothic),
   };
-  const getFontName = (font: string) =>
-    font.match(/^simsun/) ? "simsun" : font === "gothic" ? "defont" : (font as commentFlashFont);
-  for (const line of parts) {
+  const index: commentContentIndex[] = [];
+  let match;
+  if ((match = regex.simsunStrong.exec(string)) !== null) {
+    index.push({ font: "simsunStrong", index: match.index });
+  }
+  if ((match = regex.simsunWeak.exec(string)) !== null) {
+    index.push({ font: "simsunWeak", index: match.index });
+  }
+  if ((match = regex.gulim.exec(string)) !== null) {
+    index.push({ font: "gulim", index: match.index });
+  }
+  if ((match = regex.gothic.exec(string)) !== null) {
+    index.push({ font: "gothic", index: match.index });
+  }
+  return index;
+};
+const parse = (string: string, compat = false): parsedComment => {
+  const content: commentContentItem[] = [];
+  const lines = splitContents(string);
+  for (const line of lines) {
     const lineContent: commentContentItem[] = [];
     for (const part of line) {
       if (part.match(/[ -~｡-ﾟ]+/g) !== null) {
-        if (compat) {
-          const result: charItem[] = [];
-          let buffer = "";
-          let lastItem: charItem | undefined;
-          let lastChar = "";
-          for (const char of part) {
-            if (char === "a" && lastChar === "a") {
-              if (buffer) {
-                lastItem = { type: "text", text: buffer };
-                result.push(lastItem);
-                buffer = "";
-              }
-              lastChar = "";
-              if (lastItem?.type === "fill" && lastItem.char === "a") {
-                lastItem.width += 1;
-                continue;
-              }
-              lastItem = { type: "fill", char: "a", width: 1 };
-              result.push(lastItem);
-              continue;
-            }
-            if (char === " ") {
-              if (buffer) {
-                lastItem = { type: "text", text: buffer };
-                result.push(lastItem);
-                buffer = "";
-              }
-              if (lastItem?.type === "space" && lastItem.char === " ") {
-                lastItem.width += 0.5;
-                continue;
-              }
-              lastItem = { type: "space", char: " ", width: 0.5 };
-              result.push(lastItem);
-              continue;
-            }
-            buffer += lastChar;
-            lastChar = char;
-          }
-          if (buffer || lastChar) {
-            result.push({ type: "text", text: buffer + lastChar });
-          }
-          lineContent.push({ type: "compat", content: result });
-          continue;
-        }
-        lineContent.push({
-          type: "normal",
-          content: part,
-        });
+        lineContent.push(parseHalfStr(part, compat));
         continue;
       }
-      const index: commentContentIndex[] = [];
-      let match;
-      if ((match = regex.simsunStrong.exec(part)) !== null) {
-        index.push({ font: "simsunStrong", index: match.index });
-      }
-      if ((match = regex.simsunWeak.exec(part)) !== null) {
-        index.push({ font: "simsunWeak", index: match.index });
-      }
-      if ((match = regex.gulim.exec(part)) !== null) {
-        index.push({ font: "gulim", index: match.index });
-      }
-      if ((match = regex.gothic.exec(part)) !== null) {
-        index.push({ font: "gothic", index: match.index });
-      }
-      if (index.length === 0) {
-        lineContent.push({ type: "normal", content: part });
-      } else if (index.length === 1 && index[0]) {
-        lineContent.push({ type: "normal", content: part, font: getFontName(index[0].font) });
-      } else {
-        index.sort((a, b) => {
-          if (a.index > b.index) {
-            return 1;
-          } else if (a.index < b.index) {
-            return -1;
-          } else {
-            return 0;
-          }
-        });
-        if (config.flashMode === "xp") {
-          let offset = 0;
-          for (let i = 1; i < index.length; i++) {
-            const currentVal = index[i];
-            const lastVal = index[i - 1];
-            if (currentVal === undefined || lastVal === undefined) {
-              continue;
-            }
-            lineContent.push({
-              type: "normal",
-              content: part.slice(offset, currentVal.index),
-              font: getFontName(lastVal.font),
-            });
-            offset = currentVal.index;
-          }
-          const val = index[index.length - 1];
-          if (val) {
-            lineContent.push({ type: "normal", content: part.slice(offset), font: getFontName(val.font) });
-          }
-        } else {
-          const firstVal = index[0];
-          const secondVal = index[1];
-          if (!(firstVal && secondVal)) {
-            lineContent.push({ type: "normal", content: part });
-            continue;
-          }
-          if (firstVal.font !== "gothic") {
-            lineContent.push({ type: "normal", content: part, font: getFontName(firstVal.font) });
-          } else {
-            lineContent.push({
-              type: "normal",
-              content: part.slice(0, secondVal.index),
-              font: getFontName(firstVal.font),
-            });
-            lineContent.push({
-              type: "normal",
-              content: part.slice(secondVal.index),
-              font: getFontName(secondVal.font),
-            });
-          }
-        }
-      }
+      lineContent.push(...parseFullStr(part));
     }
     const firstContent = lineContent[0];
     if (firstContent?.font) {
       content.push(
         ...lineContent.map((val) => {
-          if (!val.font) {
-            val.font = firstContent.font;
-          }
+          val.font ||= firstContent.font;
           return val;
         }),
       );
@@ -162,6 +69,111 @@ const parse = (string: string, compat = false): parsedComment => {
     (string.match(new RegExp(config.flashScriptChar.super, "g"))?.length || 0) * -1 * config.scriptCharOffset +
     (string.match(new RegExp(config.flashScriptChar.sub, "g"))?.length || 0) * config.scriptCharOffset;
   return { content, font, lineCount, lineOffset };
+};
+
+const parseHalfStr = (string: string, compat: boolean): commentContentItem => {
+  if (compat) {
+    const result: charItem[] = [];
+    let buffer = "";
+    let lastItem: charItem | undefined;
+    let lastChar = "";
+    for (const char of string) {
+      if (char === "a" && lastChar === "a") {
+        if (buffer) {
+          lastItem = { type: "text", text: buffer };
+          result.push(lastItem);
+          buffer = "";
+        }
+        lastChar = "";
+        if (lastItem?.type === "fill" && lastItem.char === "a") {
+          lastItem.width += 1;
+          continue;
+        }
+        lastItem = { type: "fill", char: "a", width: 1 };
+        result.push(lastItem);
+        continue;
+      }
+      if (char === " ") {
+        if (buffer) {
+          lastItem = { type: "text", text: buffer };
+          result.push(lastItem);
+          buffer = "";
+        }
+        if (lastItem?.type === "space" && lastItem.char === " ") {
+          lastItem.width += 0.5;
+          continue;
+        }
+        lastItem = { type: "space", char: " ", width: 0.5 };
+        result.push(lastItem);
+        continue;
+      }
+      buffer += lastChar;
+      lastChar = char;
+    }
+    if (buffer || lastChar) {
+      result.push({ type: "text", text: buffer + lastChar });
+    }
+    return { type: "compat", content: result };
+  }
+  return {
+    type: "normal",
+    content: string,
+  };
+};
+
+const parseFullStr = (string: string): commentContentItem[] => {
+  const index = getFontIndex(string);
+  if (index.length === 0) {
+    return [{ type: "normal", content: string }];
+  } else if (index.length === 1 && index[0]) {
+    return [{ type: "normal", content: string, font: getFontName(index[0].font) }];
+  } else {
+    index.sort(navieSort("index"));
+    if (config.flashMode === "xp") {
+      const result: commentContentItem[] = [];
+      let offset = 0;
+      for (let i = 1; i < index.length; i++) {
+        const currentVal = index[i];
+        const lastVal = index[i - 1];
+        if (currentVal === undefined || lastVal === undefined) {
+          continue;
+        }
+        result.push({
+          type: "normal",
+          content: string.slice(offset, currentVal.index),
+          font: getFontName(lastVal.font),
+        });
+        offset = currentVal.index;
+      }
+      const val = index[index.length - 1];
+      if (val) {
+        result.push({ type: "normal", content: string.slice(offset), font: getFontName(val.font) });
+      }
+      return result;
+    } else {
+      const firstVal = index[0];
+      const secondVal = index[1];
+      if (!(firstVal && secondVal)) {
+        return [{ type: "normal", content: string }];
+      }
+      if (firstVal.font !== "gothic") {
+        return [{ type: "normal", content: string, font: getFontName(firstVal.font) }];
+      } else {
+        return [
+          {
+            type: "normal",
+            content: string.slice(0, secondVal.index),
+            font: getFontName(firstVal.font),
+          },
+          {
+            type: "normal",
+            content: string.slice(secondVal.index),
+            font: getFontName(secondVal.font),
+          },
+        ];
+      }
+    }
+  }
 };
 
 const measure = (context: CanvasRenderingContext2D, comment: measureTextInput) => {
