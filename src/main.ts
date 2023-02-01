@@ -6,8 +6,6 @@ import { getQueue, resetQueue, setCurrentTime } from "@/queue";
 import { addScript, getScripts } from "@/scripts";
 import { formattedComment } from "@/@types/types";
 
-//let comments = [];
-
 class Niwango {
   private readonly globalScope: T_scope;
   private readonly environmentScope: T_environment;
@@ -28,11 +26,11 @@ class Niwango {
     this.drawCanvas.width = 1920;
     this.drawCanvas.height = 1080;
     const drawContext = this.drawCanvas.getContext("2d");
-    this.targetContext = this.targetCanvas.getContext("2d")!;
-    if (!drawContext) {
+    const targetContext = this.targetCanvas.getContext("2d");
+    if (!(drawContext && targetContext)) {
       throw new Error();
     }
-    console.log(this.targetCanvas);
+    this.targetContext = targetContext;
     this.drawContext = drawContext;
     this.drawContext.scale(1920 / config.canvasWidth, 1080 / config.canvasHeight);
     setContext(drawContext);
