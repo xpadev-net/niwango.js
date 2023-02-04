@@ -1,7 +1,4 @@
 type A_ANY =
-  | {
-      type: string;
-    }
   | A_Identifier
   | A_Literal
   | A_ExpressionStatement
