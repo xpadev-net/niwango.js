@@ -6,7 +6,7 @@ const defaultOptions: IShapeOptions = {
   x: 0,
   y: 0,
   z: 0,
-  shape: "circle",
+  shape: "rect",
   width: 30,
   height: 30,
   pos: "naka",
