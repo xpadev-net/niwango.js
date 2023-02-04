@@ -208,9 +208,14 @@ const execute = (script: A_ANY | undefined, scopes: T_scope[]): unknown => {
         return;
       }
       if (callee === "times" && !isNaN(Number(object)) && script.arguments[0]) {
+        const body = script.arguments[0];
         let lastResult;
         for (let i = 0; i < Number(object); i++) {
-          lastResult = execute(script.arguments[0], [{ "@0": i }, ...scopes]);
+          if (body.type === "LambdaExpression") {
+            lastResult = execute(body.body, [{ "@0": i }, ...scopes]);
+            continue;
+          }
+          lastResult = execute(body, [{ "@0": i }, ...scopes]);
         }
         return lastResult;
       }
