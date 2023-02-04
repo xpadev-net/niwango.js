@@ -1,4 +1,4 @@
-const navieSort = <T>(key: string) => {
+const nativeSort = <T>(key: string) => {
   return (a: { [x: string]: T }, b: { [x: string]: T }) => {
     const left = a[key] || 0;
     const right = b[key] || 0;
@@ -12,4 +12,4 @@ const navieSort = <T>(key: string) => {
   };
 };
 
-export { navieSort };
+export { nativeSort };

@@ -1,7 +1,7 @@
 import { IrObject } from "@/objects/object";
 import { number2color } from "@/utils/number2color";
 import { config } from "@/definition/config";
-import { parseFont } from "@/utils/utils";
+import { getValue, parseFont } from "@/utils/utils";
 import { measure, parse } from "@/utils/flashText";
 import { parsedComment } from "@/@types/flashText";
 import { ITextOptions, ITextOptionsNullable } from "@/@types/types";
@@ -155,57 +155,48 @@ class IrText extends IrObject {
     let lastFont = this.parsedComment.font;
     let leftOffset = 0;
     let lineCount = 0;
-    for (let i = 0; i < this.parsedComment.content.length; i++) {
-      const item = this.parsedComment.content[i];
-      if (!item) {
-        continue;
-      }
-      if (lastFont !== (item.font || this.parsedComment.font)) {
-        lastFont = item.font || this.parsedComment.font;
+    const reverseOffset = this.__reverse ? this.__actualWidth : 0;
+    for (const item of this.parsedComment.content) {
+      if (lastFont !== getValue(item.font, this.parsedComment.font)) {
+        lastFont = getValue(item.font, this.parsedComment.font);
         this.__context.font = parseFont(lastFont, this.__size);
       }
       if (item.type === "normal") {
         const lines = item.content.split(/[\n\r]/g);
-        for (let j = 0; j < lines.length; j++) {
-          const line = lines[j];
-          if (line === undefined) {
-            continue;
-          }
-          const posX = leftOffset - (this.__reverse ? this.__actualWidth : 0);
+        lines.forEach((line, index) => {
+          const posX = leftOffset - reverseOffset;
           const posY =
             (lineOffset + lineCount + 1) * (this.__size * config.lineHeight) +
             config.commentYPaddingTop +
             this.__size * config.lineHeight * config.commentYOffset -
-            (this.__reverse ? this.__actualHeight : 0);
-          //this.__context.strokeText(line, leftOffset, posY);
+            reverseOffset;
           this.__context.fillText(line, posX, posY);
-          if (j < lines.length - 1) {
-            leftOffset = 0;
-            lineCount += 1;
-          } else {
-            leftOffset += item.width?.[j] || 0;
+          if (index === lines.length - 1) {
+            leftOffset += getValue(item.width?.[index], 0);
+            return;
           }
-        }
-      } else {
-        for (let j = 0; j < item.content.length; j++) {
-          const part = item.content[j];
-          if (part === undefined) {
-            continue;
-          }
-          const posX = leftOffset - (this.__reverse ? this.__actualWidth : 0);
-          const posY =
-            (lineOffset + lineCount + 1) * (this.__size * config.lineHeight) +
-            config.commentYPaddingTop +
-            this.__size * config.lineHeight * config.commentYOffset -
-            (this.__reverse ? this.__actualHeight : 0);
-          if (part.type === "fill") {
-            this.__context.fillRect(posX, posY, part.width * this.__size, this.__size * config.lineHeight);
-          } else if (part.type === "text") {
-            this.__context.fillText(part.text, posX, posY);
-          }
-          leftOffset += item.width?.[j] || 0;
-        }
+          leftOffset = 0;
+          lineCount += 1;
+        });
+        continue;
       }
+      item.content.forEach((part, index) => {
+        const posX = leftOffset - reverseOffset;
+        const posY =
+          (lineOffset + lineCount + 1) * (this.__size * config.lineHeight) +
+          config.commentYPaddingTop +
+          this.__size * config.lineHeight * config.commentYOffset -
+          reverseOffset;
+        switch (part.type) {
+          case "fill": {
+            this.__context.fillRect(posX, posY, part.width * this.__size, this.__size * config.lineHeight);
+            break;
+          }
+          case "text":
+            this.__context.fillText(part.text, posX, posY);
+        }
+        leftOffset += getValue(item.width?.[index], 0);
+      });
     }
   }
 

@@ -2,7 +2,7 @@ import { commentContentIndex, commentContentItem, commentFlashFont } from "@/@ty
 import { config } from "@/definition/config";
 import { charItem, measureTextInput, parsedComment } from "@/@types/flashText";
 import { parseFont } from "@/utils/utils";
-import { navieSort } from "@/utils/sort";
+import { nativeSort } from "@/utils/sort";
 
 const getFontName = (font: string): commentFlashFont => {
   if (font.match(/^simsun/)) {
@@ -133,7 +133,7 @@ const parseFullStr = (string: string): commentContentItem[] => {
   if (index.length === 1 && index[0]) {
     return [{ type: "normal", content: string, font: getFontName(index[0].font) }];
   }
-  index.sort(navieSort("index"));
+  index.sort(nativeSort("index"));
   if (config.flashMode === "xp") {
     const result: commentContentItem[] = [];
     let offset = 0;
@@ -186,27 +186,26 @@ const measure = (context: CanvasRenderingContext2D, comment: measureTextInput) =
     context.font = parseFont(item.font || comment.font, comment.size);
     if (item.type === "normal") {
       const lines = item.content.split(/[\n\r]/);
-      let count = 0;
-      for (const value of lines) {
+      lines.forEach((value, index) => {
         const measure = context.measureText(value);
         currentWidth += measure.width;
         widths.push(measure.width);
-        if (count++ < lines.length - 1) {
+        if (index < lines.length - 1) {
           width_arr.push(currentWidth);
           currentWidth = 0;
         }
+      });
+      continue;
+    }
+    for (const value of item.content) {
+      if (value.type === "fill" || value.type === "space") {
+        currentWidth += value.width * comment.size;
+        widths.push(value.width * comment.size);
+        continue;
       }
-    } else {
-      for (const value of item.content) {
-        if (value.type === "fill" || value.type === "space") {
-          currentWidth += value.width * comment.size;
-          widths.push(value.width * comment.size);
-        } else {
-          const measure = context.measureText(value.text);
-          currentWidth += measure.width;
-          widths.push(measure.width);
-        }
-      }
+      const measure = context.measureText(value.text);
+      currentWidth += measure.width;
+      widths.push(measure.width);
     }
     item.width = widths;
   }

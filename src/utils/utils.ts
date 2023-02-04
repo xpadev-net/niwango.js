@@ -42,4 +42,8 @@ const parseFont = (font: commentFont, size: string | number): string => {
   }
 };
 
-export { resolve, getGlobalScope, parseFont };
+const getValue = <T>(value: T | undefined, fallback: T): T => {
+  return value ?? fallback;
+};
+
+export { resolve, getGlobalScope, parseFont, getValue };
