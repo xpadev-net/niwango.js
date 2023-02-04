@@ -103,10 +103,10 @@ const parseHalfStr = (string: string, compat: boolean): commentContentItem => {
       continue;
     }
     if (char === " ") {
-      if (buffer) {
-        lastItem = { type: "text", text: buffer };
+      if (lastChar) {
+        lastItem = { type: "text", text: buffer + lastChar };
         result.push(lastItem);
-        buffer = "";
+        buffer = lastChar = "";
       }
       if (lastItem?.type === "space" && lastItem.char === " ") {
         lastItem.width += 0.5;
@@ -186,26 +186,27 @@ const measure = (context: CanvasRenderingContext2D, comment: measureTextInput) =
     context.font = parseFont(item.font || comment.font, comment.size);
     if (item.type === "normal") {
       const lines = item.content.split(/[\n\r]/);
-      lines.forEach((value, index) => {
+      let count = 0;
+      for (const value of lines) {
         const measure = context.measureText(value);
         currentWidth += measure.width;
         widths.push(measure.width);
-        if (index < lines.length - 1) {
+        if (count++ < lines.length - 1) {
           width_arr.push(currentWidth);
           currentWidth = 0;
         }
-      });
-      continue;
-    }
-    for (const value of item.content) {
-      if (value.type === "fill" || value.type === "space") {
-        currentWidth += value.width * comment.size;
-        widths.push(value.width * comment.size);
-        continue;
       }
-      const measure = context.measureText(value.text);
-      currentWidth += measure.width;
-      widths.push(measure.width);
+    } else {
+      for (const value of item.content) {
+        if (value.type === "fill" || value.type === "space") {
+          currentWidth += value.width * comment.size;
+          widths.push(value.width * comment.size);
+        } else {
+          const measure = context.measureText(value.text);
+          currentWidth += measure.width;
+          widths.push(measure.width);
+        }
+      }
     }
     item.width = widths;
   }
