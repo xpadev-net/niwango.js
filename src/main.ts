@@ -20,7 +20,11 @@ class Niwango {
     initConfig();
     formattedComments.forEach((comment) => {
       if (comment.content.match(/^\//) && comment.owner) {
-        addScript(parse(comment.content.slice(1)), comment.vpos);
+        try {
+          addScript(parse(comment.content.slice(1)), comment.vpos);
+        } catch (e) {
+          console.log(comment.content.slice(1), comment.id, e);
+        }
       }
     });
     this.drawCanvas.width = 1920;
