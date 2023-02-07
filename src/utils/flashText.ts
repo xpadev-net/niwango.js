@@ -1,7 +1,7 @@
 import { commentContentIndex, commentContentItem, commentFlashFont } from "@/@types/IrText";
 import { config } from "@/definition/config";
 import { charItem, measureTextInput, parsedComment } from "@/@types/flashText";
-import { parseFont } from "@/utils/utils";
+import { getValue, parseFont } from "@/utils/utils";
 import { nativeSort } from "@/utils/sort";
 
 const getFontName = (font: string): commentFlashFont => {
@@ -95,10 +95,10 @@ const parseHalfStr = (string: string, compat: boolean): commentContentItem => {
       }
       lastChar = "";
       if (lastItem?.type === "fill" && lastItem.char === "a") {
-        lastItem.width += 1;
+        lastItem.width += config.compatWidth.aa;
         continue;
       }
-      lastItem = { type: "fill", char: "a", width: 1 };
+      lastItem = { type: "fill", char: "a", width: config.compatWidth.aa };
       result.push(lastItem);
       continue;
     }
@@ -109,10 +109,10 @@ const parseHalfStr = (string: string, compat: boolean): commentContentItem => {
         buffer = lastChar = "";
       }
       if (lastItem?.type === "space" && lastItem.char === " ") {
-        lastItem.width += 0.5;
+        lastItem.width += config.compatWidth.space;
         continue;
       }
-      lastItem = { type: "space", char: " ", width: 0.5 };
+      lastItem = { type: "space", char: " ", width: config.compatWidth.space };
       result.push(lastItem);
       continue;
     }
@@ -183,7 +183,7 @@ const measure = (context: CanvasRenderingContext2D, comment: measureTextInput) =
   let currentWidth = 0;
   for (const item of comment.content) {
     const widths = [];
-    context.font = parseFont(item.font || comment.font, comment.size);
+    context.font = parseFont(getValue(item.font, comment.font), comment.size);
     if (item.type === "normal") {
       const lines = item.content.split(/[\n\r]/);
       let count = 0;

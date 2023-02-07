@@ -76,6 +76,11 @@ const initConfig = () => {
     commentYPaddingTop: 4,
     commentYOffset: -0.2,
     letterSpacing: 0,
+
+    compatWidth: {
+      aa: 1,
+      space: 0.5,
+    },
   };
 };
 

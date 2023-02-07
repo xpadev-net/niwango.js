@@ -27,4 +27,10 @@ export type baseConfig = {
   commentYOffset: number;
 
   letterSpacing: number;
+
+  compatWidth: {
+    [key in compatWidthKey]: number;
+  };
 };
+
+type compatWidthKey = "aa" | "space";
