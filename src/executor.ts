@@ -534,9 +534,33 @@ const execute = (script: A_ANY | undefined, scopes: T_scope[]): unknown => {
         } else {
           const argNames = func.script.arguments[0].arguments.map((arg) => getName(arg, scopes) as string);
           const args = argumentParser(script.arguments, scopes, argNames);
-          return execute(func.script.arguments[1], [{ ...args, self: object }, ...scopes]);
+          return execute(func.script.arguments[1], [{ ...args, self: object }, object, ...scopes]);
         }
       }
+      const self = execute({ type: "Identifier", name: "self" }, scopes) as { [key: string]: unknown };
+      if (self?.[callee]) {
+        const func = self[callee] as definedFunction;
+        if (func.type !== "definedFunction") {
+          return;
+        }
+        if (func.isKari) {
+          const args: { [key: string]: unknown } = {};
+          let count = 1;
+          script.arguments.forEach((val) => {
+            if (val?.NIWANGO_Identifier) {
+              args[getName(val.NIWANGO_Identifier, scopes) as string] = execute(val, scopes);
+            } else {
+              args[`$${count++}`] = execute(val, scopes);
+            }
+          });
+          return execute(func.script.arguments[1], [args, ...scopes]);
+        } else {
+          const argNames = func.script.arguments[0].arguments.map((arg) => getName(arg, scopes) as string);
+          const args = argumentParser(script.arguments, scopes, argNames);
+          return execute(func.script.arguments[1], [{ ...args }, ...scopes]);
+        }
+      }
+      console.log(callee, object);
       console.warn("%cUnknown CallExpression:", "background:red;", script, scopes);
       console.trace();
       return;
