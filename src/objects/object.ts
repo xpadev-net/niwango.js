@@ -137,9 +137,18 @@ abstract class IrObject {
     return this.options.alpha;
   }
 
-  set alpha(val: number) {
-    this.options.alpha = val;
-    this.__context.globalAlpha = (100 - val) / 100;
+  set alpha(val: unknown) {
+    let value: number;
+    if (typeof val !== "number") {
+      value = Number(val) || 0;
+    } else if (val > 100) {
+      value = 100;
+    } else if (val < 0) {
+      value = 0;
+    } else {
+      value = val;
+    }
+    this.options.alpha = value;
     this.__draw();
   }
 

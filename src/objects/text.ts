@@ -152,6 +152,7 @@ class IrText extends IrObject {
     }
     const lineOffset = this.parsedComment.lineOffset;
     this.__context.font = parseFont(this.parsedComment.font, this.__size);
+    this.__context.globalAlpha = (100 - this.options.alpha) / 100;
     let lastFont = this.parsedComment.font;
     let leftOffset = 0;
     let lineCount = 0;
