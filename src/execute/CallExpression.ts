@@ -151,7 +151,7 @@ const processCallExpression = (
   }
   if (callee === "timer") {
     const args = argumentParser(script.arguments, scopes, ["timer", "then"], false);
-    args.then && addQueue(args.then, Number(execute(args.timer, scopes)), scopes);
+    typeof args.then === "object" && addQueue(args.then as A_ANY, Number(execute(args.timer, scopes)), scopes);
     return console.info("[call expression] timer:", script, args); //todo: feat timer
   }
   if (callee === "jump") {

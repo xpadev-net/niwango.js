@@ -20,7 +20,7 @@ import { NotImplementedError } from "@/errors/NotImplementedError";
 
 let context: CanvasRenderingContext2D;
 
-const execute: Execute = (script: A_ANY | undefined, scopes: T_scope[]): unknown => {
+const execute: Execute = (script: unknown, scopes: T_scope[]): unknown => {
   try {
     if (!script) {
       return;
@@ -79,7 +79,7 @@ const execute: Execute = (script: A_ANY | undefined, scopes: T_scope[]): unknown
 };
 
 const argumentParser = (inputs: Argument<A_ANY>[], scopes: T_scope[], keys: string[], compute: boolean = true) => {
-  const result: { [key: string]: any } = {};
+  const result: { [key: string]: unknown } = {};
   const nonKeyValues: Argument<A_ANY>[] = [];
   for (const i in inputs) {
     const item = inputs[i];
