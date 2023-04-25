@@ -21,6 +21,13 @@ import { NotImplementedError } from "@/errors/NotImplementedError";
 let context: CanvasRenderingContext2D;
 
 const execute: Execute = (script: unknown, scopes: T_scope[]): unknown => {
+  const utils: Utils = {
+    execute,
+    assign,
+    argumentParser,
+    getName,
+    context,
+  };
   try {
     if (!script) {
       return;
@@ -145,15 +152,6 @@ const assign = (target: A_ANY, value: unknown, scopes: T_scope[]) => {
       console.error(`[assign] ${e.name}: ${e.message}`, target, value, scopes);
     }
   }
-};
-
-const utils: Utils = {
-  execute,
-  assign,
-  argumentParser,
-  getName,
-  // @ts-ignore
-  context,
 };
 
 export { execute, setContext, getName };
