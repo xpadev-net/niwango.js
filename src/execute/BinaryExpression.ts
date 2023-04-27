@@ -19,52 +19,35 @@ import {
 import { Utils } from "@/@types/execute";
 import { NotImplementedError } from "@/errors/NotImplementedError";
 
+const processors = {
+  ">=": GreaterThanOrEqual,
+  "<=": LessThanOrEqual,
+  ">": GreaterThan,
+  "<": LessThan,
+  "!=": (left: unknown, right: unknown) => left !== right,
+  "!==": (left: unknown, right: unknown) => left !== right,
+  "==": (left: unknown, right: unknown) => left === right,
+  "===": (left: unknown, right: unknown) => left === right,
+  "+": Addition,
+  "-": Subtraction,
+  "*": Multiplication,
+  "/": Division,
+  "%": Remainder,
+  "**": Exponentiation,
+  "&": BitwiseAND,
+  "|": BitwiseOR,
+  "^": BitwiseXOR,
+  "<<": LeftShift,
+  ">>": RightShift,
+  ">>>": UnsignedRightShift,
+} as const;
+
 const processBinaryExpression = (script: A_BinaryExpression, scopes: T_scope[], { execute }: Utils) => {
   const left = execute(script.left, scopes);
   const right = execute(script.right, scopes);
-  if (script.operator === ">=") {
-    return GreaterThanOrEqual(left, right);
-  } else if (script.operator === "<=") {
-    return LessThanOrEqual(left, right);
-  } else if (script.operator === ">") {
-    return GreaterThan(left, right);
-  } else if (script.operator === "<") {
-    return LessThan(left, right);
-  } else if (script.operator === "!=") {
-    return left !== right;
-  } else if (script.operator === "!==") {
-    return left !== right;
-  } else if (script.operator === "==") {
-    return left === right;
-  } else if (script.operator === "===") {
-    return left === right;
-  } else if (script.operator === "+") {
-    return Addition(left, right);
-  } else if (script.operator === "-") {
-    return Subtraction(left, right);
-  } else if (script.operator === "*") {
-    return Multiplication(left, right);
-  } else if (script.operator === "/") {
-    return Division(left, right);
-  } else if (script.operator === "%") {
-    return Remainder(left, right);
-  } else if (script.operator === "**") {
-    return Exponentiation(left, right);
-  } else if (script.operator === "&") {
-    return BitwiseAND(left, right);
-  } else if (script.operator === "|") {
-    return BitwiseOR(left, right);
-  } else if (script.operator === "^") {
-    return BitwiseXOR(left, right);
-  } else if (script.operator === "<<") {
-    return LeftShift(left, right);
-  } else if (script.operator === ">>") {
-    return RightShift(left, right);
-  } else if (script.operator === ">>>") {
-    return UnsignedRightShift(left, right);
-  } else {
-    throw new NotImplementedError("BinaryExpression", script, scopes);
-  }
+  const processor = processors[script.operator];
+  if (!processor) throw new NotImplementedError("BinaryExpression", script, scopes);
+  return processor(left, right);
 };
 
 export { processBinaryExpression };

@@ -1,6 +1,7 @@
 import typeGuard from "@/typeGuard";
 import { definedFunction } from "@/@types/function";
 import { Utils } from "@/@types/execute";
+import { NotImplementedError } from "@/errors/NotImplementedError";
 
 const processMemberExpression = (script: A_MemberExpression, scopes: T_scope[], { execute, getName }: Utils) => {
   const left = execute(script.object, scopes);
@@ -8,7 +9,9 @@ const processMemberExpression = (script: A_MemberExpression, scopes: T_scope[], 
     console.error("[member expression] left is undefined", script, scopes);
     return;
   }
-  const right = (script.computed ? execute(script.property, scopes) : getName(script.property, scopes)) as string;
+  const right = (script.computed ? execute(script.property, scopes) : getName(script.property, scopes)) as
+    | string
+    | number;
   if (typeGuard.object(left) && typeGuard.definedFunction(left[right])) {
     const func = left[right] as definedFunction;
     return execute(func.script.arguments[1], [{ self: left }, ...scopes]);
@@ -37,7 +40,7 @@ const processMemberExpression = (script: A_MemberExpression, scopes: T_scope[], 
       }
     } else if (
       (function (i: string): i is "not" | "plus" | "minus" {
-        return !!i.match(/^not|plus|minus$/);
+        return !!i.match(/^(not|plus|minus)$/);
       })(right)
     ) {
       const operator = { not: "!", plus: "+", minus: "-" };
@@ -50,7 +53,7 @@ const processMemberExpression = (script: A_MemberExpression, scopes: T_scope[], 
       return execute(UnaryExpression, scopes);
     } else if (
       (function (i: string): i is "increase" | "decrease" {
-        return !!i.match(/^increase|decreases$/);
+        return !!i.match(/^(increase|decreases)$/);
       })(right)
     ) {
       const operator = { increase: "+", decrease: "-" };
@@ -89,7 +92,7 @@ const processMemberExpression = (script: A_MemberExpression, scopes: T_scope[], 
       } else if (right === "toFloat") {
         return parseFloat(left);
       } else if (right === "eval") {
-        return console.error("[string] eval is currently unavailable", script, scopes); //todo: feat string.eval
+        throw new NotImplementedError("MemberExpression", script, scopes); //todo: feat string.eval
       }
     } else if (Array.isArray(left)) {
       if (right === "shift") {

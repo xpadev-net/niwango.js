@@ -25,9 +25,7 @@ const processCallExpression = (
       : getGlobalScope(scopes)
   ) as { [key: string]: unknown }; //global scope
   if (callee === "dump") {
-    for (const argument of script.arguments) {
-      console.debug("%cdump", "background:green;", execute(argument, scopes));
-    }
+    processDump(script, scopes, { execute, getName, argumentParser, context, assign });
     return;
   }
   if (callee === "def" && typeGuard.object(object)) {
@@ -438,6 +436,12 @@ const processCallExpression = (
     }
   }
   throw new NotImplementedError("CallExpression", script, scopes);
+};
+
+const processDump = (script: A_CallExpression, scopes: T_scope[], { execute }: Utils) => {
+  for (const argument of script.arguments) {
+    console.debug("%cdump", "background:green;", execute(argument, scopes));
+  }
 };
 
 export { processCallExpression };
