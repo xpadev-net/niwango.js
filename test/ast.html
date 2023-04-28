@@ -10,14 +10,24 @@
 <script>
 	const input = document.getElementById("input"),
 		output = document.getElementById("output"),
-			canvas = document.getElementById("canvas"),
-		niwa = new Niwango(canvas);
+			canvas = document.getElementById("canvas");
 	canvas.onclick = () => {
-		const AST = parser.parse(input.value);
-		output.value = JSON.stringify(AST,undefined," ");
-		niwa.execute(input.value,0)
-      niwa.clear();
-	  niwa.draw()
+    const AST = parser.parse(input.value);
+    output.value = JSON.stringify(AST,undefined," ");
+    const comments = input.value.split("\n").map((line,index)=>({
+      id: index,
+      vpos: 0,
+      content: `/${line}`,
+      date: 0,
+      date_usec: 0,
+      owner: true,
+      premium: true,
+      mail: [],
+      user_id: 0,
+      layer: 0
+		}));
+    const niwa = new Niwango(canvas,comments);
+	  niwa.draw(0)
 	}
 
 </script>
