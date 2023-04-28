@@ -66,8 +66,11 @@
         var line = src[s.line - 1];
         var last = s.line === e.line ? e.column : line.length + 1;
         var hatLen = last - s.column || 1;
-        str +=
-          `\n --> ${loc}\n${filler} |\n${offset_s.line} | ${line}\n${filler} | ${peg$padEnd("", s.column - 1, " ")}${peg$padEnd("", hatLen, "^")}`;
+        str += `\n --> ${loc}\n${filler} |\n${offset_s.line} | ${line}\n${filler} | ${peg$padEnd(
+          "",
+          s.column - 1,
+          " ",
+        )}${peg$padEnd("", hatLen, "^")}`;
       } else {
         str += "\n at " + loc;
       }
@@ -86,7 +89,7 @@
           return Array.isArray(part) ? `${classEscape(part[0])}-${classEscape(part[1])}` : classEscape(part);
         });
 
-        return `[${(expectation.inverted ? "^" : "")}${escapedParts.join("")}]`;
+        return `[${expectation.inverted ? "^" : ""}${escapedParts.join("")}]`;
       },
 
       any: function () {

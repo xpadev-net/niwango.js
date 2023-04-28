@@ -1,6 +1,6 @@
-import { Utils } from "@/@types/execute";
+import { execute, getName } from "@/context";
 
-const processVariableDeclaration = (script: A_VariableDeclaration, scopes: T_scope[], { execute, getName }: Utils) => {
+const processVariableDeclaration = (script: A_VariableDeclaration, scopes: T_scope[]) => {
   for (const item of script.declarations) {
     if (item.init === null) {
       return execute(

@@ -1,8 +1,8 @@
-import { Utils } from "@/@types/execute";
 import { Addition, Subtraction } from "@/operators";
 import { NotImplementedError } from "@/errors/NotImplementedError";
+import { assign, execute } from "@/context";
 
-const processUpdateExpression = (script: A_UpdateExpression, scopes: T_scope[], { execute, assign }: Utils) => {
+const processUpdateExpression = (script: A_UpdateExpression, scopes: T_scope[]) => {
   const value = execute(script.argument, scopes);
   if (script.operator === "--") {
     const result = Subtraction(value, 1);

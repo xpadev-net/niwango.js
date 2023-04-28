@@ -1,4 +1,3 @@
-import { Utils } from "@/@types/execute";
 import {
   Addition,
   BitwiseAND,
@@ -14,6 +13,7 @@ import {
   UnsignedRightShift,
 } from "@/operators";
 import { NotImplementedError } from "@/errors/NotImplementedError";
+import { assign, execute } from "@/context";
 
 const processors = {
   "=": (_: unknown, right: unknown) => right,
@@ -34,11 +34,7 @@ const processors = {
   "??=": (left: unknown, right: unknown) => left ?? right,
 } as const;
 
-const processAssignmentExpression = (
-  script: A_AssignmentExpression,
-  scopes: T_scope[],
-  { execute, assign }: Utils,
-): unknown => {
+const processAssignmentExpression = (script: A_AssignmentExpression, scopes: T_scope[]): unknown => {
   const left = execute(script.left, scopes);
   const right = execute(script.right, scopes);
   const processor = processors[script.operator];

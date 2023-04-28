@@ -1,8 +1,8 @@
-import { Utils } from "@/@types/execute";
 import { BitwiseNOT, LogicalNot, UnaryNegation, UnaryPlus } from "@/operators";
 import { NotImplementedError } from "@/errors/NotImplementedError";
+import { execute } from "@/context";
 
-const processUnaryExpression = (script: A_UnaryExpression, scopes: T_scope[], { execute }: Utils) => {
+const processUnaryExpression = (script: A_UnaryExpression, scopes: T_scope[]) => {
   const value = execute(script.argument, scopes);
   if (script.operator === "-") {
     return UnaryNegation(value);

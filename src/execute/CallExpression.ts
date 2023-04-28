@@ -1,4 +1,3 @@
-import { Utils } from "@/@types/execute";
 import typeGuard from "@/typeGuard";
 import { getGlobalScope, resolve } from "@/utils/utils";
 import { definedFunction } from "@/@types/function";
@@ -8,130 +7,36 @@ import { addQueue } from "@/queue";
 import { rand } from "@/functions/rand";
 import { Exponentiation } from "@/operators";
 import { NotImplementedError } from "@/errors/NotImplementedError";
+import { InvalidTypeError } from "@/errors/InvalidTypeError";
+import { argumentParser, assign, context, execute, getName } from "@/context";
 
-const processCallExpression = (
-  script: A_CallExpression,
-  scopes: T_scope[],
-  { execute, getName, argumentParser, context, assign }: Utils,
-) => {
+const processCallExpression = (script: A_CallExpression, scopes: T_scope[]) => {
   const isMemberExpression = typeGuard.MemberExpression(script.callee);
   const callee = getName(
     isMemberExpression ? (script.callee as A_MemberExpression).property : script.callee,
     scopes,
   ) as string;
-  const object = (
-    typeGuard.MemberExpression(script.callee)
-      ? execute(script.callee.object, scopes) //local scope
-      : getGlobalScope(scopes)
-  ) as { [key: string]: unknown }; //global scope
+  const object = getThis(script, scopes);
   if (callee === "dump") {
-    processDump(script, scopes, { execute, getName, argumentParser, context, assign });
-    return;
+    return processDump(script, scopes);
   }
   if (callee === "def" && typeGuard.object(object)) {
-    const func = (() => {
-      if (typeGuard.Identifier(script.arguments[0])) {
-        return {
-          type: "CallExpression",
-          callee: script.arguments[0],
-          arguments: [],
-        } as A_CallExpression;
-      }
-      if (typeGuard.CallExpression(script.arguments[0])) {
-        return script.arguments[0];
-      }
-      return;
-    })();
-    if (!func) {
-      return;
-    }
-    const functionName = getName(func.callee, scopes);
-    if (typeof functionName !== "string") {
-      console.error();
-      return;
-    }
-    object[functionName] = {
-      type: "definedFunction",
-      isKari: false,
-      script,
-    } as definedFunction;
-    return;
+    return processDef(script, scopes, object);
   }
   if (callee === "def_kari" && typeGuard.object(object)) {
-    if (!script.arguments[0]) {
-      return;
-    }
-    const functionName = execute(script.arguments[0], scopes);
-    if (typeof functionName !== "string") {
-      return;
-    }
-    object[functionName] = {
-      type: "definedFunction",
-      isKari: true,
-      script,
-    } as definedFunction;
-    return;
+    return processDefKari(script, scopes, object);
   }
   if (callee === "while_kari") {
-    if (!(script.arguments[0] && script.arguments[1])) {
-      return;
-    }
-    let loopCount = 0;
-    while (execute(script.arguments[0], scopes) && loopCount++ <= 10000) {
-      execute(script.arguments[1], scopes);
-    }
-    return;
+    return processWhileKari(script, scopes);
   }
   if (callee === "times" && !isNaN(Number(object)) && script.arguments[0]) {
-    const body = script.arguments[0];
-    let lastResult;
-    for (let i = 0; i < Number(object); i++) {
-      if (body.type === "LambdaExpression") {
-        lastResult = execute(body.body, [{ "@0": i }, ...scopes]);
-        continue;
-      }
-      lastResult = execute(body, [{ "@0": i }, ...scopes]);
-    }
-    return lastResult;
+    return processTimes(script.arguments[0], scopes, object);
   }
   if (callee === "dt" || callee === "drawText") {
-    const args = argumentParser(script.arguments, scopes, [
-      "text",
-      "x",
-      "y",
-      "z",
-      "size",
-      "pos",
-      "color",
-      "bold",
-      "visible",
-      "filter",
-      "alpha",
-      "mover",
-      "scale",
-    ]);
-    const text = new IrText(context, args);
-    return text;
+    return processDrawText(script, scopes);
   }
   if (callee === "drawShape") {
-    const args = argumentParser(script.arguments, scopes, [
-      "x",
-      "y",
-      "z",
-      "shape",
-      "width",
-      "height",
-      "color",
-      "visible",
-      "pos",
-      "mask",
-      "commentmask",
-      "alpha",
-      "rotation",
-      "mover",
-    ]);
-    const shape = new IrShape(context, args);
-    return shape;
+    return processDrawShape(script, scopes);
   }
   if (callee === "commentTrigger" || callee === "ctrig") {
     const args = argumentParser(script.arguments, scopes, ["then", "timer"], false);
@@ -139,13 +44,7 @@ const processCallExpression = (
     return;
   }
   if (callee === "if") {
-    const args = argumentParser(script.arguments, scopes, ["when", "then", "else"], false);
-    const condition = execute(args.when, scopes);
-    if (condition) {
-      return execute(args.then, scopes);
-    } else {
-      return execute(args.else, scopes);
-    }
+    return processIf(script, scopes);
   }
   if (callee === "timer") {
     const args = argumentParser(script.arguments, scopes, ["timer", "then"], false);
@@ -370,7 +269,8 @@ const processCallExpression = (
       }
       const key = execute(script.arguments[0], scopes) as string;
       const value = execute(script.arguments[1], scopes);
-      return (left[key] = value);
+      left[key] = value;
+      return value;
     } else if (callee === "getSlot") {
       const left = execute(script.callee.object, scopes);
       if (!typeGuard.object(left)) {
@@ -438,9 +338,130 @@ const processCallExpression = (
   throw new NotImplementedError("CallExpression", script, scopes);
 };
 
-const processDump = (script: A_CallExpression, scopes: T_scope[], { execute }: Utils) => {
+const processDump = (script: A_CallExpression, scopes: T_scope[]) => {
   for (const argument of script.arguments) {
     console.debug("%cdump", "background:green;", execute(argument, scopes));
+  }
+};
+
+const getThis = (script: A_CallExpression, scopes: T_scope[]): { [key: string]: unknown } => {
+  if (typeGuard.MemberExpression(script.callee))
+    return execute(script.callee.object, scopes) as { [key: string]: unknown };
+  return getGlobalScope(scopes) as { [key: string]: unknown };
+};
+
+const processDef = (script: A_CallExpression, scopes: T_scope[], object: { [key: string]: unknown }) => {
+  const func = (() => {
+    if (typeGuard.Identifier(script.arguments[0])) {
+      return {
+        type: "CallExpression",
+        callee: script.arguments[0],
+        arguments: [],
+      } as A_CallExpression;
+    }
+    if (typeGuard.CallExpression(script.arguments[0])) {
+      return script.arguments[0];
+    }
+    return undefined;
+  })();
+  if (!func) {
+    return;
+  }
+  const functionName = getName(func.callee, scopes);
+  if (typeof functionName !== "string") {
+    throw new InvalidTypeError("function name must be string", "CallExpression", script, scopes);
+  }
+  object[functionName] = {
+    type: "definedFunction",
+    isKari: false,
+    script,
+  } as definedFunction;
+};
+
+const processDefKari = (script: A_CallExpression, scopes: T_scope[], object: { [key: string]: unknown }) => {
+  if (!script.arguments[0]) {
+    return;
+  }
+  const functionName = execute(script.arguments[0], scopes);
+  if (typeof functionName !== "string") {
+    return;
+  }
+  object[functionName] = {
+    type: "definedFunction",
+    isKari: true,
+    script,
+  } as definedFunction;
+};
+
+const processWhileKari = (script: A_CallExpression, scopes: T_scope[]) => {
+  if (!(script.arguments[0] && script.arguments[1])) {
+    return;
+  }
+  let loopCount = 0;
+  while (execute(script.arguments[0], scopes) && loopCount++ <= 10000) {
+    execute(script.arguments[1], scopes);
+  }
+  return;
+};
+
+const processTimes = (body: Argument<A_ANY>, scopes: T_scope[], object: { [key: string]: unknown }) => {
+  let lastResult;
+  for (let i = 0; i < Number(object); i++) {
+    if (body.type === "LambdaExpression") {
+      lastResult = execute(body.body, [{ "@0": i }, ...scopes]);
+      continue;
+    }
+    lastResult = execute(body, [{ "@0": i }, ...scopes]);
+  }
+  return lastResult;
+};
+
+const processDrawText = (script: A_CallExpression, scopes: T_scope[]) => {
+  const args = argumentParser(script.arguments, scopes, [
+    "text",
+    "x",
+    "y",
+    "z",
+    "size",
+    "pos",
+    "color",
+    "bold",
+    "visible",
+    "filter",
+    "alpha",
+    "mover",
+    "scale",
+  ]);
+  return new IrText(context, args);
+};
+
+const processDrawShape = (script: A_CallExpression, scopes: T_scope[]) => {
+  const args = argumentParser(script.arguments, scopes, [
+    "x",
+    "y",
+    "z",
+    "shape",
+    "width",
+    "height",
+    "color",
+    "visible",
+    "pos",
+    "mask",
+    "commentmask",
+    "alpha",
+    "rotation",
+    "mover",
+  ]);
+  return new IrShape(context, args);
+};
+
+const processIf = (script: A_CallExpression, scopes: T_scope[]) => {
+  const args = argumentParser(script.arguments, scopes, ["when", "then", "else"], false);
+  const condition = execute(args.when, scopes);
+  if (condition) {
+    return execute(args.then, scopes);
+  } else {
+    return execute(args.else, scopes);
   }
 };
 

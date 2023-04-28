@@ -1,10 +1,11 @@
-import { execute, setContext } from "@/executor";
+import { execute, setContext } from "@/context";
 import { parse } from "./parser/parser";
 import { draw, resetObjects } from "@/utils/objectManager";
 import { config, initConfig } from "@/definition/config";
 import { getQueue, resetQueue, setCurrentTime } from "@/queue";
 import { addScript, getScripts } from "@/scripts";
 import { formattedComment } from "@/@types/types";
+import { setup } from "@/utils/setup";
 
 class Niwango {
   private readonly globalScope: T_scope;
@@ -15,6 +16,7 @@ class Niwango {
   private readonly drawContext: CanvasRenderingContext2D;
   static default = Niwango;
   constructor(targetCanvas: HTMLCanvasElement, formattedComments: formattedComment[]) {
+    setup();
     this.targetCanvas = targetCanvas;
     this.drawCanvas = document.createElement("canvas");
     initConfig();

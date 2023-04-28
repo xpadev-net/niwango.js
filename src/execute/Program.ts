@@ -1,6 +1,6 @@
-import { Utils } from "@/@types/execute";
+import { execute } from "@/context";
 
-const processProgram = (script: A_Program, scopes: T_scope[], { execute }: Utils) => {
+const processProgram = (script: A_Program, scopes: T_scope[]) => {
   let lastValue;
   for (const i in script.body) {
     const item = script.body[i];

@@ -1,6 +1,6 @@
-import { Utils } from "@/@types/execute";
+import { execute } from "@/context";
 
-const processSequenceExpression = (script: A_SequenceExpression, scopes: T_scope[], { execute }: Utils) => {
+const processSequenceExpression = (script: A_SequenceExpression, scopes: T_scope[]) => {
   return script.expressions.reduce((_, arg) => execute(arg, scopes), undefined as unknown);
 };
 

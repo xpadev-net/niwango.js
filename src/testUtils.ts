@@ -1,6 +1,8 @@
-import { execute } from "@/executor";
-//@ts-ignore
+import { execute } from "@/context";
 import { parse } from "@/parser/parser";
+import { setup } from "@/utils/setup";
+
+setup();
 
 const run = (niwango: string) => {
   const globalScope = {

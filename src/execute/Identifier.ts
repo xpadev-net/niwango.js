@@ -1,8 +1,8 @@
-import { Utils } from "@/@types/execute";
 import { resolve } from "@/utils/utils";
 import typeGuard from "@/typeGuard";
+import { execute } from "@/context";
 
-const processIdentifier = (script: A_Identifier, scopes: T_scope[], { execute }: Utils): unknown => {
+const processIdentifier = (script: A_Identifier, scopes: T_scope[]): unknown => {
   const value = resolve(script, scopes);
   if (typeGuard.definedFunction(value)) {
     if (value.isKari) {

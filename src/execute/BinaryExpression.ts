@@ -16,8 +16,8 @@ import {
   Subtraction,
   UnsignedRightShift,
 } from "@/operators";
-import { Utils } from "@/@types/execute";
 import { NotImplementedError } from "@/errors/NotImplementedError";
+import { execute } from "@/context";
 
 const processors = {
   ">=": GreaterThanOrEqual,
@@ -42,7 +42,7 @@ const processors = {
   ">>>": UnsignedRightShift,
 } as const;
 
-const processBinaryExpression = (script: A_BinaryExpression, scopes: T_scope[], { execute }: Utils) => {
+const processBinaryExpression = (script: A_BinaryExpression, scopes: T_scope[]) => {
   const left = execute(script.left, scopes);
   const right = execute(script.right, scopes);
   const processor = processors[script.operator];

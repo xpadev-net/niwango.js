@@ -1,9 +1,9 @@
 import typeGuard from "@/typeGuard";
 import { definedFunction } from "@/@types/function";
-import { Utils } from "@/@types/execute";
 import { NotImplementedError } from "@/errors/NotImplementedError";
+import { execute, getName } from "@/context";
 
-const processMemberExpression = (script: A_MemberExpression, scopes: T_scope[], { execute, getName }: Utils) => {
+const processMemberExpression = (script: A_MemberExpression, scopes: T_scope[]) => {
   const left = execute(script.object, scopes);
   if (left === undefined) {
     console.error("[member expression] left is undefined", script, scopes);

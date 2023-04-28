@@ -7,10 +7,3 @@ export type ArgumentParser = (
   compute?: boolean,
 ) => { [key: string]: unknown };
 export type GetName = (target: A_ANY, scopes: T_scope[]) => unknown;
-export type Utils = {
-  execute: Execute;
-  assign: Assign;
-  argumentParser: ArgumentParser;
-  getName: GetName;
-  context: CanvasRenderingContext2D;
-};
