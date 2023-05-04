@@ -31,6 +31,8 @@ jobs:
           cp ./src/parser/parser.js ./docs/
           sed --in-place --expression='s/..\/src\/parser\/parser.js/.\/parser.js/' docs/playground.html
           sed --in-place --expression='s/..\/dist\/bundle.js/.\/bundle.js/' docs/playground.html
+      - name: generate typedoc
+        run: yarn typedoc
       - name: Create new Branch
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
