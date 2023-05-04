@@ -3,7 +3,7 @@
 		<textarea id="input" spellcheck="false"></textarea>
 		<textarea id="ast" spellcheck="false" readonly></textarea>
 	</div>
-	<div class="item">
+	<div class="item right">
 		<canvas id="canvas" width="1920" height="1080"></canvas>
 		<div id="outputWrapper">
 			<div><button id="clear">clear</button></div>
@@ -77,7 +77,11 @@
 	.item{
 		display: flex;
 		flex-direction: column;
+		flex: 1;
 		width: 50vw;
+	}
+	.right{
+		max-width: 500px;
 	}
 	#canvas{
 		border: solid 1px black;
@@ -88,7 +92,6 @@
 	}
 	#outputWrapper {
 		white-space: pre-wrap;
-		overflow-y: scroll;
 		border: solid 1px black;
 		flex-direction: column;
 		display: flex;
@@ -96,6 +99,7 @@
 	}
 	#output {
     flex: 1;
+    overflow-y: scroll;
 	}
 	#output .debug{
 		background: white;
