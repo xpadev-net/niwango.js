@@ -33,6 +33,8 @@ jobs:
           sed --in-place --expression='s/..\/dist\/bundle.js/.\/bundle.js/' docs/playground.html
       - name: generate typedoc
         run: yarn typedoc
+      - name: update .gitignore
+        run: sed -i -e '/\/docs\/type/d' .gitignore
       - name: Create new Branch
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
