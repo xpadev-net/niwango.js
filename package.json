@@ -9,7 +9,7 @@
     "build": "rollup -c rollup.config.js",
     "pegjs": "peggy --cache -o ./src/parser/parser.js --format umd --export-var parser ./src/grammer/niwango.pegjs",
     "watch": "rollup -c rollup.config.js -w",
-    "typedoc": "typedoc --entryPointStrategy Expand --out ./docs/ ./src/",
+    "typedoc": "typedoc --entryPointStrategy Expand --out ./docs/type/ ./src/",
     "copy-dts": "npx copyfiles -u 2 src/@types/*.d.ts dist/dts",
     "prepublishOnly": "npm run copy-dts&&npm run build",
     "check-types": "npx tsc --noEmit --jsx react",
@@ -44,6 +44,8 @@
     "ts-jest": "^29.0.5",
     "ts-node": "^10.9.1",
     "tslib": "^2.5.0",
+    "typedoc": "^0.24.6",
+    "typedoc-plugin-missing-exports": "^2.0.0",
     "typescript": "^4.9.5"
   }
 }

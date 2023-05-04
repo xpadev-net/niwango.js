@@ -25,7 +25,12 @@ jobs:
         run: sed -i -e '/\/dist/d' .gitignore
       - name: generate dev build
         run: yarn build
-
+      - name: setup sandbox
+        run: |
+          cp ./dist/bundle.js ./docs/
+          cp ./src/parser/parser.js ./docs/
+          sed --in-place --expression='s/..\/src\/parser\/parser.js/.\/parser.js/' docs/playground.html
+          sed --in-place --expression='s/..\/dist\/bundle.js/.\/bundle.js/' docs/playground.html
       - name: Create new Branch
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
