@@ -5,5 +5,8 @@
   },
   "linter": {
     "enabled": true
+  },
+  "files": {
+    "ignore": ["src/parser/parser.js"]
   }
 }
