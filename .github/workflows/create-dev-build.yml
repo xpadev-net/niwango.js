@@ -19,12 +19,12 @@ jobs:
           registry-url: 'https://registry.npmjs.org'
       - name: init
         run: |
-          npm i -g yarn
-          yarn install
+          npm i -g pnpm
+          pnpm install
       - name: update .gitignore
         run: sed -i -e '/\/dist/d' .gitignore
       - name: generate dev build
-        run: yarn build
+        run: pnpm build
       - name: setup sandbox
         run: |
           cp ./dist/bundle.js ./docs/
@@ -32,7 +32,7 @@ jobs:
           sed --in-place --expression='s/..\/src\/parser\/parser.js/.\/parser.js/' docs/playground.html
           sed --in-place --expression='s/..\/dist\/bundle.js/.\/bundle.js/' docs/playground.html
       - name: generate typedoc
-        run: yarn typedoc
+        run: pnpm typedoc
       - name: update .gitignore
         run: sed -i -e '/\/docs\/type/d' .gitignore
       - name: Create new Branch
