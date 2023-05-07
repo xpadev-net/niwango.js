@@ -68,6 +68,6 @@
     "resolveJsonModule": true,
     "noImplicitOverride": true
   },
-  "include": ["src/**/*.ts", "types/**/*.d.ts"],
+  "include": ["src/**/*.ts", "types/**/*.d.ts","src/**/*.js"],
   "exclude": ["node_modules"]
 }

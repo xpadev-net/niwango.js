@@ -1,7 +1,7 @@
 import typeGuard from "@/typeGuard";
 import { definedFunction } from "@/@types/function";
-import { NotImplementedError } from "@/errors/NotImplementedError";
 import { execute, getName } from "@/context";
+import { parse } from "../parser/parser";
 
 const processMemberExpression = (script: A_MemberExpression, scopes: T_scope[]) => {
   const left = execute(script.object, scopes);
@@ -92,7 +92,7 @@ const processMemberExpression = (script: A_MemberExpression, scopes: T_scope[]) 
       } else if (right === "toFloat") {
         return parseFloat(left);
       } else if (right === "eval") {
-        throw new NotImplementedError("MemberExpression", script, scopes); //todo: feat string.eval
+        return execute(parse(left), scopes);
       }
     } else if (Array.isArray(left)) {
       if (right === "shift") {
