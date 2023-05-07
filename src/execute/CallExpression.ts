@@ -10,6 +10,11 @@ import { NotImplementedError } from "@/errors/NotImplementedError";
 import { InvalidTypeError } from "@/errors/InvalidTypeError";
 import { argumentParser, assign, context, execute, getName } from "@/context";
 
+/**
+ * 関数呼び出しを実行する
+ * @param {A_CallExpression} script
+ * @param {T_scope[]} scopes
+ */
 const processCallExpression = (script: A_CallExpression, scopes: T_scope[]) => {
   const isMemberExpression = typeGuard.MemberExpression(script.callee);
   const callee = getName(
@@ -338,18 +343,37 @@ const processCallExpression = (script: A_CallExpression, scopes: T_scope[]) => {
   throw new NotImplementedError("CallExpression", script, scopes);
 };
 
+/**
+ * @非標準
+ * @関数
+ * デバッグ用関数
+ * @param script
+ * @param scopes
+ */
 const processDump = (script: A_CallExpression, scopes: T_scope[]) => {
   for (const argument of script.arguments) {
     console.debug("%cdump", "background:green;", execute(argument, scopes));
   }
 };
 
+/**
+ * 参照を取るための関数
+ * @param script
+ * @param scopes
+ */
 const getThis = (script: A_CallExpression, scopes: T_scope[]): { [key: string]: unknown } => {
   if (typeGuard.MemberExpression(script.callee))
     return execute(script.callee.object, scopes) as { [key: string]: unknown };
   return getGlobalScope(scopes) as { [key: string]: unknown };
 };
 
+/**
+ * @関数
+ * 関数定義用関数
+ * @param script
+ * @param scopes
+ * @param object
+ */
 const processDef = (script: A_CallExpression, scopes: T_scope[], object: { [key: string]: unknown }) => {
   const func = (() => {
     if (typeGuard.Identifier(script.arguments[0])) {
@@ -378,6 +402,13 @@ const processDef = (script: A_CallExpression, scopes: T_scope[], object: { [key:
   } as definedFunction;
 };
 
+/**
+ * @関数
+ * 関数定義用関数
+ * @param script
+ * @param scopes
+ * @param object
+ */
 const processDefKari = (script: A_CallExpression, scopes: T_scope[], object: { [key: string]: unknown }) => {
   if (!script.arguments[0]) {
     return;
@@ -393,6 +424,12 @@ const processDefKari = (script: A_CallExpression, scopes: T_scope[], object: { [
   } as definedFunction;
 };
 
+/**
+ * @関数
+ * whileループ用関数
+ * @param script
+ * @param scopes
+ */
 const processWhileKari = (script: A_CallExpression, scopes: T_scope[]) => {
   if (!(script.arguments[0] && script.arguments[1])) {
     return;
@@ -401,9 +438,15 @@ const processWhileKari = (script: A_CallExpression, scopes: T_scope[]) => {
   while (execute(script.arguments[0], scopes) && loopCount++ <= 10000) {
     execute(script.arguments[1], scopes);
   }
-  return;
 };
 
+/**
+ * @関数
+ * forループ用関数
+ * @param body
+ * @param scopes
+ * @param object
+ */
 const processTimes = (body: Argument<A_ANY>, scopes: T_scope[], object: { [key: string]: unknown }) => {
   let lastResult;
   for (let i = 0; i < Number(object); i++) {
@@ -416,6 +459,12 @@ const processTimes = (body: Argument<A_ANY>, scopes: T_scope[], object: { [key: 
   return lastResult;
 };
 
+/**
+ * @関数
+ * 文字描画関数
+ * @param script
+ * @param scopes
+ */
 const processDrawText = (script: A_CallExpression, scopes: T_scope[]) => {
   const args = argumentParser(script.arguments, scopes, [
     "text",
@@ -435,6 +484,12 @@ const processDrawText = (script: A_CallExpression, scopes: T_scope[]) => {
   return new IrText(context, args);
 };
 
+/**
+ * @関数
+ * 図形描画関数
+ * @param script
+ * @param scopes
+ */
 const processDrawShape = (script: A_CallExpression, scopes: T_scope[]) => {
   const args = argumentParser(script.arguments, scopes, [
     "x",
@@ -455,6 +510,12 @@ const processDrawShape = (script: A_CallExpression, scopes: T_scope[]) => {
   return new IrShape(context, args);
 };
 
+/**
+ * @関数
+ * if文用関数
+ * @param script
+ * @param scopes
+ */
 const processIf = (script: A_CallExpression, scopes: T_scope[]) => {
   const args = argumentParser(script.arguments, scopes, ["when", "then", "else"], false);
   const condition = execute(args.when, scopes);

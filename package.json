@@ -14,7 +14,7 @@
     "prepublishOnly": "npm run copy-dts&&npm run build",
     "check-types": "npx tsc --noEmit --jsx react",
     "rome": "rome check ./src",
-    "rome:fix": "rome check ./src --apply-suggested",
+    "rome:fix": "rome check ./src --apply",
     "format": "rome format --write --skip-errors ./src",
     "lint": "npm run rome&&npm run check-types",
     "lint:fix": "npm run format&&npm run rome:fix&&npm run check-types",

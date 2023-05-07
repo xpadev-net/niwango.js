@@ -1,6 +1,13 @@
 import { execute, getName, setArgumentParser } from "@/context";
 import { ArgumentParser } from "@/@types/execute";
 
+/**
+ * callExpressionの引数をパースする
+ * @param inputs
+ * @param scopes
+ * @param keys
+ * @param compute
+ */
 const argumentParser: ArgumentParser = (
   inputs: Argument<A_ANY>[],
   scopes: T_scope[],

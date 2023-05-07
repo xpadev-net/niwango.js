@@ -1,6 +1,10 @@
 import { IrObject } from "@/objects/object";
 
 let drawObjects: IrObject[] = [];
+
+/**
+ * 描画オブジェクトを描画する
+ */
 const draw = () => {
   drawObjects.sort((a, b) => {
     if (a.z < b.z) {
@@ -16,9 +20,18 @@ const draw = () => {
     }
   }
 };
+
+/**
+ * 描画オブジェクトを追加する
+ * @param item
+ */
 const register = (item: IrObject) => {
   drawObjects.push(item);
 };
+
+/**
+ * 描画オブジェクトをリセットする
+ */
 const resetObjects = () => {
   drawObjects = [];
 };

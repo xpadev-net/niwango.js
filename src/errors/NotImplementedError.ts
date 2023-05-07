@@ -1,3 +1,6 @@
+/**
+ * 未実装の関数や機能を呼び出したときに発生するエラー
+ */
 class NotImplementedError extends Error {
   ASTName: string;
   ast: A_ANY;

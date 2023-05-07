@@ -1,5 +1,9 @@
 import type { FontItem, platform, platformFont } from "@/@types/fonts";
 
+/**
+ * フォントを結合するための関数
+ * @param fonts
+ */
 const build = (fonts: FontItem[]): FontItem => {
   return fonts.reduce(
     (pv, val, index) => {
@@ -13,6 +17,9 @@ const build = (fonts: FontItem[]): FontItem => {
   );
 };
 
+/**
+ * 結合用のパーツ
+ */
 const fontTemplates = {
   arial: {
     font: 'Arial, "ＭＳ Ｐゴシック", "MS PGothic", MSPGothic, MS-PGothic',
@@ -36,6 +43,9 @@ const fontTemplates = {
   },
 };
 
+/**
+ * 実際に使用するフォント
+ */
 const fonts: { [key in platform]: platformFont } = {
   win7: {
     //win8

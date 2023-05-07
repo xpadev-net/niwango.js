@@ -2,7 +2,13 @@ import { fonts } from "@/definition/fonts";
 import type { platform } from "@/@types/fonts";
 import { baseConfig } from "@/@types/config";
 
+/**
+ * コンフィグ
+ */
 let config: baseConfig;
+/**
+ * コンフィグ初期化
+ */
 const initConfig = () => {
   const platform: platform = (function (ua) {
     if (ua.match(/windows nt 6\.[12]/i)) {

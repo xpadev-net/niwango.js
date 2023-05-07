@@ -22,6 +22,9 @@ const defaultOptions: IShapeOptions = {
   mover: "",
 };
 
+/**
+ * 図形オブジェクトのクラス
+ */
 class IrShape extends IrObject {
   override options: IShapeOptions;
   constructor(_context: CanvasRenderingContext2D, _options: IShapeOptionsNullable) {

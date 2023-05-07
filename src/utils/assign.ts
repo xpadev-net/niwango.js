@@ -1,6 +1,12 @@
 import typeGuard from "@/typeGuard";
 import { execute, getName, setAssign } from "@/context";
 
+/**
+ * 変数に代入する関数
+ * @param target
+ * @param value
+ * @param scopes
+ */
 const assign = (target: A_ANY, value: unknown, scopes: T_scope[]) => {
   if (scopes.length < 1) {
     return;

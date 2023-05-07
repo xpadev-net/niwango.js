@@ -16,6 +16,9 @@ const defaultOptions: IObjectOptions = {
   mover: "",
 };
 
+/**
+ * 描画オブジェクトの基底クラス
+ */
 abstract class IrObject {
   protected readonly targetContext: CanvasRenderingContext2D;
   protected readonly __canvas: HTMLCanvasElement;

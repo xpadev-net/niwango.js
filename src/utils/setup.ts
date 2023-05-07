@@ -3,6 +3,9 @@ import { initArgumentParser } from "@/utils/argumentParser";
 import { initGetName } from "@/utils/getName";
 import { initExecute } from "@/executor";
 
+/**
+ * 関数を初期化する
+ */
 const setup = () => {
   initAssign();
   initArgumentParser();

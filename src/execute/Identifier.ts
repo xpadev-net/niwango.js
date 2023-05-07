@@ -2,6 +2,11 @@ import { resolve } from "@/utils/utils";
 import typeGuard from "@/typeGuard";
 import { execute } from "@/context";
 
+/**
+ * Identifierから実際の値を取得する
+ * @param script
+ * @param scopes
+ */
 const processIdentifier = (script: A_Identifier, scopes: T_scope[]): unknown => {
   const value = resolve(script, scopes);
   if (typeGuard.definedFunction(value)) {

@@ -2,6 +2,11 @@ import typeGuard from "@/typeGuard";
 import { config } from "@/definition/config";
 import { commentFont } from "@/@types/IrText";
 
+/**
+ * 変数の参照を取得する関数
+ * @param script
+ * @param scopes
+ */
 const resolve = (script: A_ANY, scopes: T_scope[]) => {
   try {
     if (typeGuard.Identifier(script)) {
@@ -18,6 +23,11 @@ const resolve = (script: A_ANY, scopes: T_scope[]) => {
     }
   }
 };
+
+/**
+ * 親変数の参照を取得する関数
+ * @param scopes
+ */
 const getGlobalScope = (scopes: T_scope[]): T_scope | undefined => {
   if (scopes.length < 2) {
     return undefined;
@@ -42,6 +52,11 @@ const parseFont = (font: commentFont, size: string | number): string => {
   }
 };
 
+/**
+ * 値がundefinedの場合にfallbackを返す
+ * @param value
+ * @param fallback
+ */
 const getValue = <T>(value: T | undefined, fallback: T): T => {
   return value ?? fallback;
 };

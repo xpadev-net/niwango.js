@@ -2,6 +2,11 @@ import { Addition, Subtraction } from "@/operators";
 import { NotImplementedError } from "@/errors/NotImplementedError";
 import { assign, execute } from "@/context";
 
+/**
+ * 更新式を実行する
+ * @param script
+ * @param scopes
+ */
 const processUpdateExpression = (script: A_UpdateExpression, scopes: T_scope[]) => {
   const value = execute(script.argument, scopes);
   if (script.operator === "--") {

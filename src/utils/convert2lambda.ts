@@ -1,3 +1,8 @@
+/**
+ * lambda式を生成する
+ * @param callee
+ * @param script
+ */
 const convert2lambda = (callee: string, script: A_CallExpression): A_Lambda => {
   return {
     type: "CallExpression",

@@ -4,6 +4,10 @@ import { setup } from "@/utils/setup";
 
 setup();
 
+/**
+ * テスト用サンドボックス
+ * @param niwango
+ */
 const run = (niwango: string) => {
   const globalScope = {
     Object: {},

@@ -19,6 +19,9 @@ import {
 import { NotImplementedError } from "@/errors/NotImplementedError";
 import { execute } from "@/context";
 
+/**
+ * 演算子と処理の対応表
+ */
 const processors = {
   ">=": GreaterThanOrEqual,
   "<=": LessThanOrEqual,
@@ -42,6 +45,11 @@ const processors = {
   ">>>": UnsignedRightShift,
 } as const;
 
+/**
+ * 演算式を実行する
+ * @param {A_BinaryExpression} script
+ * @param {T_scope[]} scopes
+ */
 const processBinaryExpression = (script: A_BinaryExpression, scopes: T_scope[]) => {
   const left = execute(script.left, scopes);
   const right = execute(script.right, scopes);

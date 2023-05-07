@@ -1,3 +1,6 @@
+/**
+ * 予期していない型が渡された際に発生するエラー
+ */
 class InvalidTypeError extends Error {
   ASTName: string;
   ast: A_ANY;

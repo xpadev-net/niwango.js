@@ -4,6 +4,10 @@ import { charItem, measureTextInput, parsedComment } from "@/@types/flashText";
 import { getValue, parseFont } from "@/utils/utils";
 import { nativeSort } from "@/utils/sort";
 
+/**
+ * Flashのフォント名を取得する
+ * @param font
+ */
 const getFontName = (font: string): commentFlashFont => {
   if (font.match(/^simsun/)) {
     return "simsun";
@@ -14,12 +18,20 @@ const getFontName = (font: string): commentFlashFont => {
   return "gulim";
 };
 
+/**
+ * Flash処理用にコメントを分割する
+ * @param string
+ */
 const splitContents = (string: string) => {
   return Array.from(string.match(/[\n\r]|[^\n\r]+/g) || []).map((val) =>
     Array.from(val.match(/[ -~｡-ﾟ]+|[^ -~｡-ﾟ]+/g) || []),
   );
 };
 
+/**
+ * 描画するフォントを処理
+ * @param string
+ */
 const getFontIndex = (string: string): commentContentIndex[] => {
   const regex = {
     simsunStrong: new RegExp(config.flashChar.simsunStrong),
@@ -43,6 +55,12 @@ const getFontIndex = (string: string): commentContentIndex[] => {
   }
   return index;
 };
+
+/**
+ * 文字列をFlash処理用にパースする
+ * @param string
+ * @param compat
+ */
 const parse = (string: string, compat = false): parsedComment => {
   const content: commentContentItem[] = [];
   const lines = splitContents(string);
@@ -75,6 +93,11 @@ const parse = (string: string, compat = false): parsedComment => {
   return { content, font, lineCount, lineOffset };
 };
 
+/**
+ * 半角文字列をFlash処理用にパースする
+ * @param string
+ * @param compat
+ */
 const parseHalfStr = (string: string, compat: boolean): commentContentItem => {
   if (!compat) {
     return {
@@ -125,6 +148,10 @@ const parseHalfStr = (string: string, compat: boolean): commentContentItem => {
   return { type: "compat", content: result };
 };
 
+/**
+ * 全角文字をFlash処理用にパースする
+ * @param string
+ */
 const parseFullStr = (string: string): commentContentItem[] => {
   const index = getFontIndex(string);
   if (index.length === 0) {
@@ -178,6 +205,11 @@ const parseFullStr = (string: string): commentContentItem[] => {
   ];
 };
 
+/**
+ * 文字幅を計測する
+ * @param context
+ * @param comment
+ */
 const measure = (context: CanvasRenderingContext2D, comment: measureTextInput) => {
   const width_arr = [];
   let currentWidth = 0;

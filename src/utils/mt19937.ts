@@ -100,6 +100,10 @@ const getNumber = (input: number | undefined) => {
   return getValue(input, 0);
 };
 
+/**
+ * mt19937の乱数を生成
+ * @param seed
+ */
 const mt19937 = (seed: number): number => {
   __init_by_array([seed], 1);
   return __genrand_int32();

@@ -1,3 +1,7 @@
+/**
+ * オブジェクトの配列を指定したキーでソートする
+ * @param key
+ */
 const nativeSort = <T>(key: string) => {
   return (a: { [x: string]: T }, b: { [x: string]: T }) => {
     const left = a[key] || 0;

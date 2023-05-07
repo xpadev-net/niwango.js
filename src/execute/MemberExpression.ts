@@ -3,6 +3,11 @@ import { definedFunction } from "@/@types/function";
 import { execute, getName } from "@/context";
 import { parse } from "../parser/parser";
 
+/**
+ * 配列やオブジェクトを処理する
+ * @param script
+ * @param scopes
+ */
 const processMemberExpression = (script: A_MemberExpression, scopes: T_scope[]) => {
   const left = execute(script.object, scopes);
   if (left === undefined) {

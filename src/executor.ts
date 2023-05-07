@@ -19,6 +19,11 @@ import {
 import { NotImplementedError } from "@/errors/NotImplementedError";
 import { setExecute } from "@/context";
 
+/**
+ * ASTを実行する関数
+ * @param script
+ * @param scopes
+ */
 const execute: Execute = (script: unknown, scopes: T_scope[]): unknown => {
   try {
     if (!script) {

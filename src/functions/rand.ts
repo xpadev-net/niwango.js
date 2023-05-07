@@ -3,6 +3,12 @@ import { mt19937 } from "@/utils/mt19937";
 
 let randCalledCount = 0;
 const onload = new Date().getTime();
+/**
+ * mt19937で乱数を生成する
+ * オリジナルのとおりに実装してるはずだけど何故か結果が違う
+ * どうして...
+ * @param value
+ */
 const rand = (value?: unknown) => {
   let seed = 0;
   if (typeof value === "undefined") {

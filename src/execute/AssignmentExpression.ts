@@ -15,6 +15,9 @@ import {
 import { NotImplementedError } from "@/errors/NotImplementedError";
 import { assign, execute } from "@/context";
 
+/**
+ * 演算子と処理の対応表
+ */
 const processors = {
   "=": (_: unknown, right: unknown) => right,
   "+=": Addition,
@@ -34,6 +37,11 @@ const processors = {
   "??=": (left: unknown, right: unknown) => left ?? right,
 } as const;
 
+/**
+ * 代入式を実行する
+ * @param {A_AssignmentExpression} script
+ * @param {T_scope[]} scopes
+ */
 const processAssignmentExpression = (script: A_AssignmentExpression, scopes: T_scope[]): unknown => {
   const left = execute(script.left, scopes);
   const right = execute(script.right, scopes);

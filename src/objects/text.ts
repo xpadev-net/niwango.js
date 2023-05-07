@@ -24,6 +24,9 @@ const defaultOptions: ITextOptions = {
   mover: "",
 };
 
+/**
+ * テキストオブジェクトのクラス
+ */
 class IrText extends IrObject {
   protected override options: ITextOptions;
   private parsedComment: parsedComment;
