@@ -145,7 +145,7 @@ IdentifierPart
   / UnicodeConnectorPunctuation
   / "\u200C"
   / "\u200D"
-  / [^ -~｡-ﾟ]
+  / [^ -~｡-ﾟ\n]
 
 UnicodeLetter
   = Lu
