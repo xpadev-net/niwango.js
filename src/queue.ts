@@ -1,19 +1,12 @@
+import { currentTime } from "@/context";
+
 let queue: { script: A_ANY; time: number; scopes: T_scope[]; type: "queue" }[] = [];
-let currentTime: number = 0;
 
 /**
  * キューの初期化
  */
 const resetQueue = () => {
   queue = [];
-};
-
-/**
- * 現在時刻の更新
- * @param time
- */
-const setCurrentTime = (time: number) => {
-  currentTime = time;
 };
 
 /**
@@ -48,4 +41,4 @@ const getQueue = (time: number) => {
   queue = newQueue;
   return result;
 };
-export { queue, resetQueue, setCurrentTime, getQueue, addQueue };
+export { queue, resetQueue, getQueue, addQueue };

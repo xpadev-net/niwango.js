@@ -6,7 +6,7 @@ const defaultOptions: IShapeOptions = {
   x: 0,
   y: 0,
   z: 0,
-  shape: "rect",
+  shape: "circle",
   width: 30,
   height: 30,
   pos: "naka",
@@ -29,9 +29,10 @@ class IrShape extends IrObject {
   override options: IShapeOptions;
   constructor(_context: CanvasRenderingContext2D, _options: IShapeOptionsNullable) {
     super(_context, _options);
-    this.options = Object.assign({ ...defaultOptions }, _options);
+    this.options = { ...defaultOptions, ..._options };
     this.__width = this.options.width;
     this.__height = this.options.height;
+    this.__parsePos();
     this.__draw();
   }
 

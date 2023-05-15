@@ -1,6 +1,7 @@
 import { fonts } from "@/definition/fonts";
 import type { platform } from "@/@types/fonts";
 import { baseConfig } from "@/@types/config";
+import { colors } from "@/definition/colors";
 
 /**
  * コンフィグ
@@ -87,6 +88,8 @@ const initConfig = () => {
       aa: 1,
       space: 0.5,
     },
+
+    colors: colors,
   };
 };
 

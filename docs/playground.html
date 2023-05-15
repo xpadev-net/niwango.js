@@ -44,22 +44,28 @@
 	canvas.onclick = () => {
     const AST = parser.parse(input.value);
     ast.value = JSON.stringify(AST,undefined," ");
-    const comments = input.value.split("\n").map((line,index)=>({
-      id: index,
-      vpos: 0,
-      content: `/${line}`,
-      date: 0,
-      date_usec: 0,
-      owner: true,
-      premium: true,
-      mail: [],
-      user_id: 0,
-      layer: 0
+    const comments = input.value.split("\n")
+				.map((line,index)=>({
+						comment:{
+							id: index,
+							content: [{content:`/${line}`}],
+							date: 0,
+							date_usec: 0,
+							owner: true,
+							premium: true,
+							mail: [],
+							user_id: 0,
+							layer: 0
+						},
+						owner: true,
+						vpos: 0,
+						mail: [],
 		}));
     try {
       const niwa = new Niwango(canvas,comments);
       niwa.draw(0)
     }catch (e){
+      console.log(1)
       output.value += JSON.stringify(e) + "\n";
 		}
 	}

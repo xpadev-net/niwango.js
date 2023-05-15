@@ -31,6 +31,7 @@ export type baseConfig = {
   compatWidth: {
     [key in compatWidthKey]: number;
   };
+  colors: { [p: string]: string };
 };
 
 type compatWidthKey = "aa" | "space";

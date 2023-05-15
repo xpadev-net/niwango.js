@@ -29,6 +29,7 @@ const processors = {
   "<": LessThan,
   "!=": (left: unknown, right: unknown) => left !== right,
   "!==": (left: unknown, right: unknown) => left !== right,
+  "<>": (left: unknown, right: unknown) => left !== right,
   "==": (left: unknown, right: unknown) => left === right,
   "===": (left: unknown, right: unknown) => left === right,
   "+": Addition,

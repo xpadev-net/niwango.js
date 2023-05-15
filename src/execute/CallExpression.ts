@@ -8,7 +8,8 @@ import { rand } from "@/functions/rand";
 import { Exponentiation } from "@/operators";
 import { NotImplementedError } from "@/errors/NotImplementedError";
 import { InvalidTypeError } from "@/errors/InvalidTypeError";
-import { argumentParser, assign, context, execute, getName } from "@/context";
+import { argumentParser, assign, context, currentTime, execute, getName } from "@/context";
+import { addHandler } from "@/commentHandler";
 
 /**
  * 関数呼び出しを実行する
@@ -45,6 +46,7 @@ const processCallExpression = (script: A_CallExpression, scopes: T_scope[]) => {
   }
   if (callee === "commentTrigger" || callee === "ctrig") {
     const args = argumentParser(script.arguments, scopes, ["then", "timer"], false);
+    addHandler(args.then as A_ANY, scopes, currentTime, args.timer ? Number(execute(args.timer, scopes)) : undefined);
     console.warn("[call expression] commentTrigger", script, args, scopes); //todo: feat commentTrigger
     return;
   }

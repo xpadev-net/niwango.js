@@ -1,11 +1,13 @@
-import { execute, setContext } from "@/context";
+import { execute, setComments, setContext, setCurrentTime } from "@/context";
 import { parse } from "./parser/parser";
 import { draw, resetObjects } from "@/utils/objectManager";
 import { config, initConfig } from "@/definition/config";
-import { getQueue, resetQueue, setCurrentTime } from "@/queue";
+import { getQueue, resetQueue } from "@/queue";
 import { addScript, getScripts } from "@/scripts";
-import { formattedComment } from "@/@types/types";
+import { IComment } from "@/@types/types";
 import { setup } from "@/utils/setup";
+import { getComments, resetHandlers, triggerHandlers } from "@/commentHandler";
+import { CommentMapper } from "@/commentMapper";
 
 class Niwango {
   private readonly globalScope: T_scope;
@@ -15,19 +17,22 @@ class Niwango {
   private readonly drawCanvas: HTMLCanvasElement;
   private readonly drawContext: CanvasRenderingContext2D;
   static default = Niwango;
-  constructor(targetCanvas: HTMLCanvasElement, formattedComments: formattedComment[]) {
+  constructor(targetCanvas: HTMLCanvasElement, formattedComments: IComment[]) {
     setup();
     this.targetCanvas = targetCanvas;
     this.drawCanvas = document.createElement("canvas");
     initConfig();
-    formattedComments.forEach((comment) => {
-      if (comment.content.match(/^\//) && comment.owner) {
+    const comments = formattedComments.map((comment) => new CommentMapper(comment));
+
+    comments.forEach((comment) => {
+      if (comment.message.match(/^\//) && comment.comment.owner) {
         try {
-          addScript(parse(comment.content.slice(1)), comment.vpos);
+          addScript(parse(comment.message.slice(1)), comment.vpos);
         } catch (e) {
-          console.log(comment.content.slice(1), comment.id, e);
+          console.log(comment.message.slice(1), comment.comment.comment.id, e);
         }
       }
+      setComments(comments);
     });
     this.drawCanvas.width = 1920;
     this.drawCanvas.height = 1080;
@@ -42,6 +47,7 @@ class Niwango {
     setContext(drawContext);
     resetQueue();
     resetObjects();
+    resetHandlers();
     setCurrentTime(0);
     this.globalScope = {
       Object: {},
@@ -63,7 +69,7 @@ class Niwango {
   }
 
   public draw(vpos: number) {
-    [...getQueue(vpos), ...getScripts(vpos)]
+    [...getQueue(vpos), ...getScripts(vpos), ...getComments(vpos)]
       .sort((a, b) => {
         if (a.time < b.time) {
           return -1;
@@ -75,6 +81,10 @@ class Niwango {
       })
       .forEach((queue) => {
         setCurrentTime(queue.time);
+        if (queue.type === "comment") {
+          triggerHandlers(queue.comment);
+          return;
+        }
         execute(queue.script, queue.type === "queue" ? queue.scopes : [this.globalScope, this.environmentScope]);
       });
     this.clear();

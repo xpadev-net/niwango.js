@@ -1,5 +1,5 @@
 import { definedFunction } from "@/@types/function";
-import { formattedComment } from "@/@types/types";
+import { FormattedComment } from "@/@types/types";
 
 const typeGuard = {
   Literal: (i: unknown): i is A_Literal => !!i && typeof i === "object" && (i as A_ANY).type === "Literal",
@@ -42,7 +42,7 @@ const typeGuard = {
     !!i && typeof i === "object" && (i as definedFunction).type === "definedFunction",
   object: (i: unknown): i is { [key: string]: unknown } => !!i && typeof i === "object",
   comment: {
-    comment: (i: unknown): i is formattedComment =>
+    comment: (i: unknown): i is FormattedComment =>
       objectVerify(i, ["id", "vpos", "content", "date", "date_usec", "owner", "premium", "mail", "user_id", "layer"]),
   },
 };

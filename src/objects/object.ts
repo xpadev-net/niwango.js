@@ -77,11 +77,11 @@ abstract class IrObject {
 
   get __x() {
     if (this.options.posX === "migi") {
-      return config.canvasWidth - this.options.x - this.width;
+      return config.stageWidth - this.options.x - this.width;
     } else if (this.options.posX === "hidari") {
       return this.options.x;
     }
-    return config.canvasWidth / 2 + this.options.x - this.width / 2;
+    return config.stageWidth / 2 + this.options.x - this.width / 2;
   }
 
   get y() {

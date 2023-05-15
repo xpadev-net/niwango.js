@@ -49,9 +49,9 @@ class IrText extends IrObject {
       this.__size = Math.abs(size);
     }
     this.parsedComment = parse(this.text, this.options.size < 3);
-    document.body.append(this.__canvas);
     this.__updateColor();
     this.__updateFont();
+    this.__parsePos();
     this.__measure();
     this.__draw();
   }
