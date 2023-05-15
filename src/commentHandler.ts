@@ -20,6 +20,7 @@ const addHandler = (script: A_ANY, scopes: T_scope[], time: number, duration?: n
 };
 
 const triggerHandlers = (comment: CommentMapper) => {
+  if (comment.message.startsWith("/")) return;
   for (const handler of handlers) {
     const globalScope = getGlobalScope(handler.scopes);
     if (!globalScope) continue;
