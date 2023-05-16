@@ -15,6 +15,7 @@ import {
   RightShift,
   Subtraction,
   UnsignedRightShift,
+  Compare,
 } from "@/operators";
 import { NotImplementedError } from "@/errors/NotImplementedError";
 import { execute } from "@/context";
@@ -29,7 +30,7 @@ const processors = {
   "<": LessThan,
   "!=": (left: unknown, right: unknown) => left !== right,
   "!==": (left: unknown, right: unknown) => left !== right,
-  "<>": (left: unknown, right: unknown) => left !== right,
+  "<>": Compare,
   "==": (left: unknown, right: unknown) => left === right,
   "===": (left: unknown, right: unknown) => left === right,
   "+": Addition,

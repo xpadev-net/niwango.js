@@ -21,9 +21,16 @@ class CommentMapper {
   }
 
   get vpos() {
-    return this.comment.vpos;
+    return this.comment.vpos / 100;
   }
   set vpos(val: number) {
+    this.comment.vpos = Math.floor(val * 100);
+  }
+
+  get _vpos() {
+    return this.comment.vpos;
+  }
+  set _vpos(val: number) {
     this.comment.vpos = val;
   }
 

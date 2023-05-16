@@ -27,7 +27,7 @@ class Niwango {
     comments.forEach((comment) => {
       if (comment.message.match(/^\//) && comment.comment.owner) {
         try {
-          addScript(parse(comment.message.slice(1)), comment.vpos);
+          addScript(parse(comment.message.slice(1)), comment._vpos);
         } catch (e) {
           console.log(comment.message.slice(1), comment.comment.comment.id, e);
         }

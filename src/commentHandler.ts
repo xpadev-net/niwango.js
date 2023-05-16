@@ -31,9 +31,9 @@ const triggerHandlers = (comment: CommentMapper) => {
 
 const getComments = (vpos: number) => {
   return comments
-    .filter((comment) => comment.vpos <= vpos && comment.vpos > currentTime)
+    .filter((comment) => comment._vpos <= vpos && comment._vpos > currentTime)
     .map((comment) => ({
-      time: comment.vpos,
+      time: comment._vpos,
       comment,
       type: "comment",
     })) as { time: number; comment: CommentMapper; type: "comment" }[];

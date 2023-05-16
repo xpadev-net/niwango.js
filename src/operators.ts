@@ -210,6 +210,24 @@ const LogicalNot = (value: unknown) => {
   return !value;
 };
 
+/**
+ * 比較
+ * @param left
+ * @param right
+ */
+const Compare = (left: unknown, right: unknown) => {
+  if (typeof left === "string" && typeof right === "string") {
+    if (left < right) return -1;
+    if (left > right) return 1;
+    return 0;
+  }
+  const leftNumber = Number(left);
+  const rightNumber = Number(right);
+  if (leftNumber < rightNumber) return -1;
+  if (leftNumber > rightNumber) return 1;
+  return 0;
+};
+
 export {
   Multiplication,
   Subtraction,
@@ -231,4 +249,5 @@ export {
   UnaryNegation,
   UnaryPlus,
   LogicalNot,
+  Compare,
 };
