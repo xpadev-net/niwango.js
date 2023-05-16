@@ -4,6 +4,7 @@ import {
   BitwiseNOT,
   BitwiseOR,
   BitwiseXOR,
+  Compare,
   Division,
   Exponentiation,
   GreaterThan,
@@ -271,4 +272,10 @@ test("LogicalNot", () => {
   expect(LogicalNot("Cat")).toBe(false);
   expect(LogicalNot({})).toBe(false);
   expect(LogicalNot(new Boolean(false))).toBe(false);
+});
+
+test("Compare", () => {
+  expect(Compare(1, 2)).toBe(-1);
+  expect(Compare(2, 1)).toBe(1);
+  expect(Compare(1, 1)).toBe(0);
 });
