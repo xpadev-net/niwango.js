@@ -11,6 +11,7 @@ export interface IComment {
   owner: boolean;
   layer: number;
   mail: string[];
+  content: string;
   image?: HTMLCanvasElement | null;
   draw: (vpos: number, showCollision: boolean, isDebug: boolean) => void;
 }
@@ -50,6 +51,7 @@ export type FormattedCommentWithFont = {
   long: number;
   invisible: boolean;
   content: CommentContentItem[];
+  rawContent: string;
   flash: boolean;
   lineCount: number;
   lineOffset: number;

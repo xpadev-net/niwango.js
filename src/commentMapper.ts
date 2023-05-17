@@ -17,7 +17,10 @@ class CommentMapper {
   }
 
   get message() {
-    return this.comment.comment.content.reduce((prev, current) => prev + current.content, "");
+    return this.comment.content;
+  }
+  set message(val: string) {
+    this.comment.content = val;
   }
 
   get vpos() {
@@ -29,9 +32,6 @@ class CommentMapper {
 
   get _vpos() {
     return this.comment.vpos;
-  }
-  set _vpos(val: number) {
-    this.comment.vpos = val;
   }
 
   get isYourPost() {
