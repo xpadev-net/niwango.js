@@ -56,7 +56,7 @@ const processCallExpression = (script: A_CallExpression, scopes: T_scope[]) => {
   if (callee === "timer") {
     const args = argumentParser(script.arguments, scopes, ["timer", "then"], false);
     typeof args.then === "object" && addQueue(args.then as A_ANY, Number(execute(args.timer, scopes)), scopes);
-    return console.info("[call expression] timer:", script, args); //todo: feat timer
+    return;
   }
   if (callee === "jump") {
     const args = argumentParser(script.arguments, scopes, [
