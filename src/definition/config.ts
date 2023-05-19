@@ -30,8 +30,8 @@ const initConfig = () => {
   config = {
     stageWidth: 672,
     stageHeight: 384,
-    canvasWidth: 683,
-    canvasHeight: 385,
+    canvasWidth: 672,
+    canvasHeight: 384,
 
     /**
      * Flash版のフォント変化文字
