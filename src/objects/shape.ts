@@ -22,6 +22,8 @@ const defaultOptions: IShapeOptions = {
   mover: "",
 };
 
+const TO_RADIANS = Math.PI / 180;
+
 /**
  * 図形オブジェクトのクラス
  */
@@ -101,8 +103,6 @@ class IrShape extends IrObject {
 
   override __updateColor() {
     this.__context.fillStyle = number2color(this.color);
-    //this.__canvas.width = this.width;
-    //this.__canvas.height = this.height;
   }
 
   override __draw() {
@@ -124,7 +124,15 @@ class IrShape extends IrObject {
     if (!(this.width > 0 && this.height > 0)) {
       return;
     }
-    this.targetContext.drawImage(this.__canvas, this.__x, this.__y);
+    if (this.rotation % 360 !== 0) {
+      this.targetContext.save();
+      this.targetContext.translate(this.__x, this.__y);
+      this.targetContext.rotate(this.rotation * TO_RADIANS);
+      this.targetContext.drawImage(this.__canvas, 0, 0);
+      this.targetContext.restore();
+    } else {
+      this.targetContext.drawImage(this.__canvas, this.__x, this.__y);
+    }
   }
 }
 export { IrShape };
