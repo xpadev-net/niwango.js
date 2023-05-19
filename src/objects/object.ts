@@ -1,6 +1,8 @@
 import { config } from "@/definition/config";
 import { register } from "@/utils/objectManager";
 import { IObjectMover, IObjectOptions } from "@/@types/types";
+import { IrObjectMoverQueue } from "@/@types/IrObject";
+import { currentTime } from "@/context";
 
 const defaultOptions: IObjectOptions = {
   x: 0,
@@ -26,9 +28,14 @@ abstract class IrObject {
   protected options: IObjectOptions;
   protected __width: number;
   protected __height: number;
+  protected moverQueue: IrObjectMoverQueue;
 
   protected constructor(context: CanvasRenderingContext2D, options: Partial<IObjectOptions>) {
     this.targetContext = context;
+    this.moverQueue = {
+      x: [],
+      y: [],
+    };
     this.options = Object.assign(defaultOptions, options);
     const canvas = document.createElement("canvas");
     canvas.width = config.canvasWidth;
@@ -46,14 +53,6 @@ abstract class IrObject {
     this.__updateColor();
     this.__parsePos();
     register(this);
-  }
-
-  get x() {
-    return this.options.x;
-  }
-
-  set x(val: number) {
-    this.options.x = val;
   }
 
   get width() {
@@ -75,13 +74,40 @@ abstract class IrObject {
     this.options.scale = val;
   }
 
-  get __x() {
-    if (this.options.posX === "migi") {
-      return config.stageWidth - this.options.x - this.width;
-    } else if (this.options.posX === "hidari") {
-      return this.options.x;
+  get x() {
+    return this.options.x;
+  }
+
+  set x(val: number) {
+    const lastVal = this.options.x;
+    this.options.x = val;
+    if (this.mover === "") return;
+    if (this.mover === "smooth") {
+      this.moverQueue.x = [{ current: lastVal, target: val, diff: val - lastVal, vpos: currentTime }];
+      return;
+    } else {
+      this.moverQueue.x.push({ current: lastVal, target: val, diff: val - lastVal, vpos: currentTime });
     }
-    return config.stageWidth / 2 + this.options.x - this.width / 2;
+    this.__updateMoverQueue("x");
+  }
+
+  get __x() {
+    this.__updateMoverQueue("x");
+    const currentQueue = this.moverQueue.x[0];
+    const posX = (() => {
+      if (!currentQueue || this.mover === "") return this.options.x;
+      if (this.mover === "simple") {
+        return currentQueue.current + (currentQueue.diff * (currentTime - currentQueue.vpos)) / 50;
+      } else if (this.mover === "rolling") {
+      }
+      return currentQueue.current;
+    })();
+    if (this.options.posX === "migi") {
+      return config.stageWidth - posX - this.width;
+    } else if (this.options.posX === "hidari") {
+      return posX;
+    }
+    return config.stageWidth / 2 + posX - this.width / 2;
   }
 
   get y() {
@@ -89,16 +115,35 @@ abstract class IrObject {
   }
 
   set y(val: number) {
+    const lastVal = this.options.y;
     this.options.y = val;
+    if (this.mover === "") return;
+    if (this.mover === "smooth") {
+      this.moverQueue.y = [{ current: lastVal, target: val, diff: val - lastVal, vpos: currentTime }];
+      return;
+    } else {
+      this.moverQueue.y.push({ current: lastVal, target: val, diff: val - lastVal, vpos: currentTime });
+    }
+    this.__updateMoverQueue("y");
   }
 
   get __y() {
+    this.__updateMoverQueue("y");
+    const currentQueue = this.moverQueue.y[0];
+    const posY = (() => {
+      if (!currentQueue || this.mover === "") return this.options.y;
+      if (this.mover === "simple") {
+        return currentQueue.current + (currentQueue.diff * (currentTime - currentQueue.vpos)) / 50;
+      } else if (this.mover === "rolling") {
+      }
+      return currentQueue.current;
+    })();
     if (this.options.posY === "ue") {
-      return this.options.y;
+      return posY;
     } else if (this.options.posY === "shita") {
-      return config.canvasHeight + this.options.y - this.height;
+      return config.canvasHeight + posY - this.height;
     }
-    return config.canvasHeight / 2 + this.options.y - this.height / 2;
+    return config.canvasHeight / 2 + posY - this.height / 2;
   }
 
   get z() {
@@ -161,6 +206,20 @@ abstract class IrObject {
 
   set mover(val: IObjectMover) {
     this.options.mover = val;
+    this.moverQueue = {
+      x: [],
+      y: [],
+    };
+  }
+
+  protected __updateMoverQueue(key: "x" | "y") {
+    if (this.mover === "" || this.mover === "smooth") return;
+    const duration = this.mover === "simple" ? 50 : 100;
+    this.moverQueue[key] = this.moverQueue[key].filter((item) => item.vpos > currentTime - duration);
+    const currentItem = this.moverQueue[key][0];
+    if (this.mover !== "hopping" && this.moverQueue[key].length > 4 && currentItem) {
+      this.moverQueue[key] = [currentItem, ...this.moverQueue[key].slice(-3)];
+    }
   }
 
   protected __parsePos() {
