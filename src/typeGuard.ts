@@ -18,6 +18,8 @@ const typeGuard = {
     !!i && typeof i === "object" && (i as A_ANY).type === "BlockStatement",
   CallExpression: (i: unknown): i is A_CallExpression =>
     !!i && typeof i === "object" && (i as A_ANY).type === "CallExpression",
+  EmptyStatement: (i: unknown): i is A_EmptyStatement =>
+    !!i && typeof i === "object" && (i as A_ANY).type === "EmptyStatement",
   IfStatement: (i: unknown): i is A_IfStatement => !!i && typeof i === "object" && (i as A_ANY).type === "IfStatement",
   LogicalExpression: (i: unknown): i is A_LogicalExpression =>
     !!i && typeof i === "object" && (i as A_ANY).type === "LogicalExpression",

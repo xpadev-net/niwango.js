@@ -21,7 +21,8 @@ type A_ANY =
   | A_UnaryExpression
   | A_UpdateExpression
   | A_VariableDeclarator
-  | A_VariableDeclaration;
+  | A_VariableDeclaration
+  | A_EmptyStatement;
 type A_Identifier = {
   type: "Identifier";
   name: string;
@@ -170,6 +171,9 @@ type A_VariableDeclarator = {
   id: A_ANY;
   init: A_ANY | null;
   type: "VariableDeclarator";
+};
+type A_EmptyStatement = {
+  type: "EmptyStatement";
 };
 type T_scope = {
   [key: string]: unknown;

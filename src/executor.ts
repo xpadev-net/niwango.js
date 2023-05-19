@@ -43,6 +43,8 @@ const execute: Execute = (script: unknown, scopes: T_scope[]): unknown => {
       return processBlockStatement(script, scopes);
     } else if (typeGuard.CallExpression(script)) {
       return processCallExpression(script, scopes);
+    } else if (typeGuard.EmptyStatement(script)) {
+      return;
     } else if (typeGuard.IfStatement(script)) {
       throw new NotImplementedError("if statement", script, scopes);
     } else if (typeGuard.Identifier(script)) {
@@ -79,7 +81,7 @@ const execute: Execute = (script: unknown, scopes: T_scope[]): unknown => {
     }
     console.trace();
   }
-  return;
+  return undefined;
 };
 
 const initExecute = () => {
