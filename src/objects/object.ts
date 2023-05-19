@@ -79,14 +79,15 @@ abstract class IrObject {
   }
 
   set x(val: number) {
+    const input = Number(val) || 0;
     const lastVal = this.options.x;
-    this.options.x = val;
+    this.options.x = input;
     if (this.mover === "") return;
     if (this.mover === "smooth") {
-      this.moverQueue.x = [{ current: lastVal, target: val, diff: val - lastVal, vpos: currentTime }];
+      this.moverQueue.x = [{ current: lastVal, target: input, diff: input - lastVal, vpos: currentTime }];
       return;
     } else {
-      this.moverQueue.x.push({ current: lastVal, target: val, diff: val - lastVal, vpos: currentTime });
+      this.moverQueue.x.push({ current: lastVal, target: input, diff: input - lastVal, vpos: currentTime });
     }
     this.__updateMoverQueue("x");
   }
@@ -115,14 +116,15 @@ abstract class IrObject {
   }
 
   set y(val: number) {
+    const input = Number(val) || 0;
     const lastVal = this.options.y;
-    this.options.y = val;
+    this.options.y = input;
     if (this.mover === "") return;
     if (this.mover === "smooth") {
-      this.moverQueue.y = [{ current: lastVal, target: val, diff: val - lastVal, vpos: currentTime }];
+      this.moverQueue.y = [{ current: lastVal, target: input, diff: input - lastVal, vpos: currentTime }];
       return;
     } else {
-      this.moverQueue.y.push({ current: lastVal, target: val, diff: val - lastVal, vpos: currentTime });
+      this.moverQueue.y.push({ current: lastVal, target: input, diff: input - lastVal, vpos: currentTime });
     }
     this.__updateMoverQueue("y");
   }
