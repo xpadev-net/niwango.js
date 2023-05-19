@@ -7,6 +7,7 @@ import { execute, getName } from "@/context";
  * @param scopes
  */
 const processVariableDeclaration = (script: A_VariableDeclaration, scopes: T_scope[]) => {
+  let lastItem;
   for (const item of script.declarations) {
     if (item.init === null) {
       return execute(
@@ -19,9 +20,10 @@ const processVariableDeclaration = (script: A_VariableDeclaration, scopes: T_sco
       );
     } else {
       if (scopes[0]) {
-        scopes[0][getName(item.id, scopes) as string] = execute(item.init, scopes);
+        lastItem = scopes[0][getName(item.id, scopes) as string] = execute(item.init, scopes);
       }
     }
   }
+  return lastItem;
 };
 export { processVariableDeclaration };
