@@ -202,6 +202,9 @@ class IrText extends IrObject {
         leftOffset += getValue(item.width?.[index], 0);
       });
     }
+    if (this.filter === "kasumi") {
+      this.kasumi();
+    }
   }
 
   override draw() {
@@ -218,6 +221,53 @@ class IrText extends IrObject {
       this.__y,
       this.__width,
       this.__height,
+    );
+  }
+
+  private kasumi() {
+    const canvasBlur050 = document.createElement("canvas");
+    canvasBlur050.width = this.__canvas.width * 0.5;
+    canvasBlur050.height = this.__canvas.height * 0.5;
+    const canvasBlur025 = document.createElement("canvas");
+    canvasBlur025.width = this.__canvas.width * 0.25;
+    canvasBlur025.height = this.__canvas.height * 0.25;
+    canvasBlur025
+      .getContext("2d")
+      ?.drawImage(
+        this.__canvas,
+        0,
+        0,
+        this.__canvas.width,
+        this.__canvas.height,
+        0,
+        0,
+        canvasBlur025.width,
+        canvasBlur025.height,
+      );
+    canvasBlur050
+      .getContext("2d")
+      ?.drawImage(
+        canvasBlur025,
+        0,
+        0,
+        canvasBlur025.width,
+        canvasBlur025.height,
+        0,
+        0,
+        canvasBlur050.width,
+        canvasBlur050.height,
+      );
+    this.__context.clearRect(0, 0, this.__canvas.width, this.__canvas.height);
+    this.__context.drawImage(
+      canvasBlur050,
+      0,
+      0,
+      canvasBlur050.width,
+      canvasBlur050.height,
+      0,
+      0,
+      this.__canvas.width,
+      this.__canvas.height,
     );
   }
 }
