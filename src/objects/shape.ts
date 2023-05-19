@@ -42,6 +42,7 @@ class IrShape extends IrObject {
 
   set shape(val) {
     this.options.shape = val;
+    this.__draw();
   }
 
   override get width() {
