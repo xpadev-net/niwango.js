@@ -82,7 +82,7 @@ class IrText extends IrObject {
   }
 
   set text(string) {
-    this.options.text = string;
+    this.options.text = `${string}`;
     this.parsedComment = parse(this.text, this.options.size < 3);
     this.__measure();
     this.__draw();
