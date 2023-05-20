@@ -191,6 +191,8 @@ type T_environment = {
   isLoaded: true; //true
   isWide: boolean | null; //false
   lastVideo: "sm1"; //sm1
+  readonly screenWidth: number;
+  readonly screenHeight: number;
 };
 type T_chat = {
   message: string;

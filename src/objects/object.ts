@@ -2,7 +2,7 @@ import { config } from "@/definition/config";
 import { register } from "@/utils/objectManager";
 import { IObjectMover, IObjectOptions } from "@/@types/types";
 import { IrObjectMoverQueue } from "@/@types/IrObject";
-import { currentTime } from "@/context";
+import { currentTime, isWide } from "@/context";
 
 const defaultOptions: IObjectOptions = {
   x: 0,
@@ -104,11 +104,11 @@ abstract class IrObject {
       return currentQueue.current;
     })();
     if (this.options.posX === "migi") {
-      return config.stageWidth - posX - this.width;
+      return config.stageWidth[isWide ? "full" : "default"] - posX - this.width;
     } else if (this.options.posX === "hidari") {
       return posX;
     }
-    return config.stageWidth / 2 + posX - this.width / 2;
+    return config.stageWidth[isWide ? "full" : "default"] / 2 + posX - this.width / 2;
   }
 
   get y() {

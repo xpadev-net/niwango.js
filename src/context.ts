@@ -11,6 +11,7 @@ let context: CanvasRenderingContext2D;
 let currentTime = 0;
 
 let comments: CommentMapper[] = [];
+let isWide = false;
 
 const setExecute = (val: Execute) => {
   execute = val;
@@ -40,6 +41,8 @@ const setComments = (val: CommentMapper[]) => {
   comments = val;
 };
 
+const setIsWide = (val: boolean) => (isWide = val);
+
 export {
   execute,
   argumentParser,
@@ -48,6 +51,7 @@ export {
   context,
   currentTime,
   comments,
+  isWide,
   setExecute,
   setArgumentParser,
   setAssign,
@@ -55,4 +59,5 @@ export {
   setContext,
   setCurrentTime,
   setComments,
+  setIsWide,
 };

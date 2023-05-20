@@ -11,7 +11,10 @@ type fontList = {
   [key in "gulim" | "simsun"]: string;
 };
 export type baseConfig = {
-  stageWidth: number;
+  stageWidth: {
+    default: number;
+    full: number;
+  };
   stageHeight: number;
   canvasWidth: number;
   canvasHeight: number;

@@ -28,7 +28,10 @@ const initConfig = () => {
     return "other";
   })(navigator.userAgent);
   config = {
-    stageWidth: 672,
+    stageWidth: {
+      default: 512,
+      full: 672,
+    },
     stageHeight: 384,
     canvasWidth: 672,
     canvasHeight: 384,

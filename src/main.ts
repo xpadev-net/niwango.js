@@ -1,4 +1,4 @@
-import { execute, setComments, setContext, setCurrentTime } from "@/context";
+import { execute, setComments, setContext, setCurrentTime, setIsWide } from "@/context";
 import { parse } from "./parser/parser";
 import { draw, resetObjects } from "@/utils/objectManager";
 import { config, initConfig } from "@/definition/config";
@@ -65,10 +65,15 @@ class Niwango {
       isLoaded: true, //true
       isWide: null, //false
       lastVideo: "sm1", //sm1
+      get screenWidth() {
+        return config.stageWidth[this.isWide ? "full" : "default"];
+      },
+      screenHeight: config.stageHeight,
     };
   }
 
   public draw(vpos: number) {
+    setIsWide(!!this.environmentScope.isWide);
     [...getQueue(vpos), ...getScripts(vpos), ...getComments(vpos)]
       .sort((a, b) => {
         if (a.time < b.time) {

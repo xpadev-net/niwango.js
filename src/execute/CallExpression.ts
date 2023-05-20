@@ -8,8 +8,9 @@ import { rand } from "@/functions/rand";
 import { Exponentiation } from "@/operators";
 import { NotImplementedError } from "@/errors/NotImplementedError";
 import { InvalidTypeError } from "@/errors/InvalidTypeError";
-import { argumentParser, assign, context, currentTime, execute, getName } from "@/context";
+import { argumentParser, assign, context, currentTime, execute, getName, isWide } from "@/context";
 import { addHandler } from "@/commentHandler";
+import { config } from "@/definition/config";
 
 /**
  * 関数呼び出しを実行する
@@ -47,7 +48,6 @@ const processCallExpression = (script: A_CallExpression, scopes: T_scope[]) => {
   if (callee === "commentTrigger" || callee === "ctrig") {
     const args = argumentParser(script.arguments, scopes, ["then", "timer"], false);
     addHandler(args.then as A_ANY, scopes, currentTime, args.timer ? Number(execute(args.timer, scopes)) : undefined);
-    console.warn("[call expression] commentTrigger", script, args, scopes); //todo: feat commentTrigger
     return;
   }
   if (callee === "if") {
@@ -138,13 +138,13 @@ const processCallExpression = (script: A_CallExpression, scopes: T_scope[]) => {
   }
   if (callee === "distance") {
     const args = argumentParser(script.arguments, scopes, ["x1", "y1", "x2", "y2"]);
-    return console.warn("[call expression] distance:", script, args); //todo: feat distance
+    return Math.sqrt(Math.pow(Number(args.x2) - Number(args.x1), 2) + Math.pow(Number(args.y2) - Number(args.y1), 2));
   }
   if (callee === "screenWidth") {
-    return console.warn("[call expression] screenWidth:", script); //todo: feat screenWidth
+    return config.stageWidth[isWide ? "full" : "default"];
   }
   if (callee === "screenHeight") {
-    return console.warn("[call expression] screenHeight:", script); //todo: feat screenWidth
+    return config.stageHeight;
   }
   if (callee === "addButton") {
     const args = argumentParser(script.arguments, scopes, [
