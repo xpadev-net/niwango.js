@@ -1,5 +1,4 @@
 import { execute, setComments, setContext, setCurrentTime, setIsWide } from "@/context";
-import { parse } from "./parser/parser";
 import { draw } from "@/utils/objectManager";
 import { config, initConfig } from "@/definition/config";
 import { getQueue } from "@/queue";
@@ -8,6 +7,7 @@ import { IComment } from "@/@types/types";
 import { setup } from "@/utils/setup";
 import { getComments, triggerHandlers } from "@/commentHandler";
 import { CommentMapper } from "@/commentMapper";
+import { parseScript } from "@/parser/parse";
 
 class Niwango {
   private readonly globalScope: T_scope;
@@ -27,9 +27,10 @@ class Niwango {
     comments.forEach((comment) => {
       if (comment.message.match(/^\//) && comment.comment.owner) {
         try {
-          addScript(parse(comment.message.slice(1)), comment._vpos);
+          const ast = parseScript(comment);
+          addScript(ast, comment._vpos);
         } catch (e) {
-          console.log(comment.message.slice(1), comment.comment.comment.id, e);
+          console.error(e);
         }
       }
       setComments(comments);

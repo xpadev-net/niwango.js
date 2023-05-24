@@ -1,9 +1,10 @@
 /**
  * ニワン語をASTに変換するパーサー
  * @param {string} script
+ * @param options 設定
  * @returns {A_ANY}
  */
-export function parse(script: string): A_ANY;
+export function parse(script: string, options?:Partial<{grammarSource:string}>): A_ANY;
 
 /**
  * パースエラーが発生した際に投げられるエラー?
@@ -13,6 +14,11 @@ export class SyntaxError extends Error {
   constructor(message: string, expected: string, found: string, location: string);
   expected: string;
   found: string;
-  location: string;
+  location: {
+    start: {offset: number, line: number, column: number};
+    end: {offset: number, line: number, column: number};
+    source: string;
+  };
   name: "SyntaxError";
+  format: (sources: {source: string,text: string}[]) => string;
 }
