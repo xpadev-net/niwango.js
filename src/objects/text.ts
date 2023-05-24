@@ -38,6 +38,7 @@ class IrText extends IrObject {
   constructor(_context: CanvasRenderingContext2D, _options: ITextOptionsNullable) {
     super(_context, _options);
     this.options = Object.assign({ ...defaultOptions }, _options);
+    this.__context.strokeStyle = "#000000";
     this.__actualHeight = this.__actualWidth = 0;
     const size = this.options.size * this.options.scale;
     this.__reverse = size < 0;
@@ -174,6 +175,10 @@ class IrText extends IrObject {
             config.commentYPaddingTop +
             this.__size * config.lineHeight * config.commentYOffset -
             reverseOffset;
+          if (this.filter === "fuchi") {
+            this.__context.lineWidth = 4;
+            this.__context.strokeText(line, posX, posY);
+          }
           this.__context.fillText(line, posX, posY);
           if (index === lines.length - 1) {
             leftOffset += getValue(item.width?.[index], 0);
@@ -193,10 +198,16 @@ class IrText extends IrObject {
           reverseOffset;
         switch (part.type) {
           case "fill": {
+            if (this.filter === "fuchi") {
+              this.__context.strokeRect(posX, posY, part.width * this.__size, this.__size * config.lineHeight);
+            }
             this.__context.fillRect(posX, posY, part.width * this.__size, this.__size * config.lineHeight);
             break;
           }
           case "text":
+            if (this.filter === "fuchi") {
+              this.__context.strokeText(part.text, posX, posY);
+            }
             this.__context.fillText(part.text, posX, posY);
         }
         leftOffset += getValue(item.width?.[index], 0);
