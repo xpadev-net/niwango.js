@@ -1,12 +1,12 @@
 import { execute, setComments, setContext, setCurrentTime, setIsWide } from "@/context";
 import { parse } from "./parser/parser";
-import { draw, resetObjects } from "@/utils/objectManager";
+import { draw } from "@/utils/objectManager";
 import { config, initConfig } from "@/definition/config";
-import { getQueue, resetQueue } from "@/queue";
-import { addScript, getScripts, resetScripts } from "@/scripts";
+import { getQueue } from "@/queue";
+import { addScript, getScripts } from "@/scripts";
 import { IComment } from "@/@types/types";
 import { setup } from "@/utils/setup";
-import { getComments, resetHandlers, triggerHandlers } from "@/commentHandler";
+import { getComments, triggerHandlers } from "@/commentHandler";
 import { CommentMapper } from "@/commentMapper";
 
 class Niwango {
@@ -45,10 +45,6 @@ class Niwango {
     this.drawContext = drawContext;
     this.drawContext.scale(1920 / config.canvasWidth, 1080 / config.canvasHeight);
     setContext(drawContext);
-    resetQueue();
-    resetObjects();
-    resetHandlers();
-    resetScripts();
     setCurrentTime(0);
     this.globalScope = {
       Object: {},
