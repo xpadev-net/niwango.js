@@ -3,7 +3,7 @@ import { parse } from "./parser/parser";
 import { draw, resetObjects } from "@/utils/objectManager";
 import { config, initConfig } from "@/definition/config";
 import { getQueue, resetQueue } from "@/queue";
-import { addScript, getScripts } from "@/scripts";
+import { addScript, getScripts, resetScripts } from "@/scripts";
 import { IComment } from "@/@types/types";
 import { setup } from "@/utils/setup";
 import { getComments, resetHandlers, triggerHandlers } from "@/commentHandler";
@@ -48,6 +48,7 @@ class Niwango {
     resetQueue();
     resetObjects();
     resetHandlers();
+    resetScripts();
     setCurrentTime(0);
     this.globalScope = {
       Object: {},

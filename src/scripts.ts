@@ -28,4 +28,9 @@ const getScripts = (time: number) => {
   scripts = newScripts;
   return result;
 };
-export { scripts, addScript, getScripts };
+
+const resetScripts = () => {
+  scripts = [];
+};
+
+export { scripts, addScript, getScripts, resetScripts };
