@@ -1,3 +1,3 @@
 export default {
-	"src/**/*.{ts,tsx,json,scss,css}": [()=>"npm run format",()=>"npm run lint:fix",()=>"npm run test"],//()=>"npm run eslint:fix",()=>"npm run check-types",
+	"src/**/*.{ts,tsx,json,scss,css}": [()=>"npm run format",()=>"npm run eslint:fix",()=>"npm run check-types",()=>"npm run test"],//()=>"npm run eslint:fix",()=>"npm run check-types",
 };
