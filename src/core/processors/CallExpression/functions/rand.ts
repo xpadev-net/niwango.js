@@ -1,5 +1,7 @@
 import typeGuard from "@/typeGuard";
 import { mt19937 } from "@/utils/mt19937";
+import { execute } from "@/context";
+import { A_CallExpression, T_scope } from "@/@types/ast";
 
 let randCalledCount = 0;
 const onload = new Date().getTime();
@@ -26,4 +28,11 @@ const rand = (value?: unknown) => {
   return result < 0 ? -(result + 1) : result;
 };
 
-export { rand };
+const processRand = (script: A_CallExpression, scopes: T_scope[]) => {
+  if (script.arguments[0]) {
+    return rand(execute(script.arguments[0], scopes));
+  }
+  return rand();
+};
+
+export { processRand };

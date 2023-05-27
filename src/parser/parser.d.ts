@@ -6,7 +6,10 @@ import { A_ANY } from "@/@types/ast";
  * @param options 設定
  * @returns
  */
-export function parse(script: string, options?:Partial<{grammarSource:string}>): A_ANY;
+export function parse(
+  script: string,
+  options?: Partial<{ grammarSource: string }>
+): A_ANY;
 
 /**
  * パースエラーが発生した際に投げられるエラー?
@@ -22,10 +25,10 @@ export class SyntaxError extends Error {
   expected: string;
   found: string;
   location: {
-    start: {offset: number, line: number, column: number};
-    end: {offset: number, line: number, column: number};
+    start: { offset: number; line: number; column: number };
+    end: { offset: number; line: number; column: number };
     source: string;
   };
   name: "SyntaxError";
-  format: (sources: {source: string,text: string}[]) => string;
+  format: (sources: { source: string; text: string }[]) => string;
 }
