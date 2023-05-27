@@ -1,5 +1,5 @@
 import { execute } from "@/context";
-import { parse } from "@/parser/parser";
+import { parse } from "./parser/parser";
 import { setup } from "@/utils/setup";
 
 setup();

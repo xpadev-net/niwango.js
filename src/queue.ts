@@ -1,6 +1,8 @@
 import { currentTime } from "@/context";
+import { A_ANY, T_scope } from "@/@types/ast";
 
-let queue: { script: A_ANY; time: number; scopes: T_scope[]; type: "queue" }[] = [];
+let queue: { script: A_ANY; time: number; scopes: T_scope[]; type: "queue" }[] =
+  [];
 
 /**
  * キューの初期化

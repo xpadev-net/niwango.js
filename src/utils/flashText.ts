@@ -1,8 +1,12 @@
-import { commentContentIndex, commentContentItem, commentFlashFont } from "@/@types/IrText";
-import { config } from "@/definition/config";
 import { charItem, measureTextInput, parsedComment } from "@/@types/flashText";
-import { getValue, parseFont } from "@/utils/utils";
+import {
+  commentContentIndex,
+  commentContentItem,
+  commentFlashFont,
+} from "@/@types/IrText";
+import { config } from "@/definition/config";
 import { nativeSort } from "@/utils/sort";
+import { getValue, parseFont } from "@/utils/utils";
 
 /**
  * Flashのフォント名を取得する
@@ -24,7 +28,7 @@ const getFontName = (font: string): commentFlashFont => {
  */
 const splitContents = (string: string) => {
   return Array.from(string.match(/[\n\r]|[^\n\r]+/g) || []).map((val) =>
-    Array.from(val.match(/[ -~｡-ﾟ]+|[^ -~｡-ﾟ]+/g) || []),
+    Array.from(val.match(/[ -~｡-ﾟ]+|[^ -~｡-ﾟ]+/g) || [])
   );
 };
 
@@ -79,7 +83,7 @@ const parse = (string: string, compat = false): parsedComment => {
         ...lineContent.map((val) => {
           val.font ||= firstContent.font;
           return val;
-        }),
+        })
       );
     } else {
       content.push(...lineContent);
@@ -88,8 +92,11 @@ const parse = (string: string, compat = false): parsedComment => {
   const lineCount = Array.from(string.match(/[\n\r]/g) || []).length + 1;
   const font = content[0]?.font || "defont";
   const lineOffset =
-    (string.match(new RegExp(config.flashScriptChar.super, "g"))?.length || 0) * -1 * config.scriptCharOffset +
-    (string.match(new RegExp(config.flashScriptChar.sub, "g"))?.length || 0) * config.scriptCharOffset;
+    (string.match(new RegExp(config.flashScriptChar.super, "g"))?.length || 0) *
+      -1 *
+      config.scriptCharOffset +
+    (string.match(new RegExp(config.flashScriptChar.sub, "g"))?.length || 0) *
+      config.scriptCharOffset;
   return { content, font, lineCount, lineOffset };
 };
 
@@ -158,7 +165,9 @@ const parseFullStr = (string: string): commentContentItem[] => {
     return [{ type: "normal", content: string }];
   }
   if (index.length === 1 && index[0]) {
-    return [{ type: "normal", content: string, font: getFontName(index[0].font) }];
+    return [
+      { type: "normal", content: string, font: getFontName(index[0].font) },
+    ];
   }
   index.sort(nativeSort("index"));
   if (config.flashMode === "xp") {
@@ -179,7 +188,11 @@ const parseFullStr = (string: string): commentContentItem[] => {
     }
     const val = index[index.length - 1];
     if (val) {
-      result.push({ type: "normal", content: string.slice(offset), font: getFontName(val.font) });
+      result.push({
+        type: "normal",
+        content: string.slice(offset),
+        font: getFontName(val.font),
+      });
     }
     return result;
   }
@@ -189,7 +202,9 @@ const parseFullStr = (string: string): commentContentItem[] => {
     return [{ type: "normal", content: string }];
   }
   if (firstVal.font !== "gothic") {
-    return [{ type: "normal", content: string, font: getFontName(firstVal.font) }];
+    return [
+      { type: "normal", content: string, font: getFontName(firstVal.font) },
+    ];
   }
   return [
     {
@@ -210,7 +225,10 @@ const parseFullStr = (string: string): commentContentItem[] => {
  * @param context
  * @param comment
  */
-const measure = (context: CanvasRenderingContext2D, comment: measureTextInput) => {
+const measure = (
+  context: CanvasRenderingContext2D,
+  comment: measureTextInput
+) => {
   const width_arr = [];
   let currentWidth = 0;
   for (const item of comment.content) {
@@ -243,7 +261,9 @@ const measure = (context: CanvasRenderingContext2D, comment: measureTextInput) =
     item.width = widths;
   }
   width_arr.push(currentWidth);
-  const height = comment.size * config.lineHeight * comment.lineCount + config.commentYPaddingTop;
+  const height =
+    comment.size * config.lineHeight * comment.lineCount +
+    config.commentYPaddingTop;
   return { width: Math.max(...width_arr, 0), height };
 };
-export { parse, measure };
+export { measure, parse };

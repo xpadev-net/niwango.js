@@ -1,3 +1,5 @@
+import type { A_ANY, A_CallExpression } from "@/@types/ast";
+
 export type definedFunction =
   | {
       type: "definedFunction";

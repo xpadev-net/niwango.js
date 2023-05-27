@@ -1,27 +1,44 @@
+import {
+  A_ANY,
+  A_CallExpression,
+  A_MemberExpression,
+  Argument,
+  T_scope,
+} from "@/@types/ast";
+import { definedFunction } from "@/@types/function";
+import { addHandler } from "@/commentHandler";
+import {
+  argumentParser,
+  assign,
+  context,
+  currentTime,
+  execute,
+  getName,
+  isWide,
+} from "@/context";
+import { config } from "@/definition/config";
+import { InvalidTypeError } from "@/errors/InvalidTypeError";
+import { NotImplementedError } from "@/errors/NotImplementedError";
+import { rand } from "@/functions/rand";
+import { IrShape } from "@/objects/shape";
+import { IrText } from "@/objects/text";
+import { Exponentiation } from "@/operators";
+import { addQueue } from "@/queue";
 import typeGuard from "@/typeGuard";
 import { getGlobalScope, resolve } from "@/utils/utils";
-import { definedFunction } from "@/@types/function";
-import { IrText } from "@/objects/text";
-import { IrShape } from "@/objects/shape";
-import { addQueue } from "@/queue";
-import { rand } from "@/functions/rand";
-import { Exponentiation } from "@/operators";
-import { NotImplementedError } from "@/errors/NotImplementedError";
-import { InvalidTypeError } from "@/errors/InvalidTypeError";
-import { argumentParser, assign, context, currentTime, execute, getName, isWide } from "@/context";
-import { addHandler } from "@/commentHandler";
-import { config } from "@/definition/config";
 
 /**
  * 関数呼び出しを実行する
- * @param {A_CallExpression} script
- * @param {T_scope[]} scopes
+ * @param script
+ * @param scopes
  */
 const processCallExpression = (script: A_CallExpression, scopes: T_scope[]) => {
   const isMemberExpression = typeGuard.MemberExpression(script.callee);
   const callee = getName(
-    isMemberExpression ? (script.callee as A_MemberExpression).property : script.callee,
-    scopes,
+    isMemberExpression
+      ? (script.callee as A_MemberExpression).property
+      : script.callee,
+    scopes
   ) as string;
   const object = getThis(script, scopes);
   if (callee === "dump") {
@@ -46,16 +63,32 @@ const processCallExpression = (script: A_CallExpression, scopes: T_scope[]) => {
     return processDrawShape(script, scopes);
   }
   if (callee === "commentTrigger" || callee === "ctrig") {
-    const args = argumentParser(script.arguments, scopes, ["then", "timer"], false);
-    addHandler(args.then as A_ANY, scopes, currentTime, args.timer ? Number(execute(args.timer, scopes)) : undefined);
+    const args = argumentParser(
+      script.arguments,
+      scopes,
+      ["then", "timer"],
+      false
+    );
+    addHandler(
+      args.then as A_ANY,
+      scopes,
+      currentTime,
+      args.timer ? Number(execute(args.timer, scopes)) : undefined
+    );
     return;
   }
   if (callee === "if") {
     return processIf(script, scopes);
   }
   if (callee === "timer") {
-    const args = argumentParser(script.arguments, scopes, ["timer", "then"], false);
-    typeof args.then === "object" && addQueue(args.then as A_ANY, Number(execute(args.timer, scopes)), scopes);
+    const args = argumentParser(
+      script.arguments,
+      scopes,
+      ["timer", "then"],
+      false
+    );
+    typeof args.then === "object" &&
+      addQueue(args.then as A_ANY, Number(execute(args.timer, scopes)), scopes);
     return;
   }
   if (callee === "jump") {
@@ -137,8 +170,16 @@ const processCallExpression = (script: A_CallExpression, scopes: T_scope[]) => {
     return rand();
   }
   if (callee === "distance") {
-    const args = argumentParser(script.arguments, scopes, ["x1", "y1", "x2", "y2"]);
-    return Math.sqrt(Math.pow(Number(args.x2) - Number(args.x1), 2) + Math.pow(Number(args.y2) - Number(args.y1), 2));
+    const args = argumentParser(script.arguments, scopes, [
+      "x1",
+      "y1",
+      "x2",
+      "y2",
+    ]);
+    return Math.sqrt(
+      Math.pow(Number(args.x2) - Number(args.x1), 2) +
+        Math.pow(Number(args.y2) - Number(args.y1), 2)
+    );
   }
   if (callee === "screenWidth") {
     return config.stageWidth[isWide ? "full" : "default"];
@@ -163,7 +204,15 @@ const processCallExpression = (script: A_CallExpression, scopes: T_scope[]) => {
     return new Date().getTime();
   }
   if (callee === "BGM") {
-    const args = argumentParser(script.arguments, scopes, ["id", "x", "y", "width", "height", "visual", "volume"]);
+    const args = argumentParser(script.arguments, scopes, [
+      "id",
+      "x",
+      "y",
+      "width",
+      "height",
+      "visual",
+      "volume",
+    ]);
     return console.warn("[call expression] BGM:", script, args); //todo: feat BGM
   }
   if (callee === "playBGM") {
@@ -179,11 +228,21 @@ const processCallExpression = (script: A_CallExpression, scopes: T_scope[]) => {
     return console.warn("[call expression] addAtPausePoint:", script, args); //todo: feat addAtPausePoint
   }
   if (callee === "addPostRoute") {
-    const args = argumentParser(script.arguments, scopes, ["match", "id", "button"]);
+    const args = argumentParser(script.arguments, scopes, [
+      "match",
+      "id",
+      "button",
+    ]);
     return console.warn("[call expression] addPostRoute:", script, args); //todo: feat addPostRoute
   }
   if (callee === "CM") {
-    const args = argumentParser(script.arguments, scopes, ["id", "time", "pause", "link", "volume"]);
+    const args = argumentParser(script.arguments, scopes, [
+      "id",
+      "time",
+      "pause",
+      "link",
+      "volume",
+    ]);
     return console.warn("[call expression] CM:", script, args); //todo: feat CM
   }
   if (callee === "playCM") {
@@ -202,7 +261,11 @@ const processCallExpression = (script: A_CallExpression, scopes: T_scope[]) => {
       console.error("[call expression] @: at least 1 argument required");
       return;
     }
-    assign(script.arguments[0], resolve({ type: "Identifier", name: "@0" }, scopes), scopes);
+    assign(
+      script.arguments[0],
+      resolve({ type: "Identifier", name: "@0" }, scopes),
+      scopes
+    );
     return;
   }
   if (typeGuard.MemberExpression(script.callee)) {
@@ -216,7 +279,7 @@ const processCallExpression = (script: A_CallExpression, scopes: T_scope[]) => {
       if (typeof left === "string") {
         return left.charAt(Number(right));
       }
-      if (Array.isArray(left)) {
+      if (typeGuard.array(left)) {
         return left[Number(right)];
       }
     } else if (callee === "indexOf") {
@@ -229,16 +292,20 @@ const processCallExpression = (script: A_CallExpression, scopes: T_scope[]) => {
           left,
           right,
           script,
-          scopes,
+          scopes
         );
         return;
       }
-      return offset === undefined ? left.indexOf(`${right}`) : left.indexOf(`${right}`, Number(offset));
+      return offset === undefined
+        ? left.indexOf(`${right}`)
+        : left.indexOf(`${right}`, Number(offset));
     } else if (callee === "slice") {
       const left = execute(script.callee.object, scopes);
       const arg1 = Number(execute(script.arguments[0], scopes));
       if (typeof left !== "string") {
-        console.error("[call expression] String.slice: slice cannot be used for anything other than String");
+        console.error(
+          "[call expression] String.slice: slice cannot be used for anything other than String"
+        );
         return;
       }
       if (script.arguments[1]) {
@@ -248,22 +315,24 @@ const processCallExpression = (script: A_CallExpression, scopes: T_scope[]) => {
       return left.slice(arg1);
     } else if (callee === "unshift") {
       const left = execute(script.callee.object, scopes);
-      if (!Array.isArray(left)) {
+      if (!typeGuard.array(left)) {
         return left;
       }
       const args = script.arguments.map((arg) => execute(arg, scopes));
       return left.unshift(...args);
     } else if (callee === "push") {
       const left = execute(script.callee.object, scopes);
-      if (!Array.isArray(left)) {
+      if (!typeGuard.array(left)) {
         return left;
       }
       const args = script.arguments.map((arg) => execute(arg, scopes));
       return left.push(...args);
     } else if (callee === "join") {
       const left = execute(script.callee.object, scopes);
-      if (!Array.isArray(left)) {
-        console.error("[call expression] Array.join: join cannot be used for anything other than Array");
+      if (!typeGuard.array(left)) {
+        console.error(
+          "[call expression] Array.join: join cannot be used for anything other than Array"
+        );
         return;
       }
       const arg1 = execute(script.arguments[0], scopes);
@@ -271,7 +340,9 @@ const processCallExpression = (script: A_CallExpression, scopes: T_scope[]) => {
     } else if (callee === "setSlot") {
       const left = execute(script.callee.object, scopes);
       if (!typeGuard.object(left)) {
-        console.error("[call expression] Object.setSlot: setSlot cannot be used for anything other than Object");
+        console.error(
+          "[call expression] Object.setSlot: setSlot cannot be used for anything other than Object"
+        );
         return;
       }
       const key = execute(script.arguments[0], scopes) as string;
@@ -281,13 +352,20 @@ const processCallExpression = (script: A_CallExpression, scopes: T_scope[]) => {
     } else if (callee === "getSlot") {
       const left = execute(script.callee.object, scopes);
       if (!typeGuard.object(left)) {
-        console.error("[call expression] Object.setSlot: setSlot cannot be used for anything other than Object");
+        console.error(
+          "[call expression] Object.setSlot: setSlot cannot be used for anything other than Object"
+        );
         return;
       }
       const key = execute(script.arguments[0], scopes) as string;
       return left[key];
     } else if (callee === "alternative" || callee === "alt") {
-      const args = argumentParser(script.arguments, scopes, ["then", "else"], false);
+      const args = argumentParser(
+        script.arguments,
+        scopes,
+        ["then", "else"],
+        false
+      );
       const left = execute(script.callee.object, scopes);
       if (left && args.then) {
         return execute(args.then, scopes);
@@ -307,19 +385,30 @@ const processCallExpression = (script: A_CallExpression, scopes: T_scope[]) => {
       let count = 1;
       script.arguments.forEach((val) => {
         if (val?.NIWANGO_Identifier) {
-          args[getName(val.NIWANGO_Identifier, scopes) as string] = execute(val, scopes);
+          args[getName(val.NIWANGO_Identifier, scopes) as string] = execute(
+            val,
+            scopes
+          );
         } else {
           args[`$${count++}`] = execute(val, scopes);
         }
       });
       return execute(func.script.arguments[1], [args, ...scopes]);
     } else {
-      const argNames = func.script.arguments[0].arguments.map((arg) => getName(arg, scopes) as string);
+      const argNames = func.script.arguments[0].arguments.map(
+        (arg) => getName(arg, scopes) as string
+      );
       const args = argumentParser(script.arguments, scopes, argNames);
-      return execute(func.script.arguments[1], [{ ...args, self: object }, object, ...scopes]);
+      return execute(func.script.arguments[1], [
+        { ...args, self: object },
+        object,
+        ...scopes,
+      ]);
     }
   }
-  const self = execute({ type: "Identifier", name: "self" }, scopes) as { [key: string]: unknown };
+  const self = execute({ type: "Identifier", name: "self" }, scopes) as {
+    [key: string]: unknown;
+  };
   if (self?.[callee]) {
     const func = self[callee] as definedFunction;
     if (func.type !== "definedFunction") {
@@ -330,14 +419,19 @@ const processCallExpression = (script: A_CallExpression, scopes: T_scope[]) => {
       let count = 1;
       script.arguments.forEach((val) => {
         if (val?.NIWANGO_Identifier) {
-          args[getName(val.NIWANGO_Identifier, scopes) as string] = execute(val, scopes);
+          args[getName(val.NIWANGO_Identifier, scopes) as string] = execute(
+            val,
+            scopes
+          );
         } else {
           args[`$${count++}`] = execute(val, scopes);
         }
       });
       return execute(func.script.arguments[1], [args, ...scopes]);
     } else {
-      const argNames = func.script.arguments[0].arguments.map((arg) => getName(arg, scopes) as string);
+      const argNames = func.script.arguments[0].arguments.map(
+        (arg) => getName(arg, scopes) as string
+      );
       const args = argumentParser(script.arguments, scopes, argNames);
       return execute(func.script.arguments[1], [{ ...args }, ...scopes]);
     }
@@ -363,7 +457,10 @@ const processDump = (script: A_CallExpression, scopes: T_scope[]) => {
  * @param script
  * @param scopes
  */
-const getThis = (script: A_CallExpression, scopes: T_scope[]): { [key: string]: unknown } => {
+const getThis = (
+  script: A_CallExpression,
+  scopes: T_scope[]
+): { [key: string]: unknown } => {
   if (typeGuard.MemberExpression(script.callee))
     return execute(script.callee.object, scopes) as { [key: string]: unknown };
   return getGlobalScope(scopes) as { [key: string]: unknown };
@@ -376,7 +473,11 @@ const getThis = (script: A_CallExpression, scopes: T_scope[]): { [key: string]: 
  * @param scopes
  * @param object
  */
-const processDef = (script: A_CallExpression, scopes: T_scope[], object: { [key: string]: unknown }) => {
+const processDef = (
+  script: A_CallExpression,
+  scopes: T_scope[],
+  object: { [key: string]: unknown }
+) => {
   const func = (() => {
     if (typeGuard.Identifier(script.arguments[0])) {
       return {
@@ -395,7 +496,12 @@ const processDef = (script: A_CallExpression, scopes: T_scope[], object: { [key:
   }
   const functionName = getName(func.callee, scopes);
   if (typeof functionName !== "string") {
-    throw new InvalidTypeError("function name must be string", "CallExpression", script, scopes);
+    throw new InvalidTypeError(
+      "function name must be string",
+      "CallExpression",
+      script,
+      scopes
+    );
   }
   object[functionName] = {
     type: "definedFunction",
@@ -411,7 +517,11 @@ const processDef = (script: A_CallExpression, scopes: T_scope[], object: { [key:
  * @param scopes
  * @param object
  */
-const processDefKari = (script: A_CallExpression, scopes: T_scope[], object: { [key: string]: unknown }) => {
+const processDefKari = (
+  script: A_CallExpression,
+  scopes: T_scope[],
+  object: { [key: string]: unknown }
+) => {
   if (!script.arguments[0]) {
     return;
   }
@@ -449,7 +559,11 @@ const processWhileKari = (script: A_CallExpression, scopes: T_scope[]) => {
  * @param scopes
  * @param object
  */
-const processTimes = (body: Argument<A_ANY>, scopes: T_scope[], object: { [key: string]: unknown }) => {
+const processTimes = (
+  body: Argument<A_ANY>,
+  scopes: T_scope[],
+  object: { [key: string]: unknown }
+) => {
   let lastResult;
   for (let i = 0; i < Number(object); i++) {
     if (body.type === "LambdaExpression") {
@@ -519,7 +633,12 @@ const processDrawShape = (script: A_CallExpression, scopes: T_scope[]) => {
  * @param scopes
  */
 const processIf = (script: A_CallExpression, scopes: T_scope[]) => {
-  const args = argumentParser(script.arguments, scopes, ["when", "then", "else"], false);
+  const args = argumentParser(
+    script.arguments,
+    scopes,
+    ["when", "then", "else"],
+    false
+  );
   const condition = execute(args.when, scopes);
   if (condition) {
     return execute(args.then, scopes);

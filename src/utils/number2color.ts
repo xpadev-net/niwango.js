@@ -12,4 +12,4 @@ const color2number = (input: string) => {
   return parseInt(hex, 16);
 };
 
-export { number2color, color2number };
+export { color2number, number2color };

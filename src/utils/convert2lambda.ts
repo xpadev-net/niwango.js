@@ -1,3 +1,5 @@
+import { A_CallExpression, A_Lambda } from "@/@types/ast";
+
 /**
  * lambda式を生成する
  * @param callee

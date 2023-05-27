@@ -1,3 +1,6 @@
+import { A_AssignmentExpression, T_scope } from "@/@types/ast";
+import { assign, execute } from "@/context";
+import { NotImplementedError } from "@/errors/NotImplementedError";
 import {
   Addition,
   BitwiseAND,
@@ -12,8 +15,6 @@ import {
   Subtraction,
   UnsignedRightShift,
 } from "@/operators";
-import { NotImplementedError } from "@/errors/NotImplementedError";
-import { assign, execute } from "@/context";
 
 /**
  * 演算子と処理の対応表
@@ -39,14 +40,18 @@ const processors = {
 
 /**
  * 代入式を実行する
- * @param {A_AssignmentExpression} script
- * @param {T_scope[]} scopes
+ * @param script
+ * @param scopes
  */
-const processAssignmentExpression = (script: A_AssignmentExpression, scopes: T_scope[]): unknown => {
+const processAssignmentExpression = (
+  script: A_AssignmentExpression,
+  scopes: T_scope[]
+): unknown => {
   const left = execute(script.left, scopes);
   const right = execute(script.right, scopes);
   const processor = processors[script.operator];
-  if (!processor) throw new NotImplementedError("AssignmentExpression", script, scopes);
+  if (!processor)
+    throw new NotImplementedError("AssignmentExpression", script, scopes);
   const result = processor(left, right);
   assign(script.left, result, scopes);
   return result;

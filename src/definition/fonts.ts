@@ -13,7 +13,7 @@ const build = (fonts: FontItem[]): FontItem => {
       pv.font += `, ${val.font}`;
       return pv;
     },
-    { font: "", offset: 0, weight: 600 },
+    { font: "", offset: 0, weight: 600 }
   );
 };
 

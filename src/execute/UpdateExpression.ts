@@ -1,13 +1,17 @@
-import { Addition, Subtraction } from "@/operators";
-import { NotImplementedError } from "@/errors/NotImplementedError";
+import { A_UpdateExpression, T_scope } from "@/@types/ast";
 import { assign, execute } from "@/context";
+import { NotImplementedError } from "@/errors/NotImplementedError";
+import { Addition, Subtraction } from "@/operators";
 
 /**
  * 更新式を実行する
  * @param script
  * @param scopes
  */
-const processUpdateExpression = (script: A_UpdateExpression, scopes: T_scope[]) => {
+const processUpdateExpression = (
+  script: A_UpdateExpression,
+  scopes: T_scope[]
+) => {
   const value = execute(script.argument, scopes);
   if (script.operator === "--") {
     const result = Subtraction(value, 1);

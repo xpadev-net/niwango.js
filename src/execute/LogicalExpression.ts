@@ -1,12 +1,16 @@
-import { NotImplementedError } from "@/errors/NotImplementedError";
+import { A_LogicalExpression, T_scope } from "@/@types/ast";
 import { execute } from "@/context";
+import { NotImplementedError } from "@/errors/NotImplementedError";
 
 /**
  * 論理式を実行する
  * @param script
  * @param scopes
  */
-const processLogicalExpression = (script: A_LogicalExpression, scopes: T_scope[]): unknown => {
+const processLogicalExpression = (
+  script: A_LogicalExpression,
+  scopes: T_scope[]
+): unknown => {
   const left = execute(script.left, scopes);
   const right = execute(script.right, scopes);
   if (script.operator === "&&") {

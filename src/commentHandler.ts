@@ -1,14 +1,26 @@
 import { getGlobalScope } from "@/utils/utils";
 import { CommentMapper } from "@/commentMapper";
 import { comments, currentTime, execute } from "@/context";
+import type { A_ANY, T_scope } from "@/@types/ast";
 
-let handlers: { script: A_ANY; scopes: T_scope[]; time: number; duration?: number; type: "commentHandler" }[] = [];
+let handlers: {
+  script: A_ANY;
+  scopes: T_scope[];
+  time: number;
+  duration?: number;
+  type: "commentHandler";
+}[] = [];
 
 const resetHandlers = () => {
   handlers = [];
 };
 
-const addHandler = (script: A_ANY, scopes: T_scope[], time: number, duration?: number) => {
+const addHandler = (
+  script: A_ANY,
+  scopes: T_scope[],
+  time: number,
+  duration?: number
+) => {
   console.log(script, scopes, time, duration);
   handlers.push({
     script,

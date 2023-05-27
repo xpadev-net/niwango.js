@@ -1,3 +1,4 @@
+import { A_CallExpression, A_VariableDeclaration, T_scope } from "@/@types/ast";
 import { execute, getName } from "@/context";
 
 /**
@@ -6,7 +7,10 @@ import { execute, getName } from "@/context";
  * @param script
  * @param scopes
  */
-const processVariableDeclaration = (script: A_VariableDeclaration, scopes: T_scope[]) => {
+const processVariableDeclaration = (
+  script: A_VariableDeclaration,
+  scopes: T_scope[]
+) => {
   let lastItem;
   for (const item of script.declarations) {
     if (item.init === null) {
@@ -16,11 +20,14 @@ const processVariableDeclaration = (script: A_VariableDeclaration, scopes: T_sco
           callee: item.id,
           arguments: [],
         } as A_CallExpression,
-        scopes,
+        scopes
       );
     } else {
       if (scopes[0]) {
-        lastItem = scopes[0][getName(item.id, scopes) as string] = execute(item.init, scopes);
+        lastItem = scopes[0][getName(item.id, scopes) as string] = execute(
+          item.init,
+          scopes
+        );
       }
     }
   }

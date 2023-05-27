@@ -1,7 +1,7 @@
-import { fonts } from "@/definition/fonts";
-import type { platform } from "@/@types/fonts";
 import { baseConfig } from "@/@types/config";
+import type { platform } from "@/@types/fonts";
 import { colors } from "@/definition/colors";
+import { fonts } from "@/definition/fonts";
 
 /**
  * コンフィグ
@@ -75,7 +75,8 @@ const initConfig = () => {
     font: {
       gulim:
         'normal 600 [size]px gulim, "Microsoft JhengHei UI", Arial, "ＭＳ Ｐゴシック", "MS PGothic", MSPGothic, MS-PGothic',
-      simsun: 'normal 400 [size]px simsun, "游明朝体", "游明朝", "Yu Mincho", YuMincho, yumincho, YuMin-Medium',
+      simsun:
+        'normal 400 [size]px simsun, "游明朝体", "游明朝", "Yu Mincho", YuMincho, yumincho, YuMin-Medium',
     },
     /**
      * フォント @html5?

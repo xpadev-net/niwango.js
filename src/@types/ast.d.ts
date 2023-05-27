@@ -1,4 +1,4 @@
-type A_ANY =
+export type A_ANY =
   | A_Identifier
   | A_Literal
   | A_ExpressionStatement
@@ -23,25 +23,25 @@ type A_ANY =
   | A_VariableDeclarator
   | A_VariableDeclaration
   | A_EmptyStatement;
-type A_Identifier = {
+export type A_Identifier = {
   type: "Identifier";
   name: string;
 };
-type A_Literal = {
+export type A_Literal = {
   type: "Literal";
   value: null | boolean | number | string;
 };
-type A_ExpressionStatement = {
+export type A_ExpressionStatement = {
   type: "ExpressionStatement";
   expression: A_ANY;
 };
-type A_AssignmentExpression = {
+export type A_AssignmentExpression = {
   type: "AssignmentExpression";
   operator: AssignmentExpressionOperator;
   left: A_ANY;
   right: A_ANY;
 };
-type AssignmentExpressionOperator =
+export type AssignmentExpressionOperator =
   | "="
   | "+="
   | "-="
@@ -58,21 +58,21 @@ type AssignmentExpressionOperator =
   | "&&="
   | "||="
   | "??=";
-type A_ArrayExpression = {
+export type A_ArrayExpression = {
   type: "ArrayExpression";
   elements: A_ANY[];
 };
-type A_ArrowFunctionExpression = {
+export type A_ArrowFunctionExpression = {
   type: "ArrowFunctionExpression";
   body: A_BlockStatement;
 };
-type A_BinaryExpression = {
+export type A_BinaryExpression = {
   type: "BinaryExpression";
   operator: BinaryExpressionOperator;
   left: A_ANY;
   right: A_ANY;
 };
-type BinaryExpressionOperator =
+export type BinaryExpressionOperator =
   | ">="
   | "<="
   | ">"
@@ -93,92 +93,92 @@ type BinaryExpressionOperator =
   | "<<"
   | ">>"
   | ">>>";
-type A_BlockStatement = {
+export type A_BlockStatement = {
   type: "BlockStatement";
   body: A_ANY[];
 };
-type A_CallExpression = {
+export type A_CallExpression = {
   type: "CallExpression";
   callee: A_ANY;
   arguments: Argument<A_ANY>[];
   NIWANGO_Identifier?: A_ANY;
 };
-type A_IfStatement = {
+export type A_IfStatement = {
   type: "IfStatement";
   test: A_ANY;
 };
-type A_Lambda = {
+export type A_Lambda = {
   type: "CallExpression";
   callee: { type: "Identifier"; name: "\\" };
   arguments: [A_CallExpression];
 };
-type A_LambdaExpression = {
+export type A_LambdaExpression = {
   type: "LambdaExpression";
   body: A_BlockStatement;
   scopes: T_scope[];
 };
-type A_MemberExpression = {
+export type A_MemberExpression = {
   type: "MemberExpression";
   object: A_ANY;
   property: A_ANY;
   computed: boolean;
 };
-type A_LogicalExpression = {
+export type A_LogicalExpression = {
   type: "LogicalExpression";
   left: A_ANY;
   right: A_ANY;
   operator: string;
 };
-type A_ObjectExpression = {
+export type A_ObjectExpression = {
   type: "ObjectExpression";
   properties: A_Property[];
 };
-type A_Program = {
+export type A_Program = {
   type: "Program";
   body: A_ANY[];
 };
-type A_Property = {
+export type A_Property = {
   type: "Property";
   key: A_ANY;
   value: A_ANY;
 };
-type A_ReturnStatement = {
+export type A_ReturnStatement = {
   type: "ReturnStatement";
   argument: A_ANY;
 };
-type A_SequenceExpression = {
+export type A_SequenceExpression = {
   type: "SequenceExpression";
   expressions: A_ANY[];
 };
-type A_UnaryExpression = {
+export type A_UnaryExpression = {
   type: "UnaryExpression";
   operator: string;
   prefix: boolean;
   argument: A_ANY;
 };
-type A_UpdateExpression = {
+export type A_UpdateExpression = {
   type: "UpdateExpression";
   operator: string;
   argument: A_ANY;
   prefix: boolean;
 };
-type A_VariableDeclaration = {
+export type A_VariableDeclaration = {
   type: "VariableDeclaration";
   declarations: A_VariableDeclarator[];
   kind: string;
 };
-type A_VariableDeclarator = {
+export type A_VariableDeclarator = {
   id: A_ANY;
   init: A_ANY | null;
   type: "VariableDeclarator";
 };
-type A_EmptyStatement = {
+export type A_EmptyStatement = {
   type: "EmptyStatement";
 };
-type T_scope = {
+export type T_scope = {
   [key: string]: unknown;
 };
-type T_environment = {
+export type T_environment = {
   chat?: T_chat;
   commentColor: number | null; //0xffffff
   commentPlace: T_commentPos | null; //naka
@@ -194,7 +194,7 @@ type T_environment = {
   readonly screenWidth: number;
   readonly screenHeight: number;
 };
-type T_chat = {
+export type T_chat = {
   message: string;
   vpos: number;
   isYourPost: false;
@@ -205,8 +205,10 @@ type T_chat = {
   size: number | undefined;
   no: number;
 };
-type T_commentPos = "ue" | "naka" | "shita";
-type T_commentSize = "big" | "medium" | "small";
-type Argument<T> = T & {
+export type T_commentPos = "ue" | "naka" | "shita";
+export type T_commentSize = "big" | "medium" | "small";
+export type Argument<T> = T & {
   NIWANGO_Identifier: null | A_ANY;
 };
+
+export {};

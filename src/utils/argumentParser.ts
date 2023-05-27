@@ -1,5 +1,6 @@
-import { execute, getName, setArgumentParser } from "@/context";
+import { A_ANY, Argument, T_scope } from "@/@types/ast";
 import { ArgumentParser } from "@/@types/execute";
+import { execute, getName, setArgumentParser } from "@/context";
 
 /**
  * callExpressionの引数をパースする
@@ -12,16 +13,12 @@ const argumentParser: ArgumentParser = (
   inputs: Argument<A_ANY>[],
   scopes: T_scope[],
   keys: string[],
-  compute: boolean = true,
+  compute = true
 ): { [key: string]: unknown } => {
   const result: { [key: string]: unknown } = {};
   const nonKeyValues: Argument<A_ANY>[] = [];
-  for (const i in inputs) {
-    const item = inputs[i];
-    if (!item) {
-      continue;
-    }
-    if (item?.NIWANGO_Identifier) {
+  for (const item of inputs) {
+    if (item.NIWANGO_Identifier) {
       const key = getName(item.NIWANGO_Identifier, scopes) as string;
       if (keys.includes(key)) {
         result[key] = compute ? execute(item, scopes) : item;

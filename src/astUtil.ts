@@ -1,3 +1,5 @@
+import type { A_Identifier, A_Literal } from "@/@types/ast";
+
 /**
  * 名前からIdentifierを生成する
  * @param name

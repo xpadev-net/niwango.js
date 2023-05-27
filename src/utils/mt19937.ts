@@ -13,7 +13,8 @@ const __init_genrand = (seed: number): void => {
   mti = 1;
 
   while (mti < N) {
-    mt[mti] = 0x6c078965 * ((mt[mti - 1] || 0) ^ ((mt[mti - 1] || 0) >>> 30)) + mti;
+    mt[mti] =
+      0x6c078965 * ((mt[mti - 1] || 0) ^ ((mt[mti - 1] || 0) >>> 30)) + mti;
     mt[mti] &= 0xffffffff;
     mti++;
   }
@@ -29,7 +30,10 @@ const __init_by_array = (seed: number[], length: number) => {
   for (let i = 0; i < range; i++) {
     const value = getNumber(mt[key1]);
     const lastValue = getNumber(mt[key1 - 1]);
-    mt[key1] = (value ^ ((lastValue ^ (lastValue >>> 30)) * 0x0019660d)) + (seed[key2] || 0) + key2;
+    mt[key1] =
+      (value ^ ((lastValue ^ (lastValue >>> 30)) * 0x0019660d)) +
+      (seed[key2] || 0) +
+      key2;
     mt[key1] &= 0xffffffff;
     key1++;
     key2++;
@@ -72,19 +76,29 @@ const __genrand_int32 = (): number => {
     const index: number[] = [0, MATRIX_A];
 
     while (key < N - M) {
-      result = (getNumber(mt[key]) & UPPER_MASK) | (getNumber(mt[key + 1]) & LOWER_MASK);
-      mt[key] = getNumber(mt[key + M]) ^ (result >>> 1) ^ getNumber(index[result & 1]);
+      result =
+        (getNumber(mt[key]) & UPPER_MASK) |
+        (getNumber(mt[key + 1]) & LOWER_MASK);
+      mt[key] =
+        getNumber(mt[key + M]) ^ (result >>> 1) ^ getNumber(index[result & 1]);
       key++;
     }
 
     while (key < N - 1) {
-      result = (getNumber(mt[key]) & UPPER_MASK) | (getNumber(mt[key + 1]) & LOWER_MASK);
-      mt[key] = getNumber(mt[key + M - N]) ^ (result >>> 1) ^ getNumber(index[result & 1]);
+      result =
+        (getNumber(mt[key]) & UPPER_MASK) |
+        (getNumber(mt[key + 1]) & LOWER_MASK);
+      mt[key] =
+        getNumber(mt[key + M - N]) ^
+        (result >>> 1) ^
+        getNumber(index[result & 1]);
       key++;
     }
 
-    result = (getNumber(mt[N - 1]) & UPPER_MASK) | (getNumber(mt[0]) & LOWER_MASK);
-    mt[N - 1] = getNumber(mt[M - 1]) ^ (result >>> 1) ^ getNumber(index[result & 1]);
+    result =
+      (getNumber(mt[N - 1]) & UPPER_MASK) | (getNumber(mt[0]) & LOWER_MASK);
+    mt[N - 1] =
+      getNumber(mt[M - 1]) ^ (result >>> 1) ^ getNumber(index[result & 1]);
     mti = 0;
   }
 

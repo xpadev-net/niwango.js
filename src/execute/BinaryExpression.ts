@@ -1,8 +1,12 @@
+import { A_BinaryExpression, T_scope } from "@/@types/ast";
+import { execute } from "@/context";
+import { NotImplementedError } from "@/errors/NotImplementedError";
 import {
   Addition,
   BitwiseAND,
   BitwiseOR,
   BitwiseXOR,
+  Compare,
   Division,
   Exponentiation,
   GreaterThan,
@@ -15,10 +19,7 @@ import {
   RightShift,
   Subtraction,
   UnsignedRightShift,
-  Compare,
 } from "@/operators";
-import { NotImplementedError } from "@/errors/NotImplementedError";
-import { execute } from "@/context";
 
 /**
  * 演算子と処理の対応表
@@ -49,14 +50,18 @@ const processors = {
 
 /**
  * 演算式を実行する
- * @param {A_BinaryExpression} script
- * @param {T_scope[]} scopes
+ * @param script
+ * @param scopes
  */
-const processBinaryExpression = (script: A_BinaryExpression, scopes: T_scope[]) => {
+const processBinaryExpression = (
+  script: A_BinaryExpression,
+  scopes: T_scope[]
+) => {
   const left = execute(script.left, scopes);
   const right = execute(script.right, scopes);
   const processor = processors[script.operator];
-  if (!processor) throw new NotImplementedError("BinaryExpression", script, scopes);
+  if (!processor)
+    throw new NotImplementedError("BinaryExpression", script, scopes);
   return processor(left, right);
 };
 

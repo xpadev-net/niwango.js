@@ -18,6 +18,7 @@ import {
 } from "@/execute";
 import { NotImplementedError } from "@/errors/NotImplementedError";
 import { setExecute } from "@/context";
+import { A_LambdaExpression, T_scope } from "@/@types/ast";
 
 /**
  * ASTを実行する関数

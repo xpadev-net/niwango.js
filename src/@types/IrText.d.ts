@@ -1,7 +1,9 @@
 import { charItem } from "@/@types/flashText";
 
 export type commentFlashFont = "defont" | "gulim" | "simsun";
-export type commentContentItem = commentNormalContentItem | commentCompatContentItem;
+export type commentContentItem =
+  | commentNormalContentItem
+  | commentCompatContentItem;
 export type commentNormalContentItem = {
   type: "normal";
   content: string;

@@ -1,7 +1,9 @@
 import { run } from "@/testUtils";
 
 test("basic", () => {
-  expect(run(`a = "ニコニコ動画"; b = "で遊ぼう"; c = a + b;return c`)).toBe("ニコニコ動画で遊ぼう");
+  expect(run(`a = "ニコニコ動画"; b = "で遊ぼう"; c = a + b;return c`)).toBe(
+    "ニコニコ動画で遊ぼう"
+  );
 });
 
 test("index", () => {
@@ -15,7 +17,9 @@ test("size", () => {
 
 test("indexOf", () => {
   expect(run(`return 'abcdef'.indexOf('d')`)).toBe(3);
-  expect(run(`t1='abcdef';t2='d';check=(t1.indexOf(t2)>=0); return check`)).toBe(true);
+  expect(
+    run(`t1='abcdef';t2='d';check=(t1.indexOf(t2)>=0); return check`)
+  ).toBe(true);
 });
 
 test("slice", () => {

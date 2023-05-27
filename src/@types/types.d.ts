@@ -1,3 +1,5 @@
+import type { A_ANY } from "@/@types/ast";
+
 export interface IComment {
   comment: FormattedCommentWithSize;
   invisible: boolean;

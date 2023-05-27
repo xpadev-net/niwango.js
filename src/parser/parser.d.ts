@@ -1,8 +1,10 @@
+import { A_ANY } from "@/@types/ast";
+
 /**
  * ニワン語をASTに変換するパーサー
- * @param {string} script
+ * @param script
  * @param options 設定
- * @returns {A_ANY}
+ * @returns
  */
 export function parse(script: string, options?:Partial<{grammarSource:string}>): A_ANY;
 
@@ -11,7 +13,12 @@ export function parse(script: string, options?:Partial<{grammarSource:string}>):
  * 多分型はあってるはず
  */
 export class SyntaxError extends Error {
-  constructor(message: string, expected: string, found: string, location: string);
+  constructor(
+    message: string,
+    expected: string,
+    found: string,
+    location: string
+  );
   expected: string;
   found: string;
   location: {

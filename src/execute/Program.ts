@@ -1,3 +1,4 @@
+import { A_Program, T_scope } from "@/@types/ast";
 import { execute } from "@/context";
 
 /**
@@ -6,7 +7,10 @@ import { execute } from "@/context";
  * @param scopes
  */
 const processProgram = (script: A_Program, scopes: T_scope[]) => {
-  return script.body.reduce((_, item) => execute(item, scopes), undefined as unknown);
+  return script.body.reduce(
+    (_, item) => execute(item, scopes),
+    undefined as unknown
+  );
 };
 
 export { processProgram };

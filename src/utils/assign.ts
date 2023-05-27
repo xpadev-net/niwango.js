@@ -1,5 +1,6 @@
-import typeGuard from "@/typeGuard";
+import { A_ANY, T_scope } from "@/@types/ast";
 import { execute, getName, setAssign } from "@/context";
+import typeGuard from "@/typeGuard";
 
 /**
  * 変数に代入する関数
@@ -28,7 +29,11 @@ const assign = (target: A_ANY, value: unknown, scopes: T_scope[]) => {
         console.error("[assign] left is not object", target, value, scopes);
         return;
       }
-      const key = (target.computed ? execute(target.property, scopes) : getName(target.property, scopes)) as string;
+      const key = (
+        target.computed
+          ? execute(target.property, scopes)
+          : getName(target.property, scopes)
+      ) as string;
       left[key] = value;
     }
   } catch (e) {

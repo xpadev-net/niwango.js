@@ -1,6 +1,7 @@
-import typeGuard from "@/typeGuard";
-import { config } from "@/definition/config";
+import { A_ANY, T_scope } from "@/@types/ast";
 import { commentFont } from "@/@types/IrText";
+import { config } from "@/definition/config";
+import typeGuard from "@/typeGuard";
 
 /**
  * 変数の参照を取得する関数
@@ -38,9 +39,9 @@ const getGlobalScope = (scopes: T_scope[]): T_scope | undefined => {
 
 /**
  * フォント名とサイズをもとにcontextで使えるフォントを生成する
- * @param {string} font
- * @param {string|number} size
- * @returns {string}
+ * @param font
+ * @param size
+ * @returns
  */
 const parseFont = (font: commentFont, size: string | number): string => {
   switch (font) {
@@ -61,4 +62,4 @@ const getValue = <T>(value: T | undefined, fallback: T): T => {
   return value ?? fallback;
 };
 
-export { resolve, getGlobalScope, parseFont, getValue };
+export { getGlobalScope, getValue, parseFont, resolve };

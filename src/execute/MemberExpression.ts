@@ -1,6 +1,14 @@
-import typeGuard from "@/typeGuard";
+import {
+  A_ANY,
+  A_BinaryExpression,
+  A_MemberExpression,
+  A_UnaryExpression,
+  T_scope,
+} from "@/@types/ast";
 import { definedFunction } from "@/@types/function";
 import { execute, getName } from "@/context";
+import typeGuard from "@/typeGuard";
+
 import { parse } from "../parser/parser";
 
 /**
@@ -8,15 +16,20 @@ import { parse } from "../parser/parser";
  * @param script
  * @param scopes
  */
-const processMemberExpression = (script: A_MemberExpression, scopes: T_scope[]) => {
+const processMemberExpression = (
+  script: A_MemberExpression,
+  scopes: T_scope[]
+) => {
   const left = execute(script.object, scopes);
   if (left === undefined) {
     console.error("[member expression] left is undefined", script, scopes);
     return;
   }
-  const right = (script.computed ? execute(script.property, scopes) : getName(script.property, scopes)) as
-    | string
-    | number;
+  const right = (
+    script.computed
+      ? execute(script.property, scopes)
+      : getName(script.property, scopes)
+  ) as string | number;
   if (typeGuard.object(left) && typeGuard.definedFunction(left[right])) {
     const func = left[right] as definedFunction;
     return execute(func.script.arguments[1], [{ self: left }, ...scopes]);
@@ -35,7 +48,7 @@ const processMemberExpression = (script: A_MemberExpression, scopes: T_scope[]) 
   if (typeof right === "string") {
     if (right === "clone") {
       if (typeof left === "object") {
-        if (Array.isArray(left)) {
+        if (typeGuard.array(left)) {
           return [...left];
         } else {
           return { ...left };
@@ -73,7 +86,7 @@ const processMemberExpression = (script: A_MemberExpression, scopes: T_scope[]) 
       };
       return execute(BinaryExpression, scopes);
     } else if (right === "size") {
-      if (Array.isArray(left) || typeof left === "string") {
+      if (typeGuard.array(left) || typeof left === "string") {
         return left.length;
       }
     } else if (typeof left === "number") {
@@ -99,7 +112,7 @@ const processMemberExpression = (script: A_MemberExpression, scopes: T_scope[]) 
       } else if (right === "eval") {
         return execute(parse(left), scopes);
       }
-    } else if (Array.isArray(left)) {
+    } else if (typeGuard.array(left)) {
       if (right === "shift") {
         return left.shift();
       } else if (right === "pop") {
@@ -107,9 +120,9 @@ const processMemberExpression = (script: A_MemberExpression, scopes: T_scope[]) 
       } else if (right === "sort") {
         return left.sort();
       } else if (right === "sum") {
-        return left.reduce((sum, num) => sum + num, 0);
+        return left.reduce<number>((sum, num) => sum + Number(num), 0);
       } else if (right === "product") {
-        return left.reduce((sum, num) => sum * num, 1);
+        return left.reduce<number>((sum, num) => sum * Number(num), 1);
       }
     }
   }
