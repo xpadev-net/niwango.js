@@ -12,6 +12,7 @@ import { processToASBoolean } from "@/core/prototype/Value/toASBoolean";
 import { processIndex } from "@/core/prototype/Value/_index";
 import { processPlus } from "@/core/prototype/Value/plus";
 import { processMinus } from "@/core/prototype/Value/minus";
+import { processMultiply } from "@/core/prototype/Value/multiply";
 
 export type PrototypeValueFunction = PrototypeFunction<unknown>;
 
@@ -30,6 +31,7 @@ const prototypeValueFunctions: PrototypeFunctions<unknown> = {
   index: processIndex,
   plus: processPlus,
   minus: processMinus,
+  multiply: processMultiply,
 };
 
 export { prototypeValueFunctions };
