@@ -7,10 +7,5 @@ export type PrototypeFunction<T> = (
 ) => unknown;
 
 export type PrototypeFunctions<T> = {
-  [key: string]:
-    | {
-        func: PrototypeFunction<T>;
-        condition: (object: unknown, script: A_CallExpression) => boolean;
-      }
-    | PrototypeFunction<T>;
+  [key: string]: PrototypeFunction<T>;
 };
