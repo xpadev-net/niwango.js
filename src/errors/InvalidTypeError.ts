@@ -9,14 +9,13 @@ class InvalidTypeError extends Error {
   scopes: T_scope[];
   constructor(
     message: string,
-    ASTName: string,
     ast: A_ANY,
     scopes: T_scope[],
     options: { [key: string]: unknown } = {}
   ) {
     super("InvalidTypeError", options);
     this.message = message;
-    this.ASTName = ASTName;
+    this.ASTName = ast.type;
     this.ast = ast;
     this.scopes = scopes;
   }

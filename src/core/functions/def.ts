@@ -1,8 +1,9 @@
-import { A_CallExpression, T_scope } from "@/@types/ast";
+import { A_CallExpression } from "@/@types/ast";
 import typeGuard from "@/typeGuard";
 import { getName } from "@/context";
 import { InvalidTypeError } from "@/errors/InvalidTypeError";
 import { definedFunction } from "@/@types/function";
+import { IrFunction } from "@/core/functions/index";
 
 /**
  * @関数
@@ -11,11 +12,7 @@ import { definedFunction } from "@/@types/function";
  * @param scopes
  * @param object
  */
-const processDef = (
-  script: A_CallExpression,
-  scopes: T_scope[],
-  object: { [key: string]: unknown }
-) => {
+const processDef: IrFunction = (script, scopes, object) => {
   const func = (() => {
     if (typeGuard.Identifier(script.arguments[0])) {
       return {
@@ -27,19 +24,15 @@ const processDef = (
     if (typeGuard.CallExpression(script.arguments[0])) {
       return script.arguments[0];
     }
-    return undefined;
-  })();
-  if (!func) {
-    return;
-  }
-  const functionName = getName(func.callee, scopes);
-  if (typeof functionName !== "string") {
     throw new InvalidTypeError(
-      "function name must be string",
-      "CallExpression",
+      "function name must be CallExpression or Identifier",
       script,
       scopes
     );
+  })();
+  const functionName = getName(func.callee, scopes);
+  if (typeof functionName !== "string") {
+    throw new InvalidTypeError("function name must be string", script, scopes);
   }
   object[functionName] = {
     type: "definedFunction",

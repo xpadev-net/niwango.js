@@ -496,12 +496,7 @@ const processDef = (
   }
   const functionName = getName(func.callee, scopes);
   if (typeof functionName !== "string") {
-    throw new InvalidTypeError(
-      "function name must be string",
-      "CallExpression",
-      script,
-      scopes
-    );
+    throw new InvalidTypeError("function name must be string", script, scopes);
   }
   object[functionName] = {
     type: "definedFunction",

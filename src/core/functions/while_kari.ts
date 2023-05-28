@@ -1,5 +1,5 @@
 import { A_CallExpression, T_scope } from "@/@types/ast";
-import { execute } from "@/context";
+import { execute } from "@/core/coreContext";
 
 /**
  * @関数

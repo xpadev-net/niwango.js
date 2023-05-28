@@ -1,5 +1,5 @@
 import { A_SequenceExpression, T_scope } from "@/@types/ast";
-import { execute } from "@/context";
+import { execute } from "@/core/coreContext";
 
 /**
  * 含まれる式すべてを実行する

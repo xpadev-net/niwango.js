@@ -1,5 +1,5 @@
 import { A_ArrayExpression, T_scope } from "@/@types/ast";
-import { execute } from "@/context";
+import { execute } from "@/core/coreContext";
 
 /**
  * 配列作成関数

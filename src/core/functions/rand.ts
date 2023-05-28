@@ -1,6 +1,6 @@
 import typeGuard from "@/typeGuard";
 import { mt19937 } from "@/utils/mt19937";
-import { execute } from "@/context";
+import { execute } from "@/core/coreContext";
 import { A_CallExpression, T_scope } from "@/@types/ast";
 
 let randCalledCount = 0;

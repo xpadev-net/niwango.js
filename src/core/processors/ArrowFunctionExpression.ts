@@ -1,5 +1,5 @@
 import { A_ArrowFunctionExpression, T_scope } from "@/@types/ast";
-import { execute } from "@/context";
+import { execute } from "@/core/coreContext";
 
 const processArrowFunctionExpression = (
   script: A_ArrowFunctionExpression,

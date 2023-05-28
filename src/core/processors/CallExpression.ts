@@ -2,7 +2,7 @@ import { A_CallExpression, A_MemberExpression, T_scope } from "@/@types/ast";
 import typeGuard from "@/typeGuard";
 import { execute, getName } from "@/context";
 import { getGlobalScope } from "@/utils/utils";
-import { functions } from "@/core/processors/CallExpression/functions";
+import { functions } from "@/core/functions";
 
 const processCallExpression = (script: A_CallExpression, scopes: T_scope[]) => {
   const isMemberExpression = typeGuard.MemberExpression(script.callee);
@@ -15,9 +15,9 @@ const processCallExpression = (script: A_CallExpression, scopes: T_scope[]) => {
   const object = getThis(script, scopes);
   const processor = functions[callee];
   if (typeof processor === "object" && processor.condition(object, script)) {
-    return processor.func(script, scopes);
+    return processor.func(script, scopes, object);
   } else if (typeof processor === "function") {
-    return processor(script, scopes);
+    return processor(script, scopes, object);
   }
 };
 

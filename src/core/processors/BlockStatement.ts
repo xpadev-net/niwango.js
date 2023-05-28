@@ -1,5 +1,5 @@
 import { A_BlockStatement, T_scope } from "@/@types/ast";
-import { execute } from "@/context";
+import { execute } from "@/core/coreContext";
 
 /**
  * ブロック文を実行する

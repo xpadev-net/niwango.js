@@ -1,5 +1,5 @@
 import { A_ReturnStatement, T_scope } from "@/@types/ast";
-import { execute } from "@/context";
+import { execute } from "@/core/coreContext";
 
 const processReturnStatement = (
   script: A_ReturnStatement,

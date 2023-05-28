@@ -1,6 +1,7 @@
 import { A_ANY, A_CallExpression, T_scope } from "@/@types/ast";
-import { argumentParser, execute } from "@/context";
+import { argumentParser } from "@/context";
 import { addQueue } from "@/queue";
+import { execute } from "@/core/coreContext";
 
 const processTimer = (script: A_CallExpression, scopes: T_scope[]) => {
   const args = argumentParser(

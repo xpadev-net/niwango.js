@@ -1,5 +1,5 @@
 import { A_Identifier, T_scope } from "@/@types/ast";
-import { execute } from "@/context";
+import { execute } from "@/core/coreContext";
 import typeGuard from "@/typeGuard";
 import { resolve } from "@/utils/utils";
 

@@ -1,5 +1,7 @@
 import { A_ANY, A_CallExpression, T_scope } from "@/@types/ast";
-import { argumentParser, execute } from "@/context";
+
+import { argumentParser } from "@/context";
+import { execute } from "@/core/coreContext";
 
 /**
  * @関数
