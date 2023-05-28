@@ -1,22 +1,19 @@
 import { A_ANY } from "@/@types/ast";
-import { CommentMapper } from "@/commentMapper";
 
 import { parse, SyntaxError as PeggySyntaxError } from "./parser";
 
-const parseScript = (comment: CommentMapper): A_ANY => {
-  let script = comment.message.slice(1);
+const parseScript = (content: string, name: string): A_ANY => {
+  let script = content.slice(1);
   let firstError = undefined;
   while (true) {
     try {
-      return parse(script, { grammarSource: `${comment.no}.niwascript` });
+      return parse(script, { grammarSource: name });
     } catch (e) {
       firstError ??= e;
       if (!(e instanceof PeggySyntaxError)) {
         throw e;
       }
-      console.info(
-        e.format([{ source: `${comment.no}.niwascript`, text: script }])
-      );
+      console.info(e.format([{ source: name, text: script }]));
       if (
         script.length < 1 ||
         script.slice(0, e.location.start.offset) === script

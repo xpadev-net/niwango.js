@@ -36,7 +36,7 @@ class Niwango {
     comments.forEach((comment) => {
       if (comment.message.match(/^\//) && comment.comment.owner) {
         try {
-          const ast = parseScript(comment);
+          const ast = parseScript(comment.message, `${comment.no}.niwascript`);
           addScript(ast, comment._vpos);
         } catch (e) {
           console.error(e);
