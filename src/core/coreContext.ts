@@ -13,4 +13,4 @@ const prototypeScope = {
   Number: {},
 };
 
-export { execute, setExecute, prototypeScope };
+export { execute, prototypeScope, setExecute };

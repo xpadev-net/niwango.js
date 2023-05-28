@@ -2,7 +2,7 @@ import typeGuard from "@/typeGuard";
 import { getName } from "@/context";
 import { InvalidTypeError } from "@/errors/InvalidTypeError";
 import { definedFunction } from "@/@types/function";
-import { PrototypeFunction } from "./index";
+import { PrototypeFunction } from "@/@types/core/prototype";
 
 /**
  * @関数

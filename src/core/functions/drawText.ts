@@ -1,6 +1,7 @@
 import { A_CallExpression, T_scope } from "@/@types/ast";
 import { argumentParser, context } from "@/context";
 import { IrText } from "@/objects/text";
+import { IrFunction } from "@/@types/core/functions";
 
 /**
  * @関数
@@ -8,7 +9,10 @@ import { IrText } from "@/objects/text";
  * @param script
  * @param scopes
  */
-const processDrawText = (script: A_CallExpression, scopes: T_scope[]) => {
+const processDrawText: IrFunction = (
+  script: A_CallExpression,
+  scopes: T_scope[]
+) => {
   const args = argumentParser(script.arguments, scopes, [
     "text",
     "x",

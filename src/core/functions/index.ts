@@ -2,7 +2,6 @@ import { processDump } from "./dump";
 import { processDef } from "./def";
 import { processDefKari } from "./def_kari";
 import { processWhileKari } from "./while_kari";
-import { A_CallExpression, T_scope } from "@/@types/ast";
 import { processTimes, timesCondition } from "./times";
 import { processDrawText } from "./drawText";
 import { processDrawShape } from "./drawShape";
@@ -13,23 +12,10 @@ import { processRand } from "./rand";
 import { processDistance } from "./distance";
 import { processScreenHeight, processScreenWidth } from "./screen";
 import { processTimethis } from "./timethis";
+import { IrFunctions } from "@/@types/core/functions";
+import { processPlayStartTime } from "@/core/functions/playStartTime";
 
-export type IrFunction = (
-  script: A_CallExpression,
-  scopes: T_scope[],
-  object: { [key: string]: unknown }
-) => unknown;
-
-type IFunctions = {
-  [key: string]:
-    | {
-        func: IrFunction;
-        condition: (object: unknown, script: A_CallExpression) => boolean;
-      }
-    | IrFunction;
-};
-
-const functions: IFunctions = {
+const functions: IrFunctions = {
   dump: processDump,
   def: processDef,
   def_kari: processDefKari,

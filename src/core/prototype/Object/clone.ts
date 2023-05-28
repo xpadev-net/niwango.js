@@ -1,4 +1,4 @@
-import { PrototypeFunction } from "./index";
+import { PrototypeFunction } from "@/@types/core/prototype";
 
 /**
  * @関数

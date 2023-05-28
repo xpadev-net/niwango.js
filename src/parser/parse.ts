@@ -1,7 +1,7 @@
+import { A_ANY } from "@/@types/ast";
 import { CommentMapper } from "@/commentMapper";
 
 import { parse, SyntaxError as PeggySyntaxError } from "./parser";
-import { A_ANY } from "@/@types/ast";
 
 const parseScript = (comment: CommentMapper): A_ANY => {
   let script = comment.message.slice(1);

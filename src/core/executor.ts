@@ -1,9 +1,9 @@
 import { T_scope } from "@/@types/ast";
 import { Execute } from "@/@types/execute";
+import { setExecute } from "@/core/coreContext";
 import { processors } from "@/core/processors";
 import { NotImplementedError } from "@/errors/NotImplementedError";
 import typeGuard from "@/typeGuard";
-import { setExecute } from "@/core/coreContext";
 
 /**
  * ASTを実行する関数

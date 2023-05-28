@@ -2,6 +2,7 @@ import { A_ANY, A_CallExpression, T_scope } from "@/@types/ast";
 
 import { argumentParser } from "@/context";
 import { execute } from "@/core/coreContext";
+import { IrFunction } from "@/@types/core/functions";
 
 /**
  * @関数
@@ -9,7 +10,7 @@ import { execute } from "@/core/coreContext";
  * @param script
  * @param scopes
  */
-const processIf = (script: A_CallExpression, scopes: T_scope[]) => {
+const processIf: IrFunction = (script: A_CallExpression, scopes: T_scope[]) => {
   const args = argumentParser(
     script.arguments,
     scopes,

@@ -1,6 +1,6 @@
-import { execute } from "@/context";
 import { InvalidTypeError } from "@/errors/InvalidTypeError";
-import { PrototypeFunction } from "./index";
+import { PrototypeFunction } from "@/@types/core/prototype";
+import { execute } from "@/core/coreContext";
 
 /**
  * @関数

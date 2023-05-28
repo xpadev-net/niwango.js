@@ -1,6 +1,7 @@
 import { A_CallExpression, T_scope } from "@/@types/ast";
 import { execute } from "@/core/coreContext";
 import { definedFunction } from "@/@types/function";
+import { IrFunction } from "@/@types/core/functions";
 
 /**
  * @関数
@@ -9,7 +10,7 @@ import { definedFunction } from "@/@types/function";
  * @param scopes
  * @param object
  */
-const processDefKari = (
+const processDefKari: IrFunction = (
   script: A_CallExpression,
   scopes: T_scope[],
   object: { [key: string]: unknown }

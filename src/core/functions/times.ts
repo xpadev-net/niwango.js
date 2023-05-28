@@ -1,5 +1,6 @@
 import { A_ANY, A_CallExpression, Argument, T_scope } from "@/@types/ast";
 import { execute } from "@/core/coreContext";
+import { IrFunction } from "@/@types/core/functions";
 
 /**
  * @関数
@@ -8,7 +9,7 @@ import { execute } from "@/core/coreContext";
  * @param scopes
  * @param object
  */
-const processTimes = (
+const processTimes: IrFunction = (
   script: A_CallExpression,
   scopes: T_scope[],
   object: { [key: string]: unknown }

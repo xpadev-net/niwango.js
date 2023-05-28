@@ -3,7 +3,7 @@ import typeGuard from "@/typeGuard";
 import { getName } from "@/context";
 import { InvalidTypeError } from "@/errors/InvalidTypeError";
 import { definedFunction } from "@/@types/function";
-import { IrFunction } from "@/core/functions/index";
+import { IrFunction } from "@/@types/core/functions";
 
 /**
  * @関数

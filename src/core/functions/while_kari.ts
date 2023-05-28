@@ -1,5 +1,6 @@
 import { A_CallExpression, T_scope } from "@/@types/ast";
 import { execute } from "@/core/coreContext";
+import { IrFunction } from "@/@types/core/functions";
 
 /**
  * @関数
@@ -7,7 +8,10 @@ import { execute } from "@/core/coreContext";
  * @param script
  * @param scopes
  */
-const processWhileKari = (script: A_CallExpression, scopes: T_scope[]) => {
+const processWhileKari: IrFunction = (
+  script: A_CallExpression,
+  scopes: T_scope[]
+) => {
   if (!(script.arguments[0] && script.arguments[1])) {
     return;
   }
