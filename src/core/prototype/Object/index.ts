@@ -1,14 +1,20 @@
-import { processDef } from "@/core/prototype/Object/def";
-import { processGetSlot } from "@/core/prototype/Object/getSlot";
-import { processSetSlot } from "@/core/prototype/Object/setSlot";
-import { processClone } from "@/core/prototype/Object/clone";
-import { PrototypeFunctions } from "@/@types/core/prototype";
+import { processDef } from "./def";
+import { processGetSlot } from "./getSlot";
+import { processSetSlot } from "./setSlot";
+import { processClone } from "./clone";
+import { PrototypeFunction, PrototypeFunctions } from "@/@types/core/prototype";
 
-const prototypeFunctions: PrototypeFunctions = {
+export type PrototypeObjectFunction = PrototypeFunction<{
+  [key: string | number]: unknown;
+}>;
+
+const prototypeObjectFunctions: PrototypeFunctions<{
+  [key: string | number]: unknown;
+}> = {
   def: processDef,
   getSlot: processGetSlot,
   setSlot: processSetSlot,
   clone: processClone,
 };
 
-export { prototypeFunctions };
+export { prototypeObjectFunctions };

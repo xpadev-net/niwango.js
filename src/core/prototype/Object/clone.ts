@@ -1,4 +1,4 @@
-import { PrototypeFunction } from "@/@types/core/prototype";
+import { PrototypeObjectFunction } from "./index";
 
 /**
  * @関数
@@ -7,7 +7,7 @@ import { PrototypeFunction } from "@/@types/core/prototype";
  * @param _scope
  * @param object
  */
-const processClone: PrototypeFunction = (_script, _scope, object) => {
+const processClone: PrototypeObjectFunction = (_script, _scope, object) => {
   return structuredClone(object);
 };
 

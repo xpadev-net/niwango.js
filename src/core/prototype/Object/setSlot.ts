@@ -1,5 +1,5 @@
 import { InvalidTypeError } from "@/errors/InvalidTypeError";
-import { PrototypeFunction } from "@/@types/core/prototype";
+import { PrototypeObjectFunction } from "./index";
 import { execute } from "@/core/coreContext";
 
 /**
@@ -9,7 +9,7 @@ import { execute } from "@/core/coreContext";
  * @param scopes
  * @param object
  */
-const processSetSlot: PrototypeFunction = (script, scopes, object) => {
+const processSetSlot: PrototypeObjectFunction = (script, scopes, object) => {
   const key = execute(script.arguments[0], scopes);
   if (typeof key !== "string" && typeof key !== "number") {
     throw new InvalidTypeError(

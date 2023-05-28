@@ -2,7 +2,7 @@ import typeGuard from "@/typeGuard";
 import { getName } from "@/context";
 import { InvalidTypeError } from "@/errors/InvalidTypeError";
 import { definedFunction } from "@/@types/function";
-import { PrototypeFunction } from "@/@types/core/prototype";
+import { PrototypeObjectFunction } from "./index";
 
 /**
  * @関数
@@ -11,7 +11,7 @@ import { PrototypeFunction } from "@/@types/core/prototype";
  * @param scopes
  * @param object
  */
-const processDef: PrototypeFunction = (script, scopes, object) => {
+const processDef: PrototypeObjectFunction = (script, scopes, object) => {
   const functionName = (() => {
     if (typeGuard.Identifier(script.arguments[0])) {
       return getName(script.arguments[0], scopes);
