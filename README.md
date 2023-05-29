@@ -4,6 +4,8 @@
 ニワン語を扱えるようにするために開発しているライブラリです  
 仕様は[こちらのwiki](https://web.archive.org/web/20161026165155id_/http://nicowiki.com/?%E3%83%8B%E3%83%AF%E3%83%B3%E8%AA%9E)に基づいています
 
-動作サンプル:
-- [【読込激重】魔法少女まどか☆マギカ完結版OPをコメントでry【元動画１】](https://xpadev-net.github.io/niconicomments/sample/?video=23)
-- [【読込激重】魔法少女まどか☆マギカ完結版OPをコメントでry【元動画２】](https://xpadev-net.github.io/niconicomments/sample/?video=24)
+# 関連リンク
+- [niwango.js](https://xpadev-net.github.io/niwango.js)
+
+- [niwango-live-loader](https://xpadev-net.github.io/niwango-live-loader/)
+  niwango.jsを用いてニコニコ動画上でニワン語を描画するUserScriptです
