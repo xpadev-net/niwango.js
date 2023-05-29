@@ -1,6 +1,8 @@
+import Core from "@xpadev-net/niwango-core";
+
 import { A_CallExpression, T_scope } from "@/@types/ast";
 import { IrFunction } from "@/@types/core/functions";
-import { argumentParser, context } from "@/context";
+import { context } from "@/context";
 import { IrShape } from "@/objects/shape";
 
 /**
@@ -13,7 +15,7 @@ const processDrawShape: IrFunction = (
   script: A_CallExpression,
   scopes: T_scope[]
 ) => {
-  const args = argumentParser(script.arguments, scopes, [
+  const args = Core.utils.argumentParser(script.arguments, scopes, [
     "x",
     "y",
     "z",

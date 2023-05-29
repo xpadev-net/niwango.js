@@ -1,6 +1,7 @@
+import Core from "@xpadev-net/niwango-core";
+
 import { A_CallExpression, T_scope } from "@/@types/ast";
 import { IrFunction } from "@/@types/core/functions";
-import { execute } from "@/core/coreContext";
 import typeGuard from "@/typeGuard";
 import { mt19937 } from "@/utils/mt19937";
 
@@ -34,7 +35,7 @@ const processRand: IrFunction = (
   scopes: T_scope[]
 ) => {
   if (script.arguments[0]) {
-    return rand(execute(script.arguments[0], scopes));
+    return rand(Core.execute(script.arguments[0], scopes));
   }
   return rand();
 };

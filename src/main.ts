@@ -1,12 +1,11 @@
+import Core from "@xpadev-net/niwango-core";
+
 import { T_environment, T_scope } from "@/@types/ast";
 import { IComment } from "@/@types/types";
 import { getComments, triggerHandlers } from "@/commentHandler";
 import { CommentMapper } from "@/commentMapper";
 import { setComments, setContext, setCurrentTime, setIsWide } from "@/context";
-import { execute, prototypeScope } from "@/core/coreContext";
 import { config, initConfig } from "@/definition/config";
-import { NotImplementedError } from "@/errors/NotImplementedError";
-import { parseScript } from "@/parser/parse";
 import { getQueue } from "@/queue";
 import { addScript, getScripts } from "@/scripts";
 import { draw } from "@/utils/objectManager";
@@ -32,7 +31,10 @@ class Niwango {
     comments.forEach((comment) => {
       if (comment.message.match(/^\//) && comment.comment.owner) {
         try {
-          const ast = parseScript(comment.message, `${comment.no}.niwascript`);
+          const ast = Core.parseScript(
+            comment.message,
+            `${comment.no}.niwascript`
+          );
           addScript(ast, comment._vpos);
         } catch (e) {
           console.error(e);
@@ -95,15 +97,14 @@ class Niwango {
           return;
         }
         try {
-          execute(
+          Core.execute(
             queue.script,
             queue.type === "queue"
               ? queue.scopes
-              : [this.globalScope, this.environmentScope, prototypeScope]
+              : [this.globalScope, this.environmentScope, Core.prototypeScope]
           );
         } catch (e) {
-          const n = e as NotImplementedError;
-          console.error(n, n.ast, n.scopes);
+          console.error(e);
         }
       });
     this.clear();

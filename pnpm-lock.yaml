@@ -31,6 +31,9 @@ devDependencies:
   '@typescript-eslint/parser':
     specifier: ^5.59.6
     version: 5.59.6(eslint@8.40.0)(typescript@5.0.4)
+  '@xpadev-net/niwango-core':
+    specifier: ^0.0.2-canary.20230530-1
+    version: 0.0.2-canary.20230530-1
   copyfiles:
     specifier: ^2.4.1
     version: 2.4.1
@@ -2045,6 +2048,10 @@ packages:
     dependencies:
       '@typescript-eslint/types': 5.59.6
       eslint-visitor-keys: 3.4.1
+    dev: true
+
+  /@xpadev-net/niwango-core@0.0.2-canary.20230530-1:
+    resolution: {integrity: sha512-A5p+CDDT06qL5ASjcN5/NymKqND8zn6PVN0xCXqMly40HwV83/vUOkrZH5peuXYD3C7Aj8vW4iZ1zL521TolRQ==}
     dev: true
 
   /abab@2.0.6:

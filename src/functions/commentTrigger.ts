@@ -1,11 +1,12 @@
+import Core from "@xpadev-net/niwango-core";
+
 import { A_ANY } from "@/@types/ast";
 import { IrFunction } from "@/@types/core/functions";
 import { addHandler } from "@/commentHandler";
-import { argumentParser, currentTime } from "@/context";
-import { execute } from "@/core/coreContext";
+import { currentTime } from "@/context";
 
 const processCommentTrigger: IrFunction = (script, scopes) => {
-  const args = argumentParser(
+  const args = Core.utils.argumentParser(
     script.arguments,
     scopes,
     ["then", "timer"],
@@ -15,7 +16,7 @@ const processCommentTrigger: IrFunction = (script, scopes) => {
     args.then as A_ANY,
     scopes,
     currentTime,
-    args.timer ? Number(execute(args.timer, scopes)) : undefined
+    args.timer ? Number(Core.execute(args.timer, scopes)) : undefined
   );
 };
 

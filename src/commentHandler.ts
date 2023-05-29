@@ -1,7 +1,8 @@
+import Core from "@xpadev-net/niwango-core";
+
 import type { A_ANY, T_scope } from "@/@types/ast";
 import { CommentMapper } from "@/commentMapper";
 import { comments, currentTime } from "@/context";
-import { execute } from "@/core/coreContext";
 import { getGlobalScope } from "@/utils/utils";
 
 let handlers: {
@@ -38,7 +39,7 @@ const triggerHandlers = (comment: CommentMapper) => {
     const globalScope = getGlobalScope(handler.scopes);
     if (!globalScope) continue;
     globalScope.chat = comment;
-    execute(handler.script, handler.scopes);
+    Core.execute(handler.script, handler.scopes);
   }
 };
 

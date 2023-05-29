@@ -1,5 +1,5 @@
-import { execute, prototypeScope } from "@/core/coreContext";
-import { parseScript } from "@/parser/parse";
+import Core from "@xpadev-net/niwango-core";
+
 import { setup } from "@/utils/setup";
 
 setup();
@@ -30,7 +30,11 @@ const run = (niwango: string) => {
     isWide: null, //false
     lastVideo: "sm1", //sm1
   };
-  const ast = parseScript(niwango, "jest");
-  return execute(ast, [globalScope, environmentScope, prototypeScope]);
+  const ast = Core.parseScript(niwango, "jest");
+  return Core.execute(ast, [
+    globalScope,
+    environmentScope,
+    Core.prototypeScope,
+  ]);
 };
 export { run };
