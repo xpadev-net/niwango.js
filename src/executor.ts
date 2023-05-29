@@ -1,8 +1,10 @@
-import typeGuard from "@/typeGuard";
+import { A_LambdaExpression, T_scope } from "@/@types/ast";
 import { Execute } from "@/@types/execute";
+import { setExecute } from "@/context";
+import { NotImplementedError } from "@/errors/NotImplementedError";
 import {
-  processAssignmentExpression,
   processArrayExpression,
+  processAssignmentExpression,
   processBinaryExpression,
   processBlockStatement,
   processCallExpression,
@@ -16,9 +18,7 @@ import {
   processUpdateExpression,
   processVariableDeclaration,
 } from "@/execute";
-import { NotImplementedError } from "@/errors/NotImplementedError";
-import { setExecute } from "@/context";
-import { A_LambdaExpression, T_scope } from "@/@types/ast";
+import typeGuard from "@/typeGuard";
 
 /**
  * ASTを実行する関数

@@ -1,6 +1,6 @@
-import { PrototypeValueFunction } from "@/core/prototype/Value/index";
-import { resolvePrototype } from "@/core/prototype/resolve";
 import { UnaryPlus } from "@/core/operators";
+import { resolvePrototype } from "@/core/prototype/resolve";
+import { PrototypeValueFunction } from "@/core/prototype/Value/index";
 
 const processPlus: PrototypeValueFunction = (script, scopes, object) => {
   const toASNumber = resolvePrototype(typeof object, "toASNumber");

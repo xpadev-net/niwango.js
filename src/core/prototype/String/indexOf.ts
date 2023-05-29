@@ -1,5 +1,5 @@
-import { PrototypeStringFunction } from "@/core/prototype/String/index";
 import { execute } from "@/core/coreContext";
+import { PrototypeStringFunction } from "@/core/prototype/String/index";
 
 const processIndexOf: PrototypeStringFunction = (script, scopes, object) => {
   const searchValue = execute(script.arguments[0], scopes);

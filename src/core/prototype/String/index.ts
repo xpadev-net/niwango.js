@@ -1,15 +1,15 @@
 import { PrototypeFunction, PrototypeFunctions } from "@/@types/core/prototype";
 import { processIndex } from "@/core/prototype/String/_index";
-import { processSize } from "@/core/prototype/String/size";
-import { processIndexOf } from "@/core/prototype/String/indexOf";
-import { processSlice } from "@/core/prototype/String/slice";
-import { processToInteger } from "@/core/prototype/String/toInteger";
-import { processToFloat } from "@/core/prototype/String/toFloat";
 import { processEval } from "@/core/prototype/String/eval";
+import { processHashCode } from "@/core/prototype/String/hashCode";
+import { processIndexOf } from "@/core/prototype/String/indexOf";
+import { processMultiply } from "@/core/prototype/String/multiply";
+import { processSize } from "@/core/prototype/String/size";
+import { processSlice } from "@/core/prototype/String/slice";
 import { processToASNumber } from "@/core/prototype/String/toASNumber";
 import { processToASString } from "@/core/prototype/String/toASString";
-import { processMultiply } from "@/core/prototype/String/multiply";
-import { processHashCode } from "@/core/prototype/String/hashCode";
+import { processToFloat } from "@/core/prototype/String/toFloat";
+import { processToInteger } from "@/core/prototype/String/toInteger";
 
 export type PrototypeStringFunction = PrototypeFunction<string>;
 

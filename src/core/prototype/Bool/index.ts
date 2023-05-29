@@ -1,7 +1,7 @@
 import { PrototypeFunction, PrototypeFunctions } from "@/@types/core/prototype";
+import { processRaw } from "@/core/prototype/Bool/raw";
 import { processToASNumber } from "@/core/prototype/Bool/toASNumber";
 import { processToASString } from "@/core/prototype/Bool/toASString";
-import { processRaw } from "@/core/prototype/Bool/raw";
 
 export type PrototypeBoolFunction = PrototypeFunction<boolean>;
 

@@ -1,13 +1,14 @@
-import { processIndex } from "./_index";
 import { PrototypeFunction, PrototypeFunctions } from "@/@types/core/prototype";
-import { processSize } from "./size";
-import { processUnshift } from "./unshift";
+import { processPop } from "@/core/prototype/Array/pop";
+import { processProduct } from "@/core/prototype/Array/product";
 import { processPush } from "@/core/prototype/Array/push";
 import { processShift } from "@/core/prototype/Array/shift";
-import { processPop } from "@/core/prototype/Array/pop";
 import { processSort } from "@/core/prototype/Array/sort";
 import { processSum } from "@/core/prototype/Array/sum";
-import { processProduct } from "@/core/prototype/Array/product";
+
+import { processIndex } from "./_index";
+import { processSize } from "./size";
+import { processUnshift } from "./unshift";
 
 export type PrototypeArrayFunction = PrototypeFunction<Array<unknown>>;
 

@@ -1,7 +1,7 @@
 import { A_CallExpression, A_MemberExpression, T_scope } from "@/@types/ast";
 
 export type PrototypeFunction<T> = (
-  script: A_CallExpression & { callee: A_MemberExpression },
+  script: A_CallExpression,
   scopes: T_scope[],
   object: T
 ) => unknown;

@@ -1,8 +1,8 @@
-import typeGuard from "@/typeGuard";
-import { mt19937 } from "@/utils/mt19937";
-import { execute } from "@/core/coreContext";
 import { A_CallExpression, T_scope } from "@/@types/ast";
 import { IrFunction } from "@/@types/core/functions";
+import { execute } from "@/core/coreContext";
+import typeGuard from "@/typeGuard";
+import { mt19937 } from "@/utils/mt19937";
 
 let randCalledCount = 0;
 const onload = new Date().getTime();

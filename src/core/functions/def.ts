@@ -1,9 +1,9 @@
 import { A_CallExpression } from "@/@types/ast";
-import typeGuard from "@/typeGuard";
+import { IrFunction } from "@/@types/core/functions";
+import { definedFunction } from "@/@types/function";
 import { getName } from "@/context";
 import { InvalidTypeError } from "@/errors/InvalidTypeError";
-import { definedFunction } from "@/@types/function";
-import { IrFunction } from "@/@types/core/functions";
+import typeGuard from "@/typeGuard";
 
 /**
  * @関数

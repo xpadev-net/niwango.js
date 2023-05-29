@@ -1,5 +1,5 @@
-import { PrototypeNumberFunction } from "@/core/prototype/Number/index";
 import { execute } from "@/core/coreContext";
+import { PrototypeNumberFunction } from "@/core/prototype/Number/index";
 
 const processPow: PrototypeNumberFunction = (script, scopes, object) => {
   const exponent = execute(script.arguments[0], scopes);

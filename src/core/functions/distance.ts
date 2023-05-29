@@ -1,6 +1,6 @@
-import { argumentParser } from "@/context";
 import { A_CallExpression, T_scope } from "@/@types/ast";
 import { IrFunction } from "@/@types/core/functions";
+import { argumentParser } from "@/context";
 
 const processDistance: IrFunction = (
   script: A_CallExpression,

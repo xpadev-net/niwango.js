@@ -1,6 +1,7 @@
-import { InvalidTypeError } from "@/errors/InvalidTypeError";
-import { PrototypeObjectFunction } from "./index";
 import { execute } from "@/core/coreContext";
+import { InvalidTypeError } from "@/errors/InvalidTypeError";
+
+import { PrototypeObjectFunction } from "./index";
 
 /**
  * @関数

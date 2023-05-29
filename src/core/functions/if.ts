@@ -1,8 +1,7 @@
 import { A_ANY, A_CallExpression, T_scope } from "@/@types/ast";
-
+import { IrFunction } from "@/@types/core/functions";
 import { argumentParser } from "@/context";
 import { execute } from "@/core/coreContext";
-import { IrFunction } from "@/@types/core/functions";
 
 /**
  * @関数

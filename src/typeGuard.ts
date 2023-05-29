@@ -1,5 +1,3 @@
-import { definedFunction } from "@/@types/function";
-import { FormattedComment } from "@/@types/types";
 import {
   A_ANY,
   A_ArrayExpression,
@@ -24,6 +22,8 @@ import {
   A_UpdateExpression,
   A_VariableDeclaration,
 } from "@/@types/ast";
+import { definedFunction } from "@/@types/function";
+import { FormattedComment } from "@/@types/types";
 
 const typeGuard = {
   AST: (i: unknown): i is A_ANY =>

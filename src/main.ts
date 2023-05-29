@@ -1,3 +1,7 @@
+import { T_environment, T_scope } from "@/@types/ast";
+import { IComment } from "@/@types/types";
+import { getComments, triggerHandlers } from "@/commentHandler";
+import { CommentMapper } from "@/commentMapper";
 import {
   execute,
   setComments,
@@ -5,16 +9,12 @@ import {
   setCurrentTime,
   setIsWide,
 } from "@/context";
-import { draw } from "@/utils/objectManager";
 import { config, initConfig } from "@/definition/config";
+import { parseScript } from "@/parser/parse";
 import { getQueue } from "@/queue";
 import { addScript, getScripts } from "@/scripts";
-import { IComment } from "@/@types/types";
+import { draw } from "@/utils/objectManager";
 import { setup } from "@/utils/setup";
-import { getComments, triggerHandlers } from "@/commentHandler";
-import { CommentMapper } from "@/commentMapper";
-import { T_environment, T_scope } from "@/@types/ast";
-import { parseScript } from "@/parser/parse";
 
 class Niwango {
   private readonly globalScope: T_scope;

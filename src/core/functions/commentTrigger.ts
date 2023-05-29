@@ -1,8 +1,8 @@
 import { A_ANY } from "@/@types/ast";
-import { argumentParser, currentTime } from "@/context";
-import { addHandler } from "@/commentHandler";
-import { execute } from "@/core/coreContext";
 import { IrFunction } from "@/@types/core/functions";
+import { addHandler } from "@/commentHandler";
+import { argumentParser, currentTime } from "@/context";
+import { execute } from "@/core/coreContext";
 
 const processCommentTrigger: IrFunction = (script, scopes) => {
   const args = argumentParser(

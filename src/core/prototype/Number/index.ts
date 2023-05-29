@@ -1,9 +1,10 @@
 import { PrototypeFunction, PrototypeFunctions } from "@/@types/core/prototype";
-import { processFloor } from "./floor";
-import { processSin } from "./sin";
-import { processCos } from "./cos";
-import { processPow } from "./pow";
+
 import { processAbs } from "./abs";
+import { processCos } from "./cos";
+import { processFloor } from "./floor";
+import { processPow } from "./pow";
+import { processSin } from "./sin";
 
 export type PrototypeNumberFunction = PrototypeFunction<number>;
 

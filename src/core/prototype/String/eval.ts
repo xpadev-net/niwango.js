@@ -1,6 +1,6 @@
+import { execute } from "@/core/coreContext";
 import { PrototypeStringFunction } from "@/core/prototype/String/index";
 import { parseScript } from "@/parser/parse";
-import { execute } from "@/core/coreContext";
 
 const processEval: PrototypeStringFunction = (_script, scopes, object) => {
   try {

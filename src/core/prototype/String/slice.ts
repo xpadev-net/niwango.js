@@ -1,5 +1,5 @@
-import { PrototypeStringFunction } from "@/core/prototype/String/index";
 import { execute } from "@/core/coreContext";
+import { PrototypeStringFunction } from "@/core/prototype/String/index";
 
 const processSlice: PrototypeStringFunction = (script, scopes, object) => {
   const startIndex = execute(script.arguments[0], scopes);

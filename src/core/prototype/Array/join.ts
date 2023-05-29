@@ -1,5 +1,5 @@
-import { PrototypeArrayFunction } from "@/core/prototype/Array/index";
 import { execute } from "@/core/coreContext";
+import { PrototypeArrayFunction } from "@/core/prototype/Array/index";
 
 const processJoin: PrototypeArrayFunction = (script, scopes, object) => {
   const separator = execute(script.arguments[0], scopes);

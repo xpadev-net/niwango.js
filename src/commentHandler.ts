@@ -1,7 +1,7 @@
-import { getGlobalScope } from "@/utils/utils";
+import type { A_ANY, T_scope } from "@/@types/ast";
 import { CommentMapper } from "@/commentMapper";
 import { comments, currentTime, execute } from "@/context";
-import type { A_ANY, T_scope } from "@/@types/ast";
+import { getGlobalScope } from "@/utils/utils";
 
 let handlers: {
   script: A_ANY;
@@ -51,4 +51,4 @@ const getComments = (vpos: number) => {
     })) as { time: number; comment: CommentMapper; type: "comment" }[];
 };
 
-export { resetHandlers, addHandler, triggerHandlers, getComments };
+export { addHandler, getComments,resetHandlers, triggerHandlers };

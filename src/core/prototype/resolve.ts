@@ -1,9 +1,9 @@
+import { PrototypeFunction } from "@/@types/core/prototype";
 import { prototypeArrayFunctions } from "@/core/prototype/Array";
-import { prototypeStringFunctions } from "@/core/prototype/String";
 import { prototypeBoolFunctions } from "@/core/prototype/Bool";
 import { prototypeObjectFunctions } from "@/core/prototype/Object";
+import { prototypeStringFunctions } from "@/core/prototype/String";
 import { prototypeValueFunctions } from "@/core/prototype/Value";
-import { PrototypeFunction } from "@/@types/core/prototype";
 
 type prototypeType =
   | "string"

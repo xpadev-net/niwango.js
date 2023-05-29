@@ -1,5 +1,6 @@
-import { InvalidTypeError } from "@/errors/InvalidTypeError";
 import { execute } from "@/core/coreContext";
+import { InvalidTypeError } from "@/errors/InvalidTypeError";
+
 import { PrototypeObjectFunction } from "./index";
 
 /**

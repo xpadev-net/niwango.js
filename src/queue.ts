@@ -1,5 +1,5 @@
-import { currentTime } from "@/context";
 import { A_ANY, T_scope } from "@/@types/ast";
+import { currentTime } from "@/context";
 
 let queue: { script: A_ANY; time: number; scopes: T_scope[]; type: "queue" }[] =
   [];
@@ -43,4 +43,4 @@ const getQueue = (time: number) => {
   queue = newQueue;
   return result;
 };
-export { queue, resetQueue, getQueue, addQueue };
+export { addQueue,getQueue, queue, resetQueue };

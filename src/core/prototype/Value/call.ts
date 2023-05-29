@@ -1,6 +1,6 @@
-import { PrototypeValueFunction } from "@/core/prototype/Value/index";
 import { A_CallExpression } from "@/@types/ast";
 import { execute } from "@/core/coreContext";
+import { PrototypeValueFunction } from "@/core/prototype/Value/index";
 import { InvalidTypeError } from "@/errors/InvalidTypeError";
 
 const processCall: PrototypeValueFunction = (script, scopes) => {

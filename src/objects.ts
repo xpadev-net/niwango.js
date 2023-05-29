@@ -1,1 +1,1 @@
-let objects = {};
+const objects = {};

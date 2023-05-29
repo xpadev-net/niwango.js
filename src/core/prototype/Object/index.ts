@@ -1,9 +1,10 @@
+import { PrototypeFunction, PrototypeFunctions } from "@/@types/core/prototype";
+import { processRaw } from "@/core/prototype/Object/raw";
+
+import { processClone } from "./clone";
 import { processDef } from "./def";
 import { processGetSlot } from "./getSlot";
 import { processSetSlot } from "./setSlot";
-import { processClone } from "./clone";
-import { PrototypeFunction, PrototypeFunctions } from "@/@types/core/prototype";
-import { processRaw } from "@/core/prototype/Object/raw";
 
 export type PrototypeObjectFunction = PrototypeFunction<{
   [key: string | number]: unknown;
