@@ -1,8 +1,8 @@
 import { A_UpdateExpression, T_scope } from "@/@types/ast";
 import { assign } from "@/context";
-import { NotImplementedError } from "@/errors/NotImplementedError";
+import { execute } from "@/core/coreContext";
 import { Addition, Subtraction } from "@/core/operators";
-import {execute} from "@/core/coreContext";
+import { NotImplementedError } from "@/errors/NotImplementedError";
 
 /**
  * 更新式を実行する

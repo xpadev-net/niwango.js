@@ -1,5 +1,5 @@
+import { ResolvePrototype } from "@/@types/core/prototype";
 import { Execute } from "@/@types/execute";
-import {ResolvePrototype} from "@/@types/core/prototype";
 
 let execute: Execute;
 let resolvePrototype: ResolvePrototype;
@@ -9,11 +9,13 @@ const setExecute = (val: Execute) => {
 };
 const setResolvePrototype = (val: ResolvePrototype) => {
   resolvePrototype = val;
-}
+};
 
-const prototypeScope:{[key in "Array"|"Bool"|"Number"|"Object"|"String"|"Value"]:{
-  [key:string]:unknown
-}} = {
+const prototypeScope: {
+  [key in "Array" | "Bool" | "Number" | "Object" | "String" | "Value"]: {
+    [key: string]: unknown;
+  };
+} = {
   Array: {},
   Bool: {},
   Number: {},
@@ -22,4 +24,10 @@ const prototypeScope:{[key in "Array"|"Bool"|"Number"|"Object"|"String"|"Value"]
   Value: {},
 };
 
-export { execute, prototypeScope, setExecute,resolvePrototype, setResolvePrototype };
+export {
+  execute,
+  prototypeScope,
+  resolvePrototype,
+  setExecute,
+  setResolvePrototype,
+};

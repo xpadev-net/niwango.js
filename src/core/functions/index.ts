@@ -1,4 +1,5 @@
 import { IrFunctions } from "@/@types/core/functions";
+import { processAt } from "@/core/functions/At";
 import { processPlayStartTime } from "@/core/functions/playStartTime";
 
 import { processCommentTrigger } from "./commentTrigger";
@@ -15,7 +16,6 @@ import { processTimer } from "./timer";
 import { processTimes, timesCondition } from "./times";
 import { processTimethis } from "./timethis";
 import { processWhileKari } from "./while_kari";
-import {processAt} from "@/core/functions/At";
 
 const functions: IrFunctions = {
   dump: processDump,

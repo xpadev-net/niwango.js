@@ -2,8 +2,8 @@ import { T_scope } from "@/@types/ast";
 import { Execute } from "@/@types/execute";
 import { setExecute } from "@/core/coreContext";
 import { processors } from "@/core/processors";
+import { NotImplementedError } from "@/errors/NotImplementedError";
 import typeGuard from "@/typeGuard";
-import {NotImplementedError} from "@/errors/NotImplementedError";
 
 /**
  * ASTを実行する関数
@@ -17,11 +17,12 @@ const execute: Execute = (script: unknown, scopes: T_scope[]): unknown => {
     if (processor) {
       return processor(script, scopes);
     }
-  }catch (e){
-    const n = e as NotImplementedError
-    console.log(n,n.ast,n.scopes);
+    console.log(script);
+  } catch (e) {
+    const n = e as NotImplementedError;
+    console.log(n, n.ast, n.scopes);
   }
-  return undefined
+  return undefined;
 };
 
 const initExecute = () => {

@@ -1,13 +1,13 @@
 import { A_CallExpression, A_MemberExpression, T_scope } from "@/@types/ast";
-import {argumentParser, getName} from "@/context";
+import { definedFunction } from "@/@types/function";
+import { argumentParser, getName } from "@/context";
 import { execute } from "@/core/coreContext";
-import { functions } from "@/core/functions";
 import { resolvePrototype } from "@/core/coreContext";
+import { functions } from "@/core/functions";
+import { getType } from "@/core/prototype/getType";
 import { NotImplementedError } from "@/errors/NotImplementedError";
 import typeGuard from "@/typeGuard";
 import { getGlobalScope } from "@/utils/utils";
-import {definedFunction} from "@/@types/function";
-import {getType} from "@/core/prototype/getType";
 
 const processCallExpression = (script: A_CallExpression, scopes: T_scope[]) => {
   const isMemberExpression = typeGuard.MemberExpression(script.callee);
@@ -28,7 +28,10 @@ const processCallExpression = (script: A_CallExpression, scopes: T_scope[]) => {
   } else if (typeof processor === "function") {
     return processor(script, scopes, object);
   }
-  if (object?.[callee] && (object?.[callee] as definedFunction)?.type === "definedFunction") {
+  if (
+    object?.[callee] &&
+    (object?.[callee] as definedFunction)?.type === "definedFunction"
+  ) {
     const func = object[callee] as definedFunction;
     if (func.isKari) {
       const args: { [key: string]: unknown } = {};
@@ -59,7 +62,10 @@ const processCallExpression = (script: A_CallExpression, scopes: T_scope[]) => {
   const self = execute({ type: "Identifier", name: "self" }, scopes) as {
     [key: string]: unknown;
   };
-  if (self?.[callee] && (self?.[callee] as definedFunction)?.type === "definedFunction") {
+  if (
+    self?.[callee] &&
+    (self?.[callee] as definedFunction)?.type === "definedFunction"
+  ) {
     const func = self[callee] as definedFunction;
     if (func.isKari) {
       const args: { [key: string]: unknown } = {};

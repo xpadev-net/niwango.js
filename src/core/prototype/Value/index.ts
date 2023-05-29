@@ -1,5 +1,6 @@
 import { PrototypeFunction, PrototypeFunctions } from "@/@types/core/prototype";
 import { processIndex } from "@/core/prototype/Value/_index";
+import { processAlternative } from "@/core/prototype/Value/alternative";
 import { processCall } from "@/core/prototype/Value/call";
 import { processCompare } from "@/core/prototype/Value/compare";
 import { processForEachSlot } from "@/core/prototype/Value/forEachSlot";
@@ -13,7 +14,6 @@ import { processRaw } from "@/core/prototype/Value/raw";
 import { processToASBoolean } from "@/core/prototype/Value/toASBoolean";
 import { processToASNumber } from "@/core/prototype/Value/toASNumber";
 import { processToASString } from "@/core/prototype/Value/toASString";
-import {processAlternative} from "@/core/prototype/Value/alternative";
 
 export type PrototypeValueFunction = PrototypeFunction<unknown>;
 

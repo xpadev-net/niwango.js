@@ -1,9 +1,11 @@
+import { T_scope } from "@/@types/ast";
 import { processArrayExpression } from "@/core/processors/ArrayExpression";
 import { processArrowFunctionExpression } from "@/core/processors/ArrowFunctionExpression";
 import { processAssignmentExpression } from "@/core/processors/AssignmentExpression";
 import { processBinaryExpression } from "@/core/processors/BinaryExpression";
 import { processBlockStatement } from "@/core/processors/BlockStatement";
 import { processCallExpression } from "@/core/processors/CallExpression";
+import { processExpressionStatement } from "@/core/processors/ExpressionStatement";
 import { processIdentifier } from "@/core/processors/Identifier";
 import { processLambdaExpression } from "@/core/processors/LambdaExpression";
 import { processLiteral } from "@/core/processors/Literal";
@@ -16,16 +18,18 @@ import { processSequenceExpression } from "@/core/processors/SequenceExpression"
 import { processUnaryExpression } from "@/core/processors/UnaryExpression";
 import { processUpdateExpression } from "@/core/processors/UpdateExpression";
 import { processVariableDeclaration } from "@/core/processors/VariableDeclaration";
-import {processExpressionStatement} from "@/core/processors/ExpressionStatement";
 
-export const processors: { [key: string]: Function } = {
+export const processors: {
+  /* eslint @typescript-eslint/no-explicit-any: 0 */
+  [key: string]: (script: any, scopes: T_scope[]) => unknown;
+} = {
   AssignmentExpression: processAssignmentExpression,
   ArrayExpression: processArrayExpression,
   ArrowFunctionExpression: processArrowFunctionExpression,
   BinaryExpression: processBinaryExpression,
   BlockStatement: processBlockStatement,
   CallExpression: processCallExpression,
-  EmptyStatement: () => {},
+  EmptyStatement: () => undefined,
   ExpressionStatement: processExpressionStatement,
   Identifier: processIdentifier,
   LambdaExpression: processLambdaExpression,

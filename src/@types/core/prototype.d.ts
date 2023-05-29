@@ -1,4 +1,4 @@
-import { A_CallExpression, A_MemberExpression, T_scope } from "@/@types/ast";
+import { A_CallExpression, T_scope } from "@/@types/ast";
 
 export type PrototypeFunction<T> = (
   script: A_CallExpression,
@@ -9,7 +9,6 @@ export type PrototypeFunction<T> = (
 export type PrototypeFunctions<T> = {
   [key: string]: PrototypeFunction<T>;
 };
-
 
 export type prototypeType =
   | "string"
@@ -25,4 +24,7 @@ export type prototypeType =
 
 export type ResolveResult = PrototypeFunction<unknown> | undefined;
 
-export type ResolvePrototype = (type: prototypeType, name: string)=> ResolveResult;
+export type ResolvePrototype = (
+  type: prototypeType,
+  name: string
+) => ResolveResult;

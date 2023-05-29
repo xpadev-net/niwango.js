@@ -1,7 +1,7 @@
 import { A_ANY, T_scope } from "@/@types/ast";
 import { setGetName } from "@/context";
+import { execute } from "@/core/coreContext";
 import typeGuard from "@/typeGuard";
-import {execute} from "@/core/coreContext";
 
 /**
  * 変数名を取得する関数

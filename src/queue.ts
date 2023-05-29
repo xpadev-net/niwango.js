@@ -43,4 +43,4 @@ const getQueue = (time: number) => {
   queue = newQueue;
   return result;
 };
-export { addQueue,getQueue, queue, resetQueue };
+export { addQueue, getQueue, queue, resetQueue };

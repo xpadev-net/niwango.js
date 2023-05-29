@@ -10,4 +10,4 @@ const processScreenHeight: IrFunction = () => {
   return config.stageHeight;
 };
 
-export { processScreenHeight,processScreenWidth };
+export { processScreenHeight, processScreenWidth };

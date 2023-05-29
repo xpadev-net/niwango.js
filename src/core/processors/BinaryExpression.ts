@@ -1,6 +1,5 @@
 import { A_BinaryExpression, T_scope } from "@/@types/ast";
 import { execute } from "@/core/coreContext";
-import { NotImplementedError } from "@/errors/NotImplementedError";
 import {
   Addition,
   BitwiseAND,
@@ -20,6 +19,7 @@ import {
   Subtraction,
   UnsignedRightShift,
 } from "@/core/operators";
+import { NotImplementedError } from "@/errors/NotImplementedError";
 
 /**
  * 演算子と処理の対応表
@@ -60,8 +60,7 @@ const processBinaryExpression = (
   const left = execute(script.left, scopes);
   const right = execute(script.right, scopes);
   const processor = processors[script.operator];
-  if (!processor)
-    throw new NotImplementedError(script, scopes);
+  if (!processor) throw new NotImplementedError(script, scopes);
   return processor(left, right);
 };
 

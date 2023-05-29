@@ -1,6 +1,6 @@
-import {IrFunction} from "@/@types/core/functions";
-import {assign} from "@/context";
-import {resolve} from "@/utils/utils";
+import { IrFunction } from "@/@types/core/functions";
+import { assign } from "@/context";
+import { resolve } from "@/utils/utils";
 
 const processAt: IrFunction = (script, scopes) => {
   if (!script.arguments[0]) {
@@ -13,6 +13,6 @@ const processAt: IrFunction = (script, scopes) => {
     scopes
   );
   return;
-}
+};
 
-export {processAt}
+export { processAt };

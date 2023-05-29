@@ -1,8 +1,8 @@
+import { argumentParser } from "@/context";
 import { execute } from "@/core/coreContext";
 import { PrototypeValueFunction } from "@/core/prototype/Value/index";
-import {argumentParser} from "@/context";
 
-const processAlternative: PrototypeValueFunction = (script, scopes,object) => {
+const processAlternative: PrototypeValueFunction = (script, scopes, object) => {
   const args = argumentParser(
     script.arguments,
     scopes,

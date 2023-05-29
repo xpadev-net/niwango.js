@@ -1,13 +1,9 @@
-import {
-  A_MemberExpression,
-  T_scope,
-} from "@/@types/ast";
+import { A_MemberExpression, T_scope } from "@/@types/ast";
 import { definedFunction } from "@/@types/function";
 import { getName } from "@/context";
+import { execute } from "@/core/coreContext";
+import { processCallExpression } from "@/core/processors/CallExpression";
 import typeGuard from "@/typeGuard";
-
-import {processCallExpression} from "@/core/processors/CallExpression";
-import {execute} from "@/core/coreContext";
 
 /**
  * 配列やオブジェクトを処理する
@@ -44,12 +40,15 @@ const processMemberExpression = (
     return execute(left.body, [{ "@0": right }, ...left.scopes]);
   }
   try {
-    return processCallExpression({
-      type: "CallExpression",
-      callee: script,
-      arguments: []
-    },scopes);
-  }catch (e){
+    return processCallExpression(
+      {
+        type: "CallExpression",
+        callee: script,
+        arguments: [],
+      },
+      scopes
+    );
+  } catch (e) {
     return (left as { [key: string]: unknown })[right];
   }
 };

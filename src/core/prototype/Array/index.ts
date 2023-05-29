@@ -1,4 +1,5 @@
 import { PrototypeFunction, PrototypeFunctions } from "@/@types/core/prototype";
+import { processJoin } from "@/core/prototype/Array/join";
 import { processPop } from "@/core/prototype/Array/pop";
 import { processProduct } from "@/core/prototype/Array/product";
 import { processPush } from "@/core/prototype/Array/push";
@@ -9,7 +10,6 @@ import { processSum } from "@/core/prototype/Array/sum";
 import { processIndex } from "./_index";
 import { processSize } from "./size";
 import { processUnshift } from "./unshift";
-import {processJoin} from "@/core/prototype/Array/join";
 
 export type PrototypeArrayFunction = PrototypeFunction<Array<unknown>>;
 

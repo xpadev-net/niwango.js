@@ -34,4 +34,4 @@ const resetScripts = () => {
   scripts = [];
 };
 
-export { addScript, getScripts, resetScripts,scripts };
+export { addScript, getScripts, resetScripts, scripts };

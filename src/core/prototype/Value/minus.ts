@@ -1,7 +1,7 @@
-import { UnaryNegation } from "@/core/operators";
 import { resolvePrototype } from "@/core/coreContext";
+import { UnaryNegation } from "@/core/operators";
+import { getType } from "@/core/prototype/getType";
 import { PrototypeValueFunction } from "@/core/prototype/Value/index";
-import {getType} from "@/core/prototype/getType";
 
 const processMinus: PrototypeValueFunction = (script, scopes, object) => {
   const toASNumber = resolvePrototype(getType(object), "toASNumber");

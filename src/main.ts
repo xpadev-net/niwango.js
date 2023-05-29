@@ -2,20 +2,15 @@ import { T_environment, T_scope } from "@/@types/ast";
 import { IComment } from "@/@types/types";
 import { getComments, triggerHandlers } from "@/commentHandler";
 import { CommentMapper } from "@/commentMapper";
-import {
-  setComments,
-  setContext,
-  setCurrentTime,
-  setIsWide,
-} from "@/context";
+import { setComments, setContext, setCurrentTime, setIsWide } from "@/context";
+import { execute, prototypeScope } from "@/core/coreContext";
 import { config, initConfig } from "@/definition/config";
+import { NotImplementedError } from "@/errors/NotImplementedError";
 import { parseScript } from "@/parser/parse";
 import { getQueue } from "@/queue";
 import { addScript, getScripts } from "@/scripts";
 import { draw } from "@/utils/objectManager";
 import { setup } from "@/utils/setup";
-import {execute, prototypeScope} from "@/core/coreContext";
-import {NotImplementedError} from "@/errors/NotImplementedError";
 
 class Niwango {
   private readonly globalScope: T_scope;
@@ -60,9 +55,7 @@ class Niwango {
     );
     setContext(drawContext);
     setCurrentTime(0);
-    this.globalScope = {
-      Object: {},
-    };
+    this.globalScope = {};
     this.environmentScope = {
       chat: undefined,
       commentColor: null, //0xffffff
@@ -108,9 +101,9 @@ class Niwango {
               ? queue.scopes
               : [this.globalScope, this.environmentScope, prototypeScope]
           );
-        }catch (e) {
+        } catch (e) {
           const n = e as NotImplementedError;
-          console.error(n,n.ast,n.scopes)
+          console.error(n, n.ast, n.scopes);
         }
       });
     this.clear();

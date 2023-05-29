@@ -1,7 +1,6 @@
+import { execute, prototypeScope } from "@/core/coreContext";
+import { parseScript } from "@/parser/parse";
 import { setup } from "@/utils/setup";
-
-import {execute, prototypeScope} from "@/core/coreContext";
-import {parseScript} from "@/parser/parse";
 
 setup();
 
@@ -10,9 +9,7 @@ setup();
  * @param niwango
  */
 const run = (niwango: string) => {
-  const globalScope = {
-    Object: {},
-  };
+  const globalScope = {};
   const environmentScope = {
     chat: undefined,
     commentColor: null, //0xffffff
@@ -27,7 +24,7 @@ const run = (niwango: string) => {
     isWide: null, //false
     lastVideo: "sm1", //sm1
   };
-  const ast = parseScript(niwango,"jest");
-  return execute(ast, [globalScope, environmentScope,prototypeScope]);
+  const ast = parseScript(niwango, "jest");
+  return execute(ast, [globalScope, environmentScope, prototypeScope]);
 };
 export { run };
