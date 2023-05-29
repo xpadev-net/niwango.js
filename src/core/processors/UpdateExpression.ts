@@ -1,7 +1,8 @@
 import { A_UpdateExpression, T_scope } from "@/@types/ast";
-import { assign, execute } from "@/context";
+import { assign } from "@/context";
 import { NotImplementedError } from "@/errors/NotImplementedError";
-import { Addition, Subtraction } from "@/operators";
+import { Addition, Subtraction } from "@/core/operators";
+import {execute} from "@/core/coreContext";
 
 /**
  * 更新式を実行する
@@ -30,7 +31,7 @@ const processUpdateExpression = (
       return value;
     }
   }
-  throw new NotImplementedError("update expression", script, scopes);
+  throw new NotImplementedError(script, scopes);
 };
 
 export { processUpdateExpression };

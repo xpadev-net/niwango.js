@@ -15,6 +15,7 @@ import { processTimer } from "./timer";
 import { processTimes, timesCondition } from "./times";
 import { processTimethis } from "./timethis";
 import { processWhileKari } from "./while_kari";
+import {processAt} from "@/core/functions/At";
 
 const functions: IrFunctions = {
   dump: processDump,
@@ -38,6 +39,7 @@ const functions: IrFunctions = {
   screenHeight: processScreenHeight,
   playStartTime: processPlayStartTime,
   timethis: processTimethis,
+  "@": processAt,
 };
 
 export { functions };

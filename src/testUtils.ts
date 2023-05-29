@@ -1,7 +1,7 @@
-import { execute } from "@/context";
 import { setup } from "@/utils/setup";
 
-import { parse } from "./parser/parser";
+import {execute, prototypeScope} from "@/core/coreContext";
+import {parseScript} from "@/parser/parse";
 
 setup();
 
@@ -27,7 +27,7 @@ const run = (niwango: string) => {
     isWide: null, //false
     lastVideo: "sm1", //sm1
   };
-  const ast = parse(niwango);
-  return execute(ast, [globalScope, environmentScope]);
+  const ast = parseScript(niwango,"jest");
+  return execute(ast, [globalScope, environmentScope,prototypeScope]);
 };
 export { run };

@@ -1,7 +1,7 @@
 import { A_UnaryExpression, T_scope } from "@/@types/ast";
 import { execute } from "@/core/coreContext";
 import { NotImplementedError } from "@/errors/NotImplementedError";
-import { BitwiseNOT, LogicalNot, UnaryNegation, UnaryPlus } from "@/operators";
+import { BitwiseNOT, LogicalNot, UnaryNegation, UnaryPlus } from "@/core/operators";
 
 /**
  * 単項式を実行する
@@ -22,7 +22,7 @@ const processUnaryExpression = (
   } else if (script.operator === "!") {
     return LogicalNot(value);
   }
-  throw new NotImplementedError("unary expression", script, scopes);
+  throw new NotImplementedError(script, scopes);
 };
 
 export { processUnaryExpression };

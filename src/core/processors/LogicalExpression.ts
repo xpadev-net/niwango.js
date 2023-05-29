@@ -18,7 +18,7 @@ const processLogicalExpression = (
   } else if (script.operator === "||") {
     return left || right;
   }
-  throw new NotImplementedError("logical expression", script, scopes);
+  throw new NotImplementedError(script, scopes);
 };
 
 export { processLogicalExpression };

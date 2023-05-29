@@ -1,4 +1,4 @@
-import { ArgumentParser, Assign, Execute, GetName } from "@/@types/execute";
+import { ArgumentParser, Assign, GetName } from "@/@types/execute";
 import { CommentMapper } from "@/commentMapper";
 
 let argumentParser: ArgumentParser;

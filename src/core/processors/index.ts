@@ -16,6 +16,7 @@ import { processSequenceExpression } from "@/core/processors/SequenceExpression"
 import { processUnaryExpression } from "@/core/processors/UnaryExpression";
 import { processUpdateExpression } from "@/core/processors/UpdateExpression";
 import { processVariableDeclaration } from "@/core/processors/VariableDeclaration";
+import {processExpressionStatement} from "@/core/processors/ExpressionStatement";
 
 export const processors: { [key: string]: Function } = {
   AssignmentExpression: processAssignmentExpression,
@@ -25,6 +26,7 @@ export const processors: { [key: string]: Function } = {
   BlockStatement: processBlockStatement,
   CallExpression: processCallExpression,
   EmptyStatement: () => {},
+  ExpressionStatement: processExpressionStatement,
   Identifier: processIdentifier,
   LambdaExpression: processLambdaExpression,
   Literal: processLiteral,

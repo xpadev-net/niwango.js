@@ -5,7 +5,7 @@ import { parse, SyntaxError as PeggySyntaxError } from "./parser";
 const parseScript = (content: string, name: string): A_ANY => {
   let script = content.slice(1);
   let firstError = undefined;
-  while (true) {
+  for (let i = 0; i < 100; i++) {
     try {
       return parse(script, { grammarSource: name });
     } catch (e) {
@@ -22,6 +22,7 @@ const parseScript = (content: string, name: string): A_ANY => {
       script = script.slice(0, e.location.start.offset);
     }
   }
+  throw firstError;
 };
 
 export { parseScript };

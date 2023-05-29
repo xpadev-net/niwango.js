@@ -1,5 +1,5 @@
 import { A_AssignmentExpression, T_scope } from "@/@types/ast";
-import { assign, execute } from "@/context";
+import { assign } from "@/context";
 import { NotImplementedError } from "@/errors/NotImplementedError";
 import {
   Addition,
@@ -14,7 +14,8 @@ import {
   RightShift,
   Subtraction,
   UnsignedRightShift,
-} from "@/operators";
+} from "@/core/operators";
+import {execute} from "@/core/coreContext";
 
 /**
  * 演算子と処理の対応表
@@ -51,7 +52,7 @@ const processAssignmentExpression = (
   const right = execute(script.right, scopes);
   const processor = processors[script.operator];
   if (!processor)
-    throw new NotImplementedError("AssignmentExpression", script, scopes);
+    throw new NotImplementedError( script, scopes);
   const result = processor(left, right);
   assign(script.left, result, scopes);
   return result;

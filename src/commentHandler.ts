@@ -1,7 +1,8 @@
 import type { A_ANY, T_scope } from "@/@types/ast";
 import { CommentMapper } from "@/commentMapper";
-import { comments, currentTime, execute } from "@/context";
+import { comments, currentTime } from "@/context";
 import { getGlobalScope } from "@/utils/utils";
+import {execute} from "@/core/coreContext";
 
 let handlers: {
   script: A_ANY;

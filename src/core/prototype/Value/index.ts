@@ -13,6 +13,7 @@ import { processRaw } from "@/core/prototype/Value/raw";
 import { processToASBoolean } from "@/core/prototype/Value/toASBoolean";
 import { processToASNumber } from "@/core/prototype/Value/toASNumber";
 import { processToASString } from "@/core/prototype/Value/toASString";
+import {processAlternative} from "@/core/prototype/Value/alternative";
 
 export type PrototypeValueFunction = PrototypeFunction<unknown>;
 
@@ -32,6 +33,8 @@ const prototypeValueFunctions: PrototypeFunctions<unknown> = {
   plus: processPlus,
   minus: processMinus,
   multiply: processMultiply,
+  alt: processAlternative,
+  alternative: processAlternative,
 };
 
 export { prototypeValueFunctions };

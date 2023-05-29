@@ -19,7 +19,7 @@ import {
   RightShift,
   Subtraction,
   UnsignedRightShift,
-} from "@/operators";
+} from "@/core/operators";
 
 /**
  * 演算子と処理の対応表
@@ -61,7 +61,7 @@ const processBinaryExpression = (
   const right = execute(script.right, scopes);
   const processor = processors[script.operator];
   if (!processor)
-    throw new NotImplementedError("BinaryExpression", script, scopes);
+    throw new NotImplementedError(script, scopes);
   return processor(left, right);
 };
 

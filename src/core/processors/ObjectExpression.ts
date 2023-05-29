@@ -1,5 +1,6 @@
 import { A_ObjectExpression, T_scope } from "@/@types/ast";
-import { execute, getName } from "@/context";
+import { getName } from "@/context";
+import {execute} from "@/core/coreContext";
 
 /**
  * オブジェクトを作成する

@@ -3,7 +3,6 @@ import { IComment } from "@/@types/types";
 import { getComments, triggerHandlers } from "@/commentHandler";
 import { CommentMapper } from "@/commentMapper";
 import {
-  execute,
   setComments,
   setContext,
   setCurrentTime,
@@ -15,6 +14,8 @@ import { getQueue } from "@/queue";
 import { addScript, getScripts } from "@/scripts";
 import { draw } from "@/utils/objectManager";
 import { setup } from "@/utils/setup";
+import {execute, prototypeScope} from "@/core/coreContext";
+import {NotImplementedError} from "@/errors/NotImplementedError";
 
 class Niwango {
   private readonly globalScope: T_scope;
@@ -100,12 +101,17 @@ class Niwango {
           triggerHandlers(queue.comment);
           return;
         }
-        execute(
-          queue.script,
-          queue.type === "queue"
-            ? queue.scopes
-            : [this.globalScope, this.environmentScope]
-        );
+        try {
+          execute(
+            queue.script,
+            queue.type === "queue"
+              ? queue.scopes
+              : [this.globalScope, this.environmentScope, prototypeScope]
+          );
+        }catch (e) {
+          const n = e as NotImplementedError;
+          console.error(n,n.ast,n.scopes)
+        }
       });
     this.clear();
     draw();

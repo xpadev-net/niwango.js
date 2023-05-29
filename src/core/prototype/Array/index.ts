@@ -9,6 +9,7 @@ import { processSum } from "@/core/prototype/Array/sum";
 import { processIndex } from "./_index";
 import { processSize } from "./size";
 import { processUnshift } from "./unshift";
+import {processJoin} from "@/core/prototype/Array/join";
 
 export type PrototypeArrayFunction = PrototypeFunction<Array<unknown>>;
 
@@ -16,6 +17,7 @@ const prototypeArrayFunctions: PrototypeFunctions<Array<unknown>> = {
   index: processIndex,
   size: processSize,
   unshift: processUnshift,
+  join: processJoin,
   push: processPush,
   shift: processShift,
   pop: processPop,
