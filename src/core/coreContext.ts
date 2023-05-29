@@ -11,7 +11,7 @@ const setResolvePrototype = (val: ResolvePrototype) => {
   resolvePrototype = val;
 };
 
-const prototypeScope: {
+let prototypeScope: {
   [key in "Array" | "Bool" | "Number" | "Object" | "String" | "Value"]: {
     [key: string]: unknown;
   };
@@ -24,8 +24,20 @@ const prototypeScope: {
   Value: {},
 };
 
+const initPrototypeScope = () => {
+  prototypeScope = {
+    Array: {},
+    Bool: {},
+    Number: {},
+    Object: {},
+    String: {},
+    Value: {},
+  };
+};
+
 export {
   execute,
+  initPrototypeScope,
   prototypeScope,
   resolvePrototype,
   setExecute,

@@ -3,7 +3,10 @@ import { A_ANY } from "@/@types/ast";
 import { parse, SyntaxError as PeggySyntaxError } from "./parser";
 
 const parseScript = (content: string, name: string): A_ANY => {
-  let script = content.slice(1);
+  let script = content;
+  if (script.startsWith("/")) {
+    script = script.slice(1);
+  }
   let firstError = undefined;
   for (let i = 0; i < 100; i++) {
     try {
