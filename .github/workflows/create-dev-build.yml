@@ -28,9 +28,7 @@ jobs:
       - name: setup sandbox
         run: |
           cp ./dist/bundle.js ./docs/
-          cp ./src/parser/parser.js ./docs/
           sed --in-place --expression='s/..\/src\/parser\/parser.js/.\/parser.js/' docs/playground.html
-          sed --in-place --expression='s/..\/dist\/bundle.js/.\/bundle.js/' docs/playground.html
       - name: generate typedoc
         run: pnpm typedoc
       - name: update .gitignore
