@@ -1,5 +1,4 @@
 import { A_ANY } from "@/@types/ast";
-
 import { parse, SyntaxError as PeggySyntaxError } from "./parser";
 
 const parseScript = (content: string, name: string): A_ANY => {
