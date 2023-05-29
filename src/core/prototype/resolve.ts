@@ -8,7 +8,12 @@ import { prototypeStringFunctions } from "@/core/prototype/String";
 import { prototypeValueFunctions } from "@/core/prototype/Value";
 
 const resolvePrototype: ResolvePrototype = (type, name) => {
-  if (type === "array" && prototypeArrayFunctions[name]) {
+  if (
+    (type === "object" || type === "array") &&
+    prototypeObjectFunctions[name]
+  ) {
+    return prototypeObjectFunctions[name] as ResolveResult;
+  } else if (type === "array" && prototypeArrayFunctions[name]) {
     return prototypeArrayFunctions[name] as ResolveResult;
   } else if (type === "string" && prototypeStringFunctions[name]) {
     return prototypeStringFunctions[name] as ResolveResult;
@@ -16,10 +21,7 @@ const resolvePrototype: ResolvePrototype = (type, name) => {
     return prototypeBoolFunctions[name] as ResolveResult;
   } else if (type === "number" && prototypeNumberFunctions[name]) {
     return prototypeNumberFunctions[name] as ResolveResult;
-  } else if (type === "object" && prototypeObjectFunctions[name]) {
-    return prototypeObjectFunctions[name] as ResolveResult;
-  }
-  if (prototypeValueFunctions[name]) {
+  } else if (prototypeValueFunctions[name]) {
     return prototypeValueFunctions[name] as ResolveResult;
   }
 

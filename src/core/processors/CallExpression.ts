@@ -19,13 +19,12 @@ const processCallExpression = (script: A_CallExpression, scopes: T_scope[]) => {
   ) as string;
   const object = getThis(script, scopes);
   const prototype = resolvePrototype(getType(object), callee);
+  console.log(script, object, getType(object));
   if (prototype) {
     return prototype(script, scopes, object);
   }
   const processor = functions[callee];
-  if (typeof processor === "object" && processor.condition(object, script)) {
-    return processor.func(script, scopes, object);
-  } else if (typeof processor === "function") {
+  if (processor) {
     return processor(script, scopes, object);
   }
   if (

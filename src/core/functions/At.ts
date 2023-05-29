@@ -12,7 +12,6 @@ const processAt: IrFunction = (script, scopes) => {
     resolve({ type: "Identifier", name: "@0" }, scopes),
     scopes
   );
-  return;
 };
 
 export { processAt };

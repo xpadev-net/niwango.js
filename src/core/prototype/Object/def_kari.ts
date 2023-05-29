@@ -1,7 +1,6 @@
-import { A_CallExpression, T_scope } from "@/@types/ast";
-import { IrFunction } from "@/@types/core/functions";
 import { definedFunction } from "@/@types/function";
 import { execute } from "@/core/coreContext";
+import { PrototypeObjectFunction } from "@/core/prototype/Object/index";
 
 /**
  * @関数
@@ -10,11 +9,7 @@ import { execute } from "@/core/coreContext";
  * @param scopes
  * @param object
  */
-const processDefKari: IrFunction = (
-  script: A_CallExpression,
-  scopes: T_scope[],
-  object: { [key: string]: unknown }
-) => {
+const processDefKari: PrototypeObjectFunction = (script, scopes, object) => {
   if (!script.arguments[0]) {
     return;
   }

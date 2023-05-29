@@ -7,10 +7,5 @@ export type IrFunction = (
 ) => unknown;
 
 type IrFunctions = {
-  [key: string]:
-    | {
-        func: IrFunction;
-        condition: (object: unknown, script: A_CallExpression) => boolean;
-      }
-    | IrFunction;
+  [key: string]: IrFunction;
 };
