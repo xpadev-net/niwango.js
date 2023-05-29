@@ -1,17 +1,21 @@
-import { execute } from "@/context";
-import { parse } from "./parser/parser";
+import { execute, prototypeScope } from "@/core/coreContext";
+import { parseScript } from "@/parser/parse";
 import { setup } from "@/utils/setup";
 
 setup();
-
+if (!globalThis.structuredClone) {
+  globalThis.structuredClone = function structuredClone(
+    objectToClone: unknown
+  ) {
+    return JSON.parse(JSON.stringify(objectToClone)) as unknown;
+  };
+}
 /**
  * テスト用サンドボックス
  * @param niwango
  */
 const run = (niwango: string) => {
-  const globalScope = {
-    Object: {},
-  };
+  const globalScope = {};
   const environmentScope = {
     chat: undefined,
     commentColor: null, //0xffffff
@@ -26,7 +30,7 @@ const run = (niwango: string) => {
     isWide: null, //false
     lastVideo: "sm1", //sm1
   };
-  const ast = parse(niwango);
-  return execute(ast, [globalScope, environmentScope]);
+  const ast = parseScript(niwango, "jest");
+  return execute(ast, [globalScope, environmentScope, prototypeScope]);
 };
 export { run };

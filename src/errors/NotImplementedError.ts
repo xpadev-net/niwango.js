@@ -8,13 +8,12 @@ class NotImplementedError extends Error {
   ast: A_ANY;
   scopes: T_scope[];
   constructor(
-    ASTName: string,
     ast: A_ANY,
     scopes: T_scope[],
     options: { [key: string]: unknown } = {}
   ) {
     super("NotImplementedError", options);
-    this.ASTName = ASTName;
+    this.ASTName = ast.type;
     this.ast = ast;
     this.scopes = scopes;
   }

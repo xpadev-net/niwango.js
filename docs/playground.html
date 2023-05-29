@@ -25,13 +25,13 @@
       const element = document.createElement("div");
       for (let arg of args){
         if (typeof arg !== "string") {
-          arg = JSON.stringify(arg,undefined,"  ");
+          arg = JSON.stringify(arg,undefined,"  ") ?? "undefined";
         }
         if (styleCount > 0){
           styleCount --;
           continue;
         }
-        styleCount = arg.match(/%c/)?.length||0;
+        styleCount = arg?.match(/%c/)?.length||0;
         element.innerText += arg.replace(/%c/g,"") + " ";
       }
       element.classList.add(mode);
@@ -40,7 +40,6 @@
 	}
 
   console.debug = consoleHandler("debug");
-  console.error = consoleHandler("error");
 	canvas.onclick = () => {
     const AST = parser.parse(input.value);
     ast.value = JSON.stringify(AST,undefined," ");
@@ -60,12 +59,13 @@
 						owner: true,
 						vpos: 0,
 						mail: [],
+					content: `/${line}`
 		}));
     try {
       const niwa = new Niwango(canvas,comments);
       niwa.draw(0)
     }catch (e){
-      console.log(1)
+			console.log(e);
       output.value += JSON.stringify(e) + "\n";
 		}
 	}

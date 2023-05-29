@@ -1,5 +1,5 @@
-import { Scripts } from "@/@types/types";
 import { A_ANY } from "@/@types/ast";
+import { Scripts } from "@/@types/types";
 
 let scripts: Scripts = [];
 
@@ -34,4 +34,4 @@ const resetScripts = () => {
   scripts = [];
 };
 
-export { scripts, addScript, getScripts, resetScripts };
+export { addScript, getScripts, resetScripts, scripts };

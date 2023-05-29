@@ -1,5 +1,5 @@
 import { resetHandlers } from "@/commentHandler";
-import { initExecute } from "@/executor";
+import { initCore } from "@/core/core";
 import { resetQueue } from "@/queue";
 import { resetScripts } from "@/scripts";
 import { initArgumentParser } from "@/utils/argumentParser";
@@ -14,7 +14,7 @@ const setup = () => {
   initAssign();
   initArgumentParser();
   initGetName();
-  initExecute();
+  initCore();
   resetQueue();
   resetObjects();
   resetHandlers();

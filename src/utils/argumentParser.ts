@@ -1,6 +1,7 @@
 import { A_ANY, Argument, T_scope } from "@/@types/ast";
 import { ArgumentParser } from "@/@types/execute";
-import { execute, getName, setArgumentParser } from "@/context";
+import { getName, setArgumentParser } from "@/context";
+import { execute } from "@/core/coreContext";
 
 /**
  * callExpressionの引数をパースする

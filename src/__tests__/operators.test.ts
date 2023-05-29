@@ -20,7 +20,7 @@ import {
   UnaryNegation,
   UnaryPlus,
   UnsignedRightShift,
-} from "@/operators";
+} from "@/core/operators";
 
 test("Multiplication", () => {
   expect(Multiplication(3, 4)).toBe(12);

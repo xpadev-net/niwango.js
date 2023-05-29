@@ -1,7 +1,6 @@
-import { ArgumentParser, Assign, Execute, GetName } from "@/@types/execute";
+import { ArgumentParser, Assign, GetName } from "@/@types/execute";
 import { CommentMapper } from "@/commentMapper";
 
-let execute: Execute;
 let argumentParser: ArgumentParser;
 let assign: Assign;
 let getName: GetName;
@@ -12,10 +11,6 @@ let currentTime = 0;
 
 let comments: CommentMapper[] = [];
 let isWide = false;
-
-const setExecute = (val: Execute) => {
-  execute = val;
-};
 
 const setArgumentParser = (val: ArgumentParser) => {
   argumentParser = val;
@@ -44,20 +39,18 @@ const setComments = (val: CommentMapper[]) => {
 const setIsWide = (val: boolean) => (isWide = val);
 
 export {
-  execute,
   argumentParser,
   assign,
-  getName,
+  comments,
   context,
   currentTime,
-  comments,
+  getName,
   isWide,
-  setExecute,
   setArgumentParser,
   setAssign,
-  setGetName,
+  setComments,
   setContext,
   setCurrentTime,
-  setComments,
+  setGetName,
   setIsWide,
 };

@@ -1,20 +1,16 @@
-import {
-  execute,
-  setComments,
-  setContext,
-  setCurrentTime,
-  setIsWide,
-} from "@/context";
-import { draw } from "@/utils/objectManager";
-import { config, initConfig } from "@/definition/config";
-import { getQueue } from "@/queue";
-import { addScript, getScripts } from "@/scripts";
+import { T_environment, T_scope } from "@/@types/ast";
 import { IComment } from "@/@types/types";
-import { setup } from "@/utils/setup";
 import { getComments, triggerHandlers } from "@/commentHandler";
 import { CommentMapper } from "@/commentMapper";
-import { T_environment, T_scope } from "@/@types/ast";
+import { setComments, setContext, setCurrentTime, setIsWide } from "@/context";
+import { execute, prototypeScope } from "@/core/coreContext";
+import { config, initConfig } from "@/definition/config";
+import { NotImplementedError } from "@/errors/NotImplementedError";
 import { parseScript } from "@/parser/parse";
+import { getQueue } from "@/queue";
+import { addScript, getScripts } from "@/scripts";
+import { draw } from "@/utils/objectManager";
+import { setup } from "@/utils/setup";
 
 class Niwango {
   private readonly globalScope: T_scope;
@@ -36,7 +32,7 @@ class Niwango {
     comments.forEach((comment) => {
       if (comment.message.match(/^\//) && comment.comment.owner) {
         try {
-          const ast = parseScript(comment);
+          const ast = parseScript(comment.message, `${comment.no}.niwascript`);
           addScript(ast, comment._vpos);
         } catch (e) {
           console.error(e);
@@ -59,9 +55,7 @@ class Niwango {
     );
     setContext(drawContext);
     setCurrentTime(0);
-    this.globalScope = {
-      Object: {},
-    };
+    this.globalScope = {};
     this.environmentScope = {
       chat: undefined,
       commentColor: null, //0xffffff
@@ -100,12 +94,17 @@ class Niwango {
           triggerHandlers(queue.comment);
           return;
         }
-        execute(
-          queue.script,
-          queue.type === "queue"
-            ? queue.scopes
-            : [this.globalScope, this.environmentScope]
-        );
+        try {
+          execute(
+            queue.script,
+            queue.type === "queue"
+              ? queue.scopes
+              : [this.globalScope, this.environmentScope, prototypeScope]
+          );
+        } catch (e) {
+          const n = e as NotImplementedError;
+          console.error(n, n.ast, n.scopes);
+        }
       });
     this.clear();
     draw();

@@ -1,5 +1,6 @@
 import { A_ANY, T_scope } from "@/@types/ast";
-import { execute, getName, setAssign } from "@/context";
+import { getName, setAssign } from "@/context";
+import { execute } from "@/core/coreContext";
 import typeGuard from "@/typeGuard";
 
 /**

@@ -30,10 +30,10 @@ const resolve = (script: A_ANY, scopes: T_scope[]) => {
  * @param scopes
  */
 const getGlobalScope = (scopes: T_scope[]): T_scope | undefined => {
-  if (scopes.length < 2) {
+  if (scopes.length < 3) {
     return undefined;
   } else {
-    return scopes[scopes.length - 2];
+    return scopes[scopes.length - 3];
   }
 };
 

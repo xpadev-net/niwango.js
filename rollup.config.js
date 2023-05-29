@@ -8,7 +8,7 @@ import * as path from "path";
 import {fileURLToPath} from "url";
 const banner = `/*!
   niwango.js v${pkg.version}
-  (c) 2021 xpadev-net https://xpadev.net
+  (c) 2023 xpadev-net https://xpadev.net
   Released under the ${pkg.license} License.
 */`;
 const __filename = fileURLToPath(import.meta.url);
