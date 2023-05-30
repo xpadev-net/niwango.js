@@ -122,13 +122,24 @@ abstract class IrObject {
       }
       return currentQueue.current;
     })();
+    const paddingLeft = isWide
+      ? 0
+      : (config.stageWidth.full - config.stageWidth.default) / 2;
     if (this.options.posX === "migi") {
-      return config.stageWidth[isWide ? "full" : "default"] - posX - this.width;
+      return (
+        config.stageWidth[isWide ? "full" : "default"] -
+        posX -
+        this.width +
+        paddingLeft
+      );
     } else if (this.options.posX === "hidari") {
-      return posX;
+      return posX + paddingLeft;
     }
     return (
-      config.stageWidth[isWide ? "full" : "default"] / 2 + posX - this.width / 2
+      config.stageWidth[isWide ? "full" : "default"] / 2 +
+      posX -
+      this.width / 2 +
+      paddingLeft
     );
   }
 
