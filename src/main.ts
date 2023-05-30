@@ -4,7 +4,13 @@ import { T_environment, T_scope } from "@/@types/ast";
 import { IComment } from "@/@types/types";
 import { getComments, triggerHandlers } from "@/commentHandler";
 import { CommentMapper } from "@/commentMapper";
-import { setComments, setContext, setCurrentTime, setIsWide } from "@/context";
+import {
+  isWide,
+  setComments,
+  setContext,
+  setCurrentTime,
+  setIsWide,
+} from "@/context";
 import { config, initConfig } from "@/definition/config";
 import { getQueue } from "@/queue";
 import { addScript, getScripts } from "@/scripts";
@@ -109,6 +115,7 @@ class Niwango {
       });
     this.clear();
     draw();
+    if (!isWide) this.drawLetterBox();
     this.targetContext.drawImage(
       this.drawCanvas,
       0,
@@ -121,6 +128,19 @@ class Niwango {
       this.targetCanvas.height
     );
   }
+
+  private drawLetterBox() {
+    const letterBoxWidth =
+      (config.stageWidth.full - config.stageWidth.default) / 2;
+    this.drawContext.clearRect(0, 0, letterBoxWidth, config.stageHeight);
+    this.drawContext.clearRect(
+      config.canvasWidth - letterBoxWidth,
+      0,
+      letterBoxWidth,
+      config.stageHeight
+    );
+  }
+
   public clear() {
     this.drawContext.clearRect(
       0,
