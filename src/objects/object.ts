@@ -28,6 +28,7 @@ abstract class IrObject {
   protected options: IObjectOptions;
   protected __width: number;
   protected __height: number;
+  protected __modified: boolean;
   protected moverQueue: IrObjectMoverQueue;
 
   protected constructor(
@@ -53,6 +54,7 @@ abstract class IrObject {
     this.__context.textBaseline = "alphabetic";
     this.__context.lineWidth = 4;
     this.__width = this.__height = 0;
+    this.__modified = false;
     this.__updateColor();
     this.__parsePos();
     register(this);
@@ -220,7 +222,7 @@ abstract class IrObject {
   set color(val: number) {
     this.options.color = val;
     this.__updateColor();
-    this.__draw();
+    this.__modified = true;
   }
 
   get visible() {
@@ -247,7 +249,7 @@ abstract class IrObject {
       value = val;
     }
     this.options.alpha = value;
-    this.__draw();
+    this.__modified = true;
   }
 
   get mover() {

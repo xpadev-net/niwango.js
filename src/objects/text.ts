@@ -65,20 +65,21 @@ class IrText extends IrObject {
   }
 
   set size(val) {
-    const size = val * this.options.scale;
-    this.__reverse = size < 0;
-    if (Math.abs(size) < 10) {
-      this.__scale = Math.abs(size) / 10;
+    const size = Math.abs(val * this.options.scale);
+    if (size < 10) {
+      this.__scale = size / 10;
       this.__size = 10;
+    } else if (size > 100 && val >= 3) {
+      this.__scale = size / 100;
+      this.__size = 100;
     } else {
       this.__scale = 1;
-      this.__size = Math.abs(size);
+      this.__size = size;
     }
     this.options.size = val;
     this.__updateFont();
     this.parsedComment = parse(this.text, val < 3);
-    this.__measure();
-    this.__draw();
+    this.__modified = true;
   }
 
   get text() {
@@ -88,8 +89,7 @@ class IrText extends IrObject {
   set text(string) {
     this.options.text = `${string}`;
     this.parsedComment = parse(this.text, this.options.size < 3);
-    this.__measure();
-    this.__draw();
+    this.__modified = true;
   }
 
   override get scale() {
@@ -97,19 +97,21 @@ class IrText extends IrObject {
   }
 
   override set scale(val: number) {
-    const size = val * this.options.size;
-    this.__reverse = size < 0;
-    if (Math.abs(size) < 10) {
-      this.__scale = Math.abs(size) / 10;
+    const size = Math.abs(val * this.options.size);
+    this.__reverse = val < 0;
+    if (size < 10) {
+      this.__scale = size / 10;
       this.__size = 10;
+    } else if (size > 100 && this.options.size >= 3) {
+      this.__scale = size / 100;
+      this.__size = 100;
     } else {
       this.__scale = 1;
-      this.__size = Math.abs(size);
+      this.__size = size;
     }
     this.options.scale = val;
     this.__updateFont();
-    this.__measure();
-    this.__draw();
+    this.__modified = true;
   }
 
   get bold() {
@@ -150,6 +152,7 @@ class IrText extends IrObject {
   }
 
   override __draw() {
+    this.__modified = false;
     this.__updateColor();
     this.__context.clearRect(0, 0, this.__canvas.width, this.__canvas.height);
     if (this.__reverse) {
@@ -232,9 +235,11 @@ class IrText extends IrObject {
   }
 
   override draw() {
+    if (this.__modified) this.__measure();
     if (!(this.width > 0 && this.height > 0)) {
       return;
     }
+    if (this.__modified) this.__draw();
     this.targetContext.drawImage(
       this.__canvas,
       0,

@@ -47,7 +47,7 @@ class IrShape extends IrObject {
 
   set shape(val) {
     this.options.shape = val;
-    this.__draw();
+    this.__modified = true;
   }
 
   override get width() {
@@ -57,7 +57,7 @@ class IrShape extends IrObject {
   override set width(val) {
     this.options.width = val;
     this.__width = val * this.options.scale;
-    this.__draw();
+    this.__modified = true;
   }
 
   override get height() {
@@ -67,7 +67,7 @@ class IrShape extends IrObject {
   override set height(val) {
     this.options.height = val;
     this.__height = val * this.options.scale;
-    this.__draw();
+    this.__modified = true;
   }
 
   override get scale() {
@@ -77,7 +77,7 @@ class IrShape extends IrObject {
   override set scale(val) {
     this.options.scale = val;
     this.__width = this.options.width * val;
-    this.__draw();
+    this.__modified = true;
   }
 
   get mask() {
@@ -109,6 +109,7 @@ class IrShape extends IrObject {
   }
 
   override __draw() {
+    this.__modified = false;
     this.__canvas.width = this.__width;
     this.__canvas.height = this.__height;
     this.__updateColor();
@@ -135,6 +136,7 @@ class IrShape extends IrObject {
     if (!(this.width > 0 && this.height > 0)) {
       return;
     }
+    if (this.__modified) this.__draw();
     if (this.rotation % 360 !== 0) {
       this.targetContext.save();
       this.targetContext.translate(this.__x, this.__y);
