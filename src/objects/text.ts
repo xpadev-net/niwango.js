@@ -120,6 +120,7 @@ class IrText extends IrObject {
 
   set bold(val) {
     this.options.bold = val;
+    this.__modified = true;
   }
 
   get filter() {
@@ -128,6 +129,7 @@ class IrText extends IrObject {
 
   set filter(val) {
     this.options.filter = val;
+    this.__modified = true;
   }
 
   __updateFont() {
