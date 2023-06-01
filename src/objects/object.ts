@@ -258,6 +258,9 @@ abstract class IrObject {
 
   set mover(val: IObjectMover) {
     this.options.mover = val;
+    if (!val.match(/^(?:simple)?$/)) {
+      console.warn(`[object] mover: ${val} is not supported yet`);
+    }
     this.moverQueue = {
       x: [],
       y: [],
