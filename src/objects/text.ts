@@ -65,6 +65,9 @@ class IrText extends IrObject {
   }
 
   set size(val) {
+    if (this.options.size < 3 !== val < 3) {
+      this.parsedComment = parse(this.text, val < 3);
+    }
     const size = Math.abs(val * this.options.scale);
     if (size < 10) {
       this.__scale = size / 10;

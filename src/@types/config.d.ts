@@ -37,4 +37,4 @@ export type baseConfig = {
   colors: { [p: string]: string };
 };
 
-type compatWidthKey = "aa" | "space";
+type compatWidthKey = "aa" | "ww" | "0020" | "3000";

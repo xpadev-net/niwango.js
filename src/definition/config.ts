@@ -90,7 +90,9 @@ const initConfig = () => {
 
     compatWidth: {
       aa: 1,
-      space: 0.5,
+      ww: 1,
+      "0020": 0.5,
+      "3000": 0.5,
     },
 
     colors: colors,

@@ -132,17 +132,36 @@ const parseHalfStr = (string: string, compat: boolean): commentContentItem => {
       result.push(lastItem);
       continue;
     }
-    if (char === " ") {
+    if (char === "w" && lastChar === "w") {
+      if (buffer) {
+        lastItem = { type: "text", text: buffer };
+        result.push(lastItem);
+        buffer = "";
+      }
+      lastChar = "";
+      if (lastItem?.type === "fill" && lastItem.char === "w") {
+        lastItem.width += config.compatWidth.ww;
+        continue;
+      }
+      lastItem = { type: "fill", char: "w", width: config.compatWidth.ww };
+      result.push(lastItem);
+      continue;
+    }
+    if (char === "\u0020") {
       if (lastChar) {
         lastItem = { type: "text", text: buffer + lastChar };
         result.push(lastItem);
         buffer = lastChar = "";
       }
-      if (lastItem?.type === "space" && lastItem.char === " ") {
-        lastItem.width += config.compatWidth.space;
+      if (lastItem?.type === "space" && lastItem.char === "\u0020") {
+        lastItem.width += config.compatWidth["0020"];
         continue;
       }
-      lastItem = { type: "space", char: " ", width: config.compatWidth.space };
+      lastItem = {
+        type: "space",
+        char: "\u0020",
+        width: config.compatWidth["0020"],
+      };
       result.push(lastItem);
       continue;
     }
