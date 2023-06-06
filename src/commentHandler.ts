@@ -23,7 +23,6 @@ const addHandler = (
   time: number,
   duration?: number
 ) => {
-  console.log(script, scopes, time, duration);
   handlers.push({
     script,
     scopes,
