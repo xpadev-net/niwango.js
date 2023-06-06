@@ -1,9 +1,9 @@
 import Core from "@xpadev-net/niwango-core";
 
 import type { A_ANY, T_scope } from "@/@types/ast";
-import { CommentMapper } from "@/commentMapper";
 import { comments, currentTime } from "@/context";
 import { getGlobalScope } from "@/utils/utils";
+import { Comment } from "@/@types/comment";
 
 let handlers: {
   script: A_ANY;
@@ -33,7 +33,7 @@ const addHandler = (
   });
 };
 
-const triggerHandlers = (comment: CommentMapper) => {
+const triggerHandlers = (comment: Comment) => {
   if (comment.message.startsWith("/")) return;
   for (const handler of handlers) {
     const globalScope = getGlobalScope(handler.scopes);
@@ -50,7 +50,7 @@ const getComments = (vpos: number) => {
       time: comment._vpos,
       comment,
       type: "comment",
-    })) as { time: number; comment: CommentMapper; type: "comment" }[];
+    })) as { time: number; comment: Comment; type: "comment" }[];
 };
 
 export { addHandler, getComments, resetHandlers, triggerHandlers };

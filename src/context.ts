@@ -1,10 +1,10 @@
-import { CommentMapper } from "@/commentMapper";
+import { Comment } from "@/@types/comment";
 
 let context: CanvasRenderingContext2D;
 
 let currentTime = 0;
 
-let comments: CommentMapper[] = [];
+let comments: Comment[] = [];
 let isWide = false;
 
 const setContext = (val: CanvasRenderingContext2D) => {
@@ -15,7 +15,7 @@ const setCurrentTime = (time: number) => {
   currentTime = time;
 };
 
-const setComments = (val: CommentMapper[]) => {
+const setComments = (val: Comment[]) => {
   comments = val;
 };
 

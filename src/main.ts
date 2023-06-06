@@ -1,9 +1,7 @@
 import Core from "@xpadev-net/niwango-core";
 
 import { T_environment, T_scope } from "@/@types/ast";
-import { IComment } from "@/@types/types";
 import { getComments, triggerHandlers } from "@/commentHandler";
-import { CommentMapper } from "@/commentMapper";
 import {
   isWide,
   setComments,
@@ -16,6 +14,7 @@ import { getQueue } from "@/queue";
 import { addScript, getScripts } from "@/scripts";
 import { draw } from "@/utils/objectManager";
 import { setup } from "@/utils/setup";
+import { Comment } from "@/@types/comment";
 
 class Niwango {
   private readonly globalScope: T_scope;
@@ -25,17 +24,14 @@ class Niwango {
   private readonly drawCanvas: HTMLCanvasElement;
   private readonly drawContext: CanvasRenderingContext2D;
   static default = Niwango;
-  constructor(targetCanvas: HTMLCanvasElement, formattedComments: IComment[]) {
+  constructor(targetCanvas: HTMLCanvasElement, comments: Comment[]) {
     setup();
     this.targetCanvas = targetCanvas;
     this.drawCanvas = document.createElement("canvas");
     initConfig();
-    const comments = formattedComments.map(
-      (comment) => new CommentMapper(comment)
-    );
 
     comments.forEach((comment) => {
-      if (comment.message.match(/^\//) && comment.comment.owner) {
+      if (comment.message.match(/^\//) && comment._owner) {
         try {
           const ast = Core.parseScript(
             comment.message,
