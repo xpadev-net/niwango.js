@@ -27,7 +27,7 @@ jobs:
         run: pnpm build
       - name: setup sandbox
         run: |
-          cp ./dist/bundle.js ./docs/
+          cp ./dist/bundle.js ./docs/niwango.js
           sed --in-place --expression='s/..\/src\/parser\/parser.js/.\/parser.js/' docs/playground.html
       - name: generate typedoc
         run: pnpm typedoc
