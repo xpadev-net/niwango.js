@@ -1,7 +1,6 @@
-import Core from "@xpadev-net/niwango-core";
+import Core, { IrFunction } from "@xpadev-net/niwango-core";
 
 import { A_CallExpression, T_scope } from "@/@types/ast";
-import { IrFunction } from "@/@types/core/functions";
 import typeGuard from "@/typeGuard";
 import { mt19937 } from "@/utils/mt19937";
 
@@ -23,8 +22,8 @@ const rand = (value?: unknown) => {
     for (let i = 0; i < value.length; i++) {
       seed = seed * 31 + value.charCodeAt(i);
     }
-  } else if (typeGuard.comment.comment(value)) {
-    seed = (value.vpos * 100 + 1) * value.id;
+  } else if (typeGuard.comment(value)) {
+    seed = (value._vpos * 100 + 1) * value.no;
   }
   const result = mt19937(seed);
   return result < 0 ? -(result + 1) : result;

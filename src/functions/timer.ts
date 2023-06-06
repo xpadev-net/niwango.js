@@ -1,7 +1,7 @@
 import Core from "@xpadev-net/niwango-core";
+import { IrFunction } from "@xpadev-net/niwango-core";
 
 import { A_ANY, A_CallExpression, T_scope } from "@/@types/ast";
-import { IrFunction } from "@/@types/core/functions";
 import { addQueue } from "@/queue";
 
 const processTimer: IrFunction = (

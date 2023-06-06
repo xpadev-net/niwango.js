@@ -1,5 +1,5 @@
 import { IrObjectMoverQueue } from "@/@types/IrObject";
-import { IObjectMover, IObjectOptions } from "@/@types/types";
+import { IObjectMover, IObjectOptions } from "@/@types/IrObject";
 import { currentTime, isWide } from "@/context";
 import { config } from "@/definition/config";
 import { register } from "@/utils/objectManager";

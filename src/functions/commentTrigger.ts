@@ -1,7 +1,7 @@
 import Core from "@xpadev-net/niwango-core";
+import { IrFunction } from "@xpadev-net/niwango-core";
 
 import { A_ANY } from "@/@types/ast";
-import { IrFunction } from "@/@types/core/functions";
 import { addHandler } from "@/commentHandler";
 import { currentTime } from "@/context";
 

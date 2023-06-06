@@ -22,14 +22,10 @@ import {
   A_UpdateExpression,
   A_VariableDeclaration,
 } from "@/@types/ast";
-import { definedFunction } from "@/@types/function";
-import { FormattedComment } from "@/@types/types";
+import { definedFunction } from "@xpadev-net/niwango-core";
+import { Comment } from "@/@types/comment";
 
 const typeGuard = {
-  AST: (i: unknown): i is A_ANY =>
-    !!i &&
-    typeof i === "object" &&
-    typeof (i as { type?: unknown }).type === "string",
   Literal: (i: unknown): i is A_Literal =>
     !!i && typeof i === "object" && (i as A_ANY).type === "Literal",
   Identifier: (i: unknown): i is A_Identifier =>
@@ -82,21 +78,20 @@ const typeGuard = {
     (i as definedFunction).type === "definedFunction",
   object: (i: unknown): i is { [key: string]: unknown } =>
     !!i && typeof i === "object",
-  comment: {
-    comment: (i: unknown): i is FormattedComment =>
-      objectVerify(i, [
-        "id",
-        "vpos",
-        "content",
-        "date",
-        "date_usec",
-        "owner",
-        "premium",
-        "mail",
-        "user_id",
-        "layer",
-      ]),
-  },
+  comment: (i: unknown): i is Comment =>
+    objectVerify(i, [
+      "message",
+      "vpos",
+      "isYourPost",
+      "mail",
+      "fromButton",
+      "isPremium",
+      "color",
+      "size",
+      "no",
+      "_vpos",
+      "_owner",
+    ]),
   array: (i: unknown): i is unknown[] => Array.isArray(i),
 };
 

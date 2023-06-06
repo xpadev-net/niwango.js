@@ -1,4 +1,4 @@
-import { IShapeOptions, IShapeOptionsNullable } from "@/@types/types";
+import { IShapeOptions, IShapeOptionsNullable } from "@/@types/IrShape";
 import { IrObject } from "@/objects/object";
 import { number2color } from "@/utils/number2color";
 

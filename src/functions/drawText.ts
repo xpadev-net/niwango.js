@@ -1,7 +1,7 @@
 import Core from "@xpadev-net/niwango-core";
+import { IrFunction } from "@xpadev-net/niwango-core";
 
 import { A_CallExpression, T_scope } from "@/@types/ast";
-import { IrFunction } from "@/@types/core/functions";
 import { context } from "@/context";
 import { IrText } from "@/objects/text";
 

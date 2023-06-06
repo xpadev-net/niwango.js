@@ -1,5 +1,5 @@
 import { parsedComment } from "@/@types/flashText";
-import { ITextOptions, ITextOptionsNullable } from "@/@types/types";
+import { ITextOptions, ITextOptionsNullable } from "@/@types/IrText";
 import { config } from "@/definition/config";
 import { IrObject } from "@/objects/object";
 import { measure, parse } from "@/utils/flashText";
