@@ -1,118 +1,113 @@
 <div class="wrapper">
-	<div class="item">
-		<textarea id="input" spellcheck="false"></textarea>
-		<textarea id="ast" spellcheck="false" readonly></textarea>
-	</div>
-	<div class="item right">
-		<canvas id="canvas" width="1920" height="1080"></canvas>
-		<div id="outputWrapper">
-			<div><button id="clear">clear</button></div>
-			<div id="output"></div>
-		</div>
-	</div>
+  <div class="item">
+    <textarea id="input" spellcheck="false"></textarea>
+    <textarea id="ast" spellcheck="false" readonly></textarea>
+  </div>
+  <div class="item right">
+    <canvas id="canvas" width="1920" height="1080"></canvas>
+    <div id="outputWrapper">
+      <div><button id="clear">clear</button></div>
+      <div id="output"></div>
+    </div>
+  </div>
 </div>
 <script src="https://xpadev-net.github.io/niwango-core.js/parser.js"></script>
 <script src="../dist/bundle.js"></script>
 <script>
-	const input = document.getElementById("input"),
-		ast = document.getElementById("ast"),
-		output = document.getElementById("output"),
-			canvas = document.getElementById("canvas"),
-	clearButton = document.getElementById("clear");
+  const input = document.getElementById("input"),
+    ast = document.getElementById("ast"),
+    output = document.getElementById("output"),
+    canvas = document.getElementById("canvas"),
+    clearButton = document.getElementById("clear");
   const consoleHandler = (mode = "debug") => {
     return (...args) => {
       let styleCount = 0;
       const element = document.createElement("div");
-      for (let arg of args){
+      for (let arg of args) {
         if (typeof arg !== "string") {
-          arg = JSON.stringify(arg,undefined,"  ") ?? "undefined";
+          arg = JSON.stringify(arg, undefined, "  ") ?? "undefined";
         }
-        if (styleCount > 0){
-          styleCount --;
+        if (styleCount > 0) {
+          styleCount--;
           continue;
         }
-        styleCount = arg?.match(/%c/)?.length||0;
-        element.innerText += arg.replace(/%c/g,"") + " ";
+        styleCount = arg?.match(/%c/)?.length || 0;
+        element.innerText += arg.replace(/%c/g, "") + " ";
       }
       element.classList.add(mode);
       output.append(element);
-		}
-	}
+    };
+  };
 
   console.debug = consoleHandler("debug");
-	canvas.onclick = () => {
+  canvas.onclick = () => {
     const AST = parser.parse(input.value);
     ast.value = JSON.stringify(AST,undefined," ");
-    const comments = input.value.split("\n")
-				.map((line,index)=>({
-						comment:{
-							id: index,
-							content: [{content:`/${line}`}],
-							date: 0,
-							date_usec: 0,
-							owner: true,
-							premium: true,
-							mail: [],
-							user_id: 0,
-							layer: 0
-						},
-						owner: true,
-						vpos: 0,
-						mail: [],
-					content: `/${line}`
-		}));
+    const comments = input.value
+      .split("\n")
+      .map((line,index)=>({
+        message: `/${line}`,
+        vpos: 0,
+        isYourPost: false,
+        mail: "",
+        fromButton: false,
+        color: 0,
+        size: 0,
+        no: 0,
+        _vpos: 0,
+        _owner: true
+      }));
     try {
-      const niwa = new Niwango(canvas,comments);
-      niwa.draw(0)
-    }catch (e){
-			console.log(e);
+      const niwa = new Niwango(canvas, comments);
+      niwa.draw(0);
+    } catch (e) {
+      console.log(e);
       output.value += JSON.stringify(e) + "\n";
-		}
-	}
+    }
+  };
   clearButton.onclick = () => {
     output.innerHTML = "";
-	}
-
+  };
 </script>
 <style>
-	.wrapper{
-		display: flex;
-		flex-direction: row;
-		height: 100%;
-	}
-	.item{
-		display: flex;
-		flex-direction: column;
-		flex: 1;
-		width: 50vw;
-	}
-	.right{
-		max-width: 500px;
-	}
-	#canvas{
-		border: solid 1px black;
-	}
-	textarea{
-		height: 100%;
-		flex: 1;
-	}
-	#outputWrapper {
-		white-space: pre-wrap;
-		border: solid 1px black;
-		flex-direction: column;
-		display: flex;
-		flex: 1;
-    overflow-y: scroll;
-	}
-	#output {
+  .wrapper {
+    display: flex;
+    flex-direction: row;
+    height: 100%;
+  }
+  .item {
+    display: flex;
+    flex-direction: column;
     flex: 1;
-	}
-	#output .debug{
-		background: white;
-		color: gray;
-	}
-	#output .error{
-		background: #ff6492;
-		color: black;
-	}
+    width: 50vw;
+  }
+  .right {
+    max-width: 500px;
+  }
+  #canvas {
+    border: solid 1px black;
+  }
+  textarea {
+    height: 100%;
+    flex: 1;
+  }
+  #outputWrapper {
+    white-space: pre-wrap;
+    border: solid 1px black;
+    flex-direction: column;
+    display: flex;
+    flex: 1;
+    overflow-y: scroll;
+  }
+  #output {
+    flex: 1;
+  }
+  #output .debug {
+    background: white;
+    color: gray;
+  }
+  #output .error {
+    background: #ff6492;
+    color: black;
+  }
 </style>
