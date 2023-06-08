@@ -1,13 +1,16 @@
-export type IrObjectMoverQueue = {
-  x: IrObjectMoverItem[];
-  y: IrObjectMoverItem[];
+export type IrObjectMoverQueue = IrObjectMoverItem[];
+
+export type IrObjectPos = {
+  x: number;
+  y: number;
 };
 
 export type IrObjectMoverItem = {
-  current: number;
-  target: number;
-  diff: number;
+  current: IrObjectPos;
+  target: IrObjectPos;
+  diff: IrObjectPos;
   vpos: number;
+  duration: number;
 };
 
 type IObjectMover = "" | "smooth" | "simple" | "rolling" | "hopping";

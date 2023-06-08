@@ -1,7 +1,13 @@
-import { IrObjectMoverQueue } from "@/@types/IrObject";
-import { IObjectMover, IObjectOptions } from "@/@types/IrObject";
+import {
+  IObjectMover,
+  IObjectOptions,
+  IrObjectMoverItem,
+  IrObjectMoverQueue,
+  IrObjectPos,
+} from "@/@types/IrObject";
 import { currentTime, isWide } from "@/context";
 import { config } from "@/definition/config";
+import { getDistance, getSmoothDuration } from "@/utils/object";
 import { register } from "@/utils/objectManager";
 
 const defaultOptions: IObjectOptions = {
@@ -36,10 +42,7 @@ abstract class IrObject {
     options: Partial<IObjectOptions>
   ) {
     this.targetContext = context;
-    this.moverQueue = {
-      x: [],
-      y: [],
-    };
+    this.moverQueue = [];
     this.options = Object.assign(defaultOptions, options);
     const canvas = document.createElement("canvas");
     canvas.width = config.canvasWidth;
@@ -88,41 +91,45 @@ abstract class IrObject {
     const lastVal = this.options.x;
     this.options.x = input;
     if (this.mover === "") return;
-    if (this.mover === "smooth") {
-      this.moverQueue.x = [
-        {
-          current: lastVal,
-          target: input,
-          diff: input - lastVal,
-          vpos: currentTime,
-        },
-      ];
-      return;
+    const lastQueue = this.moverQueue.filter(
+      (queue) => queue.vpos === currentTime
+    )[0];
+    let currentPos, targetPos;
+    if (!lastQueue) {
+      currentPos = { x: lastVal, y: this.options.y };
+      targetPos = { x: input, y: this.options.y };
     } else {
-      this.moverQueue.x.push({
-        current: lastVal,
-        target: input,
-        diff: input - lastVal,
-        vpos: currentTime,
-      });
+      currentPos = { x: lastVal, y: lastQueue.current.y };
+      targetPos = { x: input, y: lastQueue.target.y };
     }
-    this.__updateMoverQueue("x");
+    console.log(
+      `mover-x: ${JSON.stringify(currentPos)} to ${JSON.stringify(targetPos)}`,
+      this.mover
+    );
+    this.__updateMoverQueue(lastQueue, currentPos, targetPos);
   }
 
   get __x() {
-    this.__updateMoverQueue("x");
-    const currentQueue = this.moverQueue.x[0];
+    this.__filterMoverQueue();
+    const currentQueue = this.moverQueue[0];
     const posX = (() => {
       if (!currentQueue || this.mover === "") return this.options.x;
       if (this.mover === "simple") {
         return (
-          currentQueue.current +
-          (currentQueue.diff * (currentTime - currentQueue.vpos)) / 50
+          currentQueue.current.x +
+          (currentQueue.diff.x * (currentTime - currentQueue.vpos)) / 50
         );
       } else if (this.mover === "rolling") {
         //todo: feat rolling
+      } else if (this.mover === "smooth") {
+        const stepCount = Math.floor((currentTime - currentQueue.vpos) / 5);
+        let x = currentQueue.diff.x;
+        for (let i = 0; i < stepCount; i++) {
+          x -= x / 14 + 1;
+        }
+        return currentQueue.target.x - x;
       }
-      return currentQueue.current;
+      return currentQueue.current.x;
     })();
     const paddingLeft = isWide
       ? 0
@@ -154,41 +161,45 @@ abstract class IrObject {
     const lastVal = this.options.y;
     this.options.y = input;
     if (this.mover === "") return;
-    if (this.mover === "smooth") {
-      this.moverQueue.y = [
-        {
-          current: lastVal,
-          target: input,
-          diff: input - lastVal,
-          vpos: currentTime,
-        },
-      ];
-      return;
+    const lastQueue = this.moverQueue.filter(
+      (queue) => queue.vpos === currentTime
+    )[0];
+    let currentPos, targetPos;
+    if (!lastQueue) {
+      currentPos = { x: this.options.x, y: lastVal };
+      targetPos = { x: this.options.x, y: input };
     } else {
-      this.moverQueue.y.push({
-        current: lastVal,
-        target: input,
-        diff: input - lastVal,
-        vpos: currentTime,
-      });
+      currentPos = { x: lastQueue.current.x, y: lastVal };
+      targetPos = { x: lastQueue.target.x, y: input };
     }
-    this.__updateMoverQueue("y");
+    console.log(
+      `mover-y: ${JSON.stringify(currentPos)} to ${JSON.stringify(targetPos)}`,
+      this.mover
+    );
+    this.__updateMoverQueue(lastQueue, currentPos, targetPos);
   }
 
   get __y() {
-    this.__updateMoverQueue("y");
-    const currentQueue = this.moverQueue.y[0];
+    this.__filterMoverQueue();
+    const currentQueue = this.moverQueue[0];
     const posY = (() => {
       if (!currentQueue || this.mover === "") return this.options.y;
       if (this.mover === "simple") {
         return (
-          currentQueue.current +
-          (currentQueue.diff * (currentTime - currentQueue.vpos)) / 50
+          currentQueue.current.y +
+          (currentQueue.diff.y * (currentTime - currentQueue.vpos)) / 50
         );
       } else if (this.mover === "rolling") {
         //todo: feat rolling
+      } else if (this.mover === "smooth") {
+        const stepCount = Math.floor((currentTime - currentQueue.vpos) / 5);
+        let y = currentQueue.diff.y;
+        for (let i = 0; i < stepCount; i++) {
+          y -= y / 14 + 1;
+        }
+        return currentQueue.target.y - y;
       }
-      return currentQueue.current;
+      return currentQueue.current.y;
     })();
     if (this.options.posY === "ue") {
       return posY;
@@ -258,28 +269,56 @@ abstract class IrObject {
 
   set mover(val: IObjectMover) {
     this.options.mover = val;
-    if (!val.match(/^(?:simple)?$/)) {
-      console.warn(`[object] mover: ${val} is not supported yet`);
-    }
-    this.moverQueue = {
-      x: [],
-      y: [],
-    };
+    console.log(`mover: ${val}`);
+    this.moverQueue = [];
   }
 
-  protected __updateMoverQueue(key: "x" | "y") {
-    if (this.mover === "" || this.mover === "smooth") return;
-    const duration = this.mover === "simple" ? 50 : 100;
-    this.moverQueue[key] = this.moverQueue[key].filter(
-      (item) => item.vpos > currentTime - duration
+  protected __updateMoverQueue(
+    lastQueue: IrObjectMoverItem | undefined,
+    currentPos: IrObjectPos,
+    targetPos: IrObjectPos
+  ) {
+    const diff = {
+      x: targetPos.x - currentPos.x,
+      y: targetPos.y - currentPos.y,
+    };
+    if (this.mover === "smooth") {
+      const distance = getDistance(currentPos, targetPos);
+      this.moverQueue = [
+        {
+          current: currentPos,
+          target: targetPos,
+          diff: diff,
+          vpos: currentTime,
+          duration: getSmoothDuration(distance),
+        },
+      ];
+    } else {
+      if (lastQueue) {
+        lastQueue.current = currentPos;
+        lastQueue.target = targetPos;
+        lastQueue.diff = diff;
+        return;
+      }
+      this.moverQueue.push({
+        current: currentPos,
+        target: targetPos,
+        diff: diff,
+        vpos: currentTime,
+        duration: this.mover === "simple" ? 50 : 100,
+      });
+    }
+    this.__filterMoverQueue();
+  }
+
+  protected __filterMoverQueue() {
+    if (this.mover === "") return;
+    this.moverQueue = this.moverQueue.filter(
+      (item) => item.vpos + item.duration > currentTime
     );
-    const currentItem = this.moverQueue[key][0];
-    if (
-      this.mover !== "hopping" &&
-      this.moverQueue[key].length > 4 &&
-      currentItem
-    ) {
-      this.moverQueue[key] = [currentItem, ...this.moverQueue[key].slice(-3)];
+    const currentItem = this.moverQueue[0];
+    if (this.mover !== "hopping" && this.moverQueue.length > 4 && currentItem) {
+      this.moverQueue = [currentItem, ...this.moverQueue.slice(-3)];
     }
   }
 
