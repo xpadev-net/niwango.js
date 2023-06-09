@@ -1,4 +1,5 @@
-import { A_ANY, T_scope } from "@/@types/ast";
+import { A_ANY, T_scope } from "@xpadev-net/niwango-core";
+
 import { currentTime } from "@/context";
 
 let queue: { script: A_ANY; time: number; scopes: T_scope[]; type: "queue" }[] =

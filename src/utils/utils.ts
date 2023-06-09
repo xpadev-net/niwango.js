@@ -1,4 +1,5 @@
-import { A_ANY, T_scope } from "@/@types/ast";
+import { A_ANY, T_scope } from "@xpadev-net/niwango-core";
+
 import { commentFont } from "@/@types/IrText";
 import { config } from "@/definition/config";
 import typeGuard from "@/typeGuard";

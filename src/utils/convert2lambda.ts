@@ -1,4 +1,4 @@
-import { A_CallExpression, A_Lambda } from "@/@types/ast";
+import { A_CallExpression, A_Lambda } from "@xpadev-net/niwango-core";
 
 /**
  * lambda式を生成する

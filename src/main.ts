@@ -1,6 +1,7 @@
-import Core from "@xpadev-net/niwango-core";
+import Core, { T_scope } from "@xpadev-net/niwango-core";
 
-import { T_environment, T_scope } from "@/@types/ast";
+import { Comment } from "@/@types/comment";
+import { T_environment } from "@/@types/types";
 import { getComments, triggerHandlers } from "@/commentHandler";
 import {
   isWide,
@@ -14,7 +15,6 @@ import { getQueue } from "@/queue";
 import { addScript, getScripts } from "@/scripts";
 import { draw } from "@/utils/objectManager";
 import { setup } from "@/utils/setup";
-import { Comment } from "@/@types/comment";
 
 class Niwango {
   private readonly globalScope: T_scope;

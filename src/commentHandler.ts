@@ -1,9 +1,9 @@
+import type { A_ANY, T_scope } from "@xpadev-net/niwango-core";
 import Core from "@xpadev-net/niwango-core";
 
-import type { A_ANY, T_scope } from "@/@types/ast";
+import { Comment } from "@/@types/comment";
 import { comments, currentTime } from "@/context";
 import { getGlobalScope } from "@/utils/utils";
-import { Comment } from "@/@types/comment";
 
 let handlers: {
   script: A_ANY;

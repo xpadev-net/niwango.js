@@ -1,6 +1,6 @@
 import Core, { IrFunction } from "@xpadev-net/niwango-core";
+import { A_CallExpression, T_scope } from "@xpadev-net/niwango-core";
 
-import { A_CallExpression, T_scope } from "@/@types/ast";
 import typeGuard from "@/typeGuard";
 import { mt19937 } from "@/utils/mt19937";
 

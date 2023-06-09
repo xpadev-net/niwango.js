@@ -21,8 +21,9 @@ import {
   A_UnaryExpression,
   A_UpdateExpression,
   A_VariableDeclaration,
-} from "@/@types/ast";
+} from "@xpadev-net/niwango-core";
 import { definedFunction } from "@xpadev-net/niwango-core";
+
 import { Comment } from "@/@types/comment";
 
 const typeGuard = {

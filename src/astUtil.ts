@@ -1,4 +1,4 @@
-import type { A_Identifier, A_Literal } from "@/@types/ast";
+import type { A_Identifier, A_Literal } from "@xpadev-net/niwango-core";
 
 /**
  * 名前からIdentifierを生成する
