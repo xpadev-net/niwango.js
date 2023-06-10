@@ -15,6 +15,7 @@ import { getQueue } from "@/queue";
 import { addScript, getScripts } from "@/scripts";
 import { draw } from "@/utils/objectManager";
 import { setup } from "@/utils/setup";
+import { nativeSort } from "@/utils/sort";
 
 class Niwango {
   private readonly globalScope: T_scope;
@@ -24,10 +25,12 @@ class Niwango {
   private readonly drawCanvas: HTMLCanvasElement;
   private readonly drawContext: CanvasRenderingContext2D;
   static default = Niwango;
+  private lastVpos: number;
   constructor(targetCanvas: HTMLCanvasElement, comments: Comment[]) {
     setup();
     this.targetCanvas = targetCanvas;
     this.drawCanvas = document.createElement("canvas");
+    this.lastVpos = 0;
     initConfig();
 
     comments.forEach((comment) => {
@@ -82,21 +85,17 @@ class Niwango {
 
   public draw(vpos: number) {
     setIsWide(!!this.environmentScope.isWide);
-    [...getQueue(vpos), ...getScripts(vpos), ...getComments(vpos)]
-      .sort((a, b) => {
-        if (a.time < b.time) {
-          return -1;
-        }
-        if (a.time > b.time) {
-          return 1;
-        }
-        return 0;
-      })
-      .forEach((queue) => {
+    for (let i = this.lastVpos; i < vpos; i++) {
+      const tasks = [...getQueue(i), ...getScripts(i), ...getComments(i)].sort(
+        nativeSort("time")
+      );
+      while (tasks.length > 0) {
+        const queue = tasks.shift();
+        if (!queue) break;
         setCurrentTime(queue.time);
         if (queue.type === "comment") {
           triggerHandlers(queue.comment);
-          return;
+          continue;
         }
         try {
           Core.execute(
@@ -108,9 +107,12 @@ class Niwango {
         } catch (e) {
           console.error(e);
         }
-      });
+        tasks.sort(nativeSort("time"));
+      }
+    }
     this.clear();
     draw();
+    this.lastVpos = vpos;
     if (!isWide) this.drawLetterBox();
     this.targetContext.drawImage(
       this.drawCanvas,
