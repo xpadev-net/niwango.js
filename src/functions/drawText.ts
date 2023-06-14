@@ -13,23 +13,30 @@ import { IrText } from "@/objects/text";
  */
 const processDrawText: IrFunction = (
   script: A_CallExpression,
-  scopes: T_scope[]
+  scopes: T_scope[],
+  _,
+  trace
 ) => {
-  const args = Core.utils.argumentParser(script.arguments, scopes, [
-    "text",
-    "x",
-    "y",
-    "z",
-    "size",
-    "pos",
-    "color",
-    "bold",
-    "visible",
-    "filter",
-    "alpha",
-    "mover",
-    "scale",
-  ]);
+  const args = Core.utils.argumentParser(
+    script.arguments,
+    scopes,
+    [
+      "text",
+      "x",
+      "y",
+      "z",
+      "size",
+      "pos",
+      "color",
+      "bold",
+      "visible",
+      "filter",
+      "alpha",
+      "mover",
+      "scale",
+    ],
+    trace
+  );
   return new IrText(context, args);
 };
 

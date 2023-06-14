@@ -31,10 +31,10 @@ const run = (niwango: string) => {
     lastVideo: "sm1", //sm1
   };
   const ast = Core.parseScript(niwango, "jest");
-  return Core.execute(ast, [
-    globalScope,
-    environmentScope,
-    Core.prototypeScope,
-  ]);
+  return Core.execute(
+    ast,
+    [globalScope, environmentScope, Core.prototypeScope],
+    [ast]
+  );
 };
 export { run };

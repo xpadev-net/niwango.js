@@ -102,7 +102,8 @@ class Niwango {
             queue.script,
             queue.type === "queue"
               ? queue.scopes
-              : [this.globalScope, this.environmentScope, Core.prototypeScope]
+              : [this.globalScope, this.environmentScope, Core.prototypeScope],
+            [queue.script]
           );
         } catch (e) {
           console.error(e);

@@ -1,4 +1,4 @@
-import Core, { IrFunction } from "@xpadev-net/niwango-core";
+import Core, { A_ANY, IrFunction } from "@xpadev-net/niwango-core";
 import { A_CallExpression, T_scope } from "@xpadev-net/niwango-core";
 
 import typeGuard from "@/typeGuard";
@@ -31,10 +31,12 @@ const rand = (value?: unknown) => {
 
 const processRand: IrFunction = (
   script: A_CallExpression,
-  scopes: T_scope[]
+  scopes: T_scope[],
+  _,
+  trace: A_ANY[]
 ) => {
   if (script.arguments[0]) {
-    return rand(Core.execute(script.arguments[0], scopes));
+    return rand(Core.execute(script.arguments[0], scopes, trace));
   }
   return rand();
 };

@@ -13,24 +13,31 @@ import { IrShape } from "@/objects/shape";
  */
 const processDrawShape: IrFunction = (
   script: A_CallExpression,
-  scopes: T_scope[]
+  scopes: T_scope[],
+  _,
+  trace
 ) => {
-  const args = Core.utils.argumentParser(script.arguments, scopes, [
-    "x",
-    "y",
-    "z",
-    "shape",
-    "width",
-    "height",
-    "color",
-    "visible",
-    "pos",
-    "mask",
-    "commentmask",
-    "alpha",
-    "rotation",
-    "mover",
-  ]);
+  const args = Core.utils.argumentParser(
+    script.arguments,
+    scopes,
+    [
+      "x",
+      "y",
+      "z",
+      "shape",
+      "width",
+      "height",
+      "color",
+      "visible",
+      "pos",
+      "mask",
+      "commentmask",
+      "alpha",
+      "rotation",
+      "mover",
+    ],
+    trace
+  );
   return new IrShape(context, args);
 };
 

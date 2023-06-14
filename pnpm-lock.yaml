@@ -1,4 +1,4 @@
-lockfileVersion: '6.1'
+lockfileVersion: '6.0'
 
 settings:
   autoInstallPeers: true
@@ -36,8 +36,8 @@ devDependencies:
     specifier: ^5.59.6
     version: 5.59.6(eslint@8.40.0)(typescript@5.0.4)
   '@xpadev-net/niwango-core':
-    specifier: ^0.0.2-canary.20230610-2
-    version: 0.0.2-canary.20230610-2
+    specifier: ^0.0.2-canary.20230614-2
+    version: 0.0.2-canary.20230614-2
   copyfiles:
     specifier: ^2.4.1
     version: 2.4.1
@@ -2054,8 +2054,8 @@ packages:
       eslint-visitor-keys: 3.4.1
     dev: true
 
-  /@xpadev-net/niwango-core@0.0.2-canary.20230610-2:
-    resolution: {integrity: sha512-dKkcNX28B6fVeZUmcvORrbgDPN566H/2m94MKbEt3QcaAS6eHL4jRCOtl4Zr/nJRmftoFTuFn8Cz0IK7nee6hA==}
+  /@xpadev-net/niwango-core@0.0.2-canary.20230614-2:
+    resolution: {integrity: sha512-NdBvu6+G6YDnKkz4AMKXaCfeA7izu/pVPh5klee5SGtqS3qAIqbwh4dapDNNwWkHfwDqr270EEkvgbXz1kPvbg==}
     dev: true
 
   /abab@2.0.6:
