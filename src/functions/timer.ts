@@ -21,7 +21,8 @@ const processTimer: IrFunction = (
     addQueue(
       args.then as A_ANY,
       Number(Core.execute(args.timer, scopes, trace)),
-      scopes
+      scopes,
+      [...trace]
     );
 };
 

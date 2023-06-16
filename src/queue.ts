@@ -2,8 +2,13 @@ import { A_ANY, T_scope } from "@xpadev-net/niwango-core";
 
 import { currentTime } from "@/context";
 
-let queue: { script: A_ANY; time: number; scopes: T_scope[]; type: "queue" }[] =
-  [];
+let queue: {
+  script: A_ANY;
+  time: number;
+  scopes: T_scope[];
+  type: "queue";
+  trace: A_ANY[];
+}[] = [];
 
 /**
  * キューの初期化
@@ -17,13 +22,20 @@ const resetQueue = () => {
  * @param script
  * @param offset
  * @param scopes
+ * @param trace
  */
-const addQueue = (script: A_ANY, offset: number, scopes: T_scope[]) => {
+const addQueue = (
+  script: A_ANY,
+  offset: number,
+  scopes: T_scope[],
+  trace: A_ANY[]
+) => {
   queue.push({
     script,
     time: currentTime + offset * 100,
     scopes,
     type: "queue",
+    trace,
   });
 };
 

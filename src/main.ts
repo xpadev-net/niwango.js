@@ -98,12 +98,16 @@ class Niwango {
           continue;
         }
         try {
+          const trace =
+            queue.type === "script"
+              ? [queue.script]
+              : [...queue.trace, { __queue: queue.type, ...queue.script }];
           Core.execute(
             queue.script,
             queue.type === "queue"
               ? queue.scopes
               : [this.globalScope, this.environmentScope, Core.prototypeScope],
-            [queue.script]
+            trace
           );
         } catch (e) {
           console.error(e);

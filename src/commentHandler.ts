@@ -11,6 +11,7 @@ let handlers: {
   time: number;
   duration?: number;
   type: "commentHandler";
+  trace: A_ANY[];
 }[] = [];
 
 const resetHandlers = () => {
@@ -20,6 +21,7 @@ const resetHandlers = () => {
 const addHandler = (
   script: A_ANY,
   scopes: T_scope[],
+  trace: A_ANY[],
   time: number,
   duration?: number
 ) => {
@@ -29,6 +31,7 @@ const addHandler = (
     time,
     duration,
     type: "commentHandler",
+    trace,
   });
 };
 
