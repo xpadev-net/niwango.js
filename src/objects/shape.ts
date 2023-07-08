@@ -133,7 +133,7 @@ class IrShape extends IrObject {
   }
 
   override draw() {
-    if (!(this.width > 0 && this.height > 0)) {
+    if (!(Math.floor(this.width) > 0 && Math.floor(this.height) > 0)) {
       return;
     }
     if (this.__modified) this.__draw();
