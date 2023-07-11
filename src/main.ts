@@ -83,7 +83,7 @@ class Niwango {
     };
   }
 
-  public draw(vpos: number) {
+  private execute(vpos: number) {
     setIsWide(!!this.environmentScope.isWide);
     for (let i = this.lastVpos; i < vpos; i++) {
       const tasks = [...getQueue(i), ...getScripts(i), ...getComments(i)].sort(
@@ -115,6 +115,14 @@ class Niwango {
         tasks.sort(nativeSort("time"));
       }
     }
+  }
+
+  public draw(vpos: number) {
+    this.execute(vpos);
+    this._draw(vpos);
+  }
+
+  private _draw(vpos: number) {
     this.clear();
     draw();
     this.lastVpos = vpos;
