@@ -18,12 +18,12 @@ const resolve = (script: A_ANY, scopes: T_scope[]) => {
         }
       }
     }
-    return undefined;
   } catch (e) {
     if (e instanceof Error) {
       console.error(`[resolve] ${e.name}: ${e.message}`, script, scopes);
     }
   }
+  return undefined;
 };
 
 /**
