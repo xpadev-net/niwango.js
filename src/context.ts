@@ -1,14 +1,15 @@
 import { Comment } from "@/@types/comment";
+import { IRender } from "@/@types/IRender";
 
-let context: CanvasRenderingContext2D;
+let render: IRender;
 
 let currentTime = 0;
 
 let comments: Comment[] = [];
 let isWide = false;
 
-const setContext = (val: CanvasRenderingContext2D) => {
-  context = val;
+const setRender = (val: IRender) => {
+  render = val;
 };
 
 const setCurrentTime = (time: number) => {
@@ -23,11 +24,11 @@ const setIsWide = (val: boolean) => (isWide = val);
 
 export {
   comments,
-  context,
+  render,
   currentTime,
   isWide,
   setComments,
-  setContext,
+  setRender,
   setCurrentTime,
   setIsWide,
 };

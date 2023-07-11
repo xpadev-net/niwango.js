@@ -2,7 +2,7 @@ import Core from "@xpadev-net/niwango-core";
 import { IrFunction } from "@xpadev-net/niwango-core";
 import { A_CallExpression, T_scope } from "@xpadev-net/niwango-core";
 
-import { context } from "@/context";
+import { render } from "@/context";
 import { IrShape } from "@/objects/shape";
 
 /**
@@ -38,7 +38,7 @@ const processDrawShape: IrFunction = (
     ],
     trace
   );
-  return new IrShape(context, args);
+  return new IrShape(render, args);
 };
 
 export { processDrawShape };

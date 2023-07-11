@@ -1,3 +1,4 @@
+import { IRender } from "@/@types/IRender";
 import { IShapeOptions, IShapeOptionsNullable } from "@/@types/IrShape";
 import { IrObject } from "@/objects/object";
 import { number2color } from "@/utils/number2color";
@@ -22,18 +23,13 @@ const defaultOptions: IShapeOptions = {
   mover: "",
 };
 
-const TO_RADIANS = Math.PI / 180;
-
 /**
  * 図形オブジェクトのクラス
  */
 class IrShape extends IrObject {
   override options: IShapeOptions;
-  constructor(
-    _context: CanvasRenderingContext2D,
-    _options: IShapeOptionsNullable
-  ) {
-    super(_context, _options);
+  constructor(_render: IRender, _options: IShapeOptionsNullable) {
+    super(_render, _options);
     this.options = { ...defaultOptions, ..._options };
     this.__width = this.options.width;
     this.__height = this.options.height;
@@ -138,13 +134,16 @@ class IrShape extends IrObject {
     }
     if (this.__modified) this.__draw();
     if (this.rotation % 360 !== 0) {
-      this.targetContext.save();
-      this.targetContext.translate(this.__x, this.__y);
-      this.targetContext.rotate(this.rotation * TO_RADIANS);
-      this.targetContext.drawImage(this.__canvas, 0, 0);
-      this.targetContext.restore();
+      this.render.drawImage(this.__canvas, {
+        targetX: this.__x,
+        targetY: this.__y,
+        rotate: this.rotation,
+      });
     } else {
-      this.targetContext.drawImage(this.__canvas, this.__x, this.__y);
+      this.render.drawImage(this.__canvas, {
+        targetX: this.__x,
+        targetY: this.__y,
+      });
     }
   }
 }

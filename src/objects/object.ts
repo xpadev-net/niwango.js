@@ -1,3 +1,4 @@
+import { IRender } from "@/@types/IRender";
 import {
   IObjectMover,
   IObjectOptions,
@@ -9,6 +10,7 @@ import { currentTime, isWide } from "@/context";
 import { config } from "@/definition/config";
 import { getDistance, getSmoothDuration } from "@/utils/object";
 import { register } from "@/utils/objectManager";
+import { uuid } from "@/utils/uuid";
 
 const defaultOptions: IObjectOptions = {
   x: 0,
@@ -28,7 +30,8 @@ const defaultOptions: IObjectOptions = {
  * 描画オブジェクトの基底クラス
  */
 abstract class IrObject {
-  protected readonly targetContext: CanvasRenderingContext2D;
+  protected readonly __id: string;
+  protected readonly render: IRender;
   protected readonly __canvas: HTMLCanvasElement;
   protected readonly __context: CanvasRenderingContext2D;
   protected options: IObjectOptions;
@@ -37,16 +40,15 @@ abstract class IrObject {
   protected __modified: boolean;
   protected moverQueue: IrObjectMoverQueue;
 
-  protected constructor(
-    context: CanvasRenderingContext2D,
-    options: Partial<IObjectOptions>
-  ) {
-    this.targetContext = context;
+  protected constructor(render: IRender, options: Partial<IObjectOptions>) {
+    this.__id = uuid();
+    this.render = render;
     this.moverQueue = [];
     this.options = Object.assign(defaultOptions, options);
     const canvas = document.createElement("canvas");
     canvas.width = config.canvasWidth;
     canvas.height = config.canvasHeight;
+    canvas.id = this.__id;
     const __context = canvas.getContext("2d");
     if (!__context) {
       throw new Error("Fail to get CanvasRenderingContext2D");

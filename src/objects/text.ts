@@ -1,4 +1,5 @@
 import { parsedComment } from "@/@types/flashText";
+import { IRender } from "@/@types/IRender";
 import { ITextOptions, ITextOptionsNullable } from "@/@types/IrText";
 import { config } from "@/definition/config";
 import { IrObject } from "@/objects/object";
@@ -35,11 +36,8 @@ class IrText extends IrObject {
   private __scale: number;
   private __size: number;
   private __reverse: boolean;
-  constructor(
-    _context: CanvasRenderingContext2D,
-    _options: ITextOptionsNullable
-  ) {
-    super(_context, _options);
+  constructor(_render: IRender, _options: ITextOptionsNullable) {
+    super(_render, _options);
     this.options = Object.assign({ ...defaultOptions }, _options);
     this.__context.strokeStyle = "#000000";
     this.__actualHeight = this.__actualWidth = 0;
@@ -245,17 +243,16 @@ class IrText extends IrObject {
       return;
     }
     if (this.__modified) this.__draw();
-    this.targetContext.drawImage(
-      this.__canvas,
-      0,
-      0,
-      this.__actualWidth,
-      this.__actualHeight,
-      this.__x,
-      this.__y,
-      this.__width,
-      this.__height
-    );
+    this.render.drawImage(this.__canvas, {
+      baseX: 0,
+      baseY: 0,
+      baseWidth: this.__actualWidth,
+      baseHeight: this.__actualHeight,
+      targetX: this.__x,
+      targetY: this.__y,
+      targetWidth: this.__width,
+      targetHeight: this.__height,
+    });
   }
 
   private kasumi() {
