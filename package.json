@@ -34,7 +34,7 @@
     "@types/jest": "^29.5.3",
     "@typescript-eslint/eslint-plugin": "^5.62.0",
     "@typescript-eslint/parser": "^5.62.0",
-    "@xpadev-net/niwango-core": "0.0.2-canary.20230708-2",
+    "@xpadev-net/niwango-core": "0.0.2-canary.20230712-1",
     "copyfiles": "^2.4.1",
     "eslint": "^8.44.0",
     "eslint-config-prettier": "^8.8.0",
