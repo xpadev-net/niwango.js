@@ -30,15 +30,15 @@ const defaultOptions: IObjectOptions = {
  * 描画オブジェクトの基底クラス
  */
 abstract class IrObject {
-  protected readonly __id: string;
   protected readonly render: IRender;
-  protected readonly __canvas: HTMLCanvasElement;
   protected readonly __context: CanvasRenderingContext2D;
   protected options: IObjectOptions;
   protected __width: number;
   protected __height: number;
   protected __modified: boolean;
   protected moverQueue: IrObjectMoverQueue;
+  public readonly __canvas: HTMLCanvasElement;
+  public readonly __id: string;
 
   protected constructor(render: IRender, options: Partial<IObjectOptions>) {
     this.__id = uuid();

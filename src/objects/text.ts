@@ -243,7 +243,7 @@ class IrText extends IrObject {
       return;
     }
     if (this.__modified) this.__draw();
-    this.render.drawImage(this.__canvas, {
+    this.render.drawImage(this, {
       baseX: 0,
       baseY: 0,
       baseWidth: this.__actualWidth,

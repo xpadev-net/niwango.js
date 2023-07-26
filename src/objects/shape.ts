@@ -134,13 +134,13 @@ class IrShape extends IrObject {
     }
     if (this.__modified) this.__draw();
     if (this.rotation % 360 !== 0) {
-      this.render.drawImage(this.__canvas, {
+      this.render.drawImage(this, {
         targetX: this.__x,
         targetY: this.__y,
         rotate: this.rotation,
       });
     } else {
-      this.render.drawImage(this.__canvas, {
+      this.render.drawImage(this, {
         targetX: this.__x,
         targetY: this.__y,
       });

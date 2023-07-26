@@ -1,3 +1,5 @@
+import { IrObject } from "@/objects/object";
+
 export type DrawOptions = DrawOptionA | DrawOptionB;
 
 export type DrawOptionA = {
@@ -21,5 +23,5 @@ export type DrawOptionB = {
 export interface IRender {
   apply(): void;
   clear(): void;
-  drawImage(image: HTMLCanvasElement, options: DrawOptions): void;
+  drawImage(image: IrObject, options: DrawOptions): void;
 }
