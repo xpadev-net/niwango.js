@@ -249,7 +249,7 @@ class IrText extends IrObject {
       baseWidth: this.__actualWidth,
       baseHeight: this.__actualHeight,
       targetX: this.__x,
-      targetY: this.__y,
+      targetY: this.__y + this.__size / 16,
       targetWidth: this.__width,
       targetHeight: this.__height,
     });
