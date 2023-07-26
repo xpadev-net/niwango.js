@@ -138,7 +138,7 @@ abstract class IrObject {
       : (config.stageWidth.full - config.stageWidth.default) / 2;
     if (this.options.posX === "migi") {
       return (
-        config.stageWidth[isWide ? "full" : "default"] -
+        config.stageWidth[isWide ? "full" : "default"] +
         posX -
         this.width +
         paddingLeft
