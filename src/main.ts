@@ -25,7 +25,7 @@ class Niwango {
     initConfig();
     this.targetCanvas = targetCanvas;
     this.render = new CanvasRender(targetCanvas);
-    this.lastVpos = 0;
+    this.lastVpos = -1;
 
     comments.forEach((comment) => {
       if (comment.message.match(/^\//) && comment._owner) {
@@ -39,9 +39,9 @@ class Niwango {
           console.error(e);
         }
       }
-      setComments(comments);
     });
-    setCurrentTime(0);
+    setComments(comments);
+    setCurrentTime(-1);
     setRender(this.render);
     this.globalScope = {};
     this.environmentScope = {
@@ -65,8 +65,7 @@ class Niwango {
   }
 
   private execute(vpos: number) {
-    setIsWide(!!this.environmentScope.isWide);
-    for (let i = this.lastVpos; i < vpos; i++) {
+    for (let i = this.lastVpos; i <= vpos; i++) {
       const tasks = [...getQueue(i), ...getScripts(i), ...getComments(i)].sort(
         nativeSort("time")
       );
@@ -74,6 +73,9 @@ class Niwango {
         const queue = tasks.shift();
         if (!queue) break;
         setCurrentTime(queue.time);
+        if (i === 0) {
+          setIsWide(!!this.environmentScope.isWide);
+        }
         if (queue.type === "comment") {
           triggerHandlers(queue.comment);
           continue;
