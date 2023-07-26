@@ -24,11 +24,11 @@ const setIsWide = (val: boolean) => (isWide = val);
 
 export {
   comments,
-  render,
   currentTime,
   isWide,
+  render,
   setComments,
-  setRender,
   setCurrentTime,
   setIsWide,
+  setRender,
 };
