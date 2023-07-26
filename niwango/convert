@@ -16,7 +16,7 @@ $json = json_decode(file_get_contents(__DIR__."/$filename.json"),true);
 $data = [];
 foreach($json["data"]["threads"][0]["comments"] as $key => $value){
     if(strpos($value["body"],"/")===0){
-        $data[]=mb_substr($value["body"],1);
+        $data[]=($value["vposMs"]/1000).":".implode(" ",$value["commands"]).":".$value["body"];
     }
 }
 @unlink(__DIR__."/$filename.json");
