@@ -4,7 +4,7 @@
     <textarea id="ast" spellcheck="false" readonly></textarea>
   </div>
   <div class="item right">
-    <canvas id="canvas" width="1920" height="1080"></canvas>
+    <div id="render"></div>
     <div id="outputWrapper">
       <div><button id="clear">clear</button></div>
       <div id="output"></div>
@@ -17,7 +17,7 @@
   const input = document.getElementById("input"),
     ast = document.getElementById("ast"),
     output = document.getElementById("output"),
-    canvas = document.getElementById("canvas"),
+    canvas = document.getElementById("render"),
     clearButton = document.getElementById("clear");
   const consoleHandler = (mode = "debug") => {
     return (...args) => {
@@ -84,8 +84,11 @@
   .right {
     max-width: 500px;
   }
-  #canvas {
+  #render {
     border: solid 1px black;
+    aspect-ratio: 16/9;
+    transform-origin: 0 0;
+    transform: scale(0.5,0.5);
   }
   textarea {
     height: 100%;

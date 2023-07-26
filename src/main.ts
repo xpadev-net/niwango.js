@@ -8,6 +8,7 @@ import { setComments, setCurrentTime, setIsWide, setRender } from "@/context";
 import { config, initConfig } from "@/definition/config";
 import { getQueue } from "@/queue";
 import { CanvasRender } from "@/render/canvas";
+import { DomRender } from "@/render/dom";
 import { addScript, getScripts } from "@/scripts";
 import { draw } from "@/utils/objectManager";
 import { setup } from "@/utils/setup";
@@ -16,15 +17,20 @@ import { nativeSort } from "@/utils/sort";
 class Niwango {
   private readonly globalScope: T_scope;
   private readonly environmentScope: T_environment;
-  public readonly targetCanvas: HTMLCanvasElement;
   private readonly render: IRender;
   static default = Niwango;
   private lastVpos: number;
-  constructor(targetCanvas: HTMLCanvasElement, comments: Comment[]) {
+  constructor(
+    targetElement: HTMLCanvasElement | HTMLDivElement,
+    comments: Comment[]
+  ) {
     setup();
     initConfig();
-    this.targetCanvas = targetCanvas;
-    this.render = new CanvasRender(targetCanvas);
+    if (targetElement.nodeName === "DIV") {
+      this.render = new DomRender(targetElement as HTMLDivElement);
+    } else {
+      this.render = new CanvasRender(targetElement as HTMLCanvasElement);
+    }
     this.lastVpos = -1;
 
     comments.forEach((comment) => {
@@ -102,6 +108,7 @@ class Niwango {
   }
 
   public draw(vpos: number) {
+    if (this.lastVpos === vpos) return;
     this.execute(vpos);
     this._draw();
   }
