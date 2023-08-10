@@ -63,9 +63,7 @@ class Niwango {
       isLoaded: true, //true
       isWide: null, //false
       lastVideo: "sm1", //sm1
-      get screenWidth() {
-        return config.stageWidth[this.isWide ? "full" : "default"];
-      },
+      screenWidth: config.stageWidth.default,
       screenHeight: config.stageHeight,
     };
   }
@@ -81,6 +79,10 @@ class Niwango {
         setCurrentTime(queue.time);
         if (i === 0) {
           setIsWide(!!this.environmentScope.isWide);
+          this.environmentScope.screenWidth =
+            config.stageWidth[
+              this.environmentScope.isWide ? "full" : "default"
+            ];
         }
         if (queue.type === "comment") {
           triggerHandlers(queue.comment);

@@ -19,7 +19,7 @@ export type T_environment = {
   isLoaded: true; //true
   isWide: boolean | null; //false
   lastVideo: "sm1"; //sm1
-  readonly screenWidth: number;
+  screenWidth: number;
   readonly screenHeight: number;
 };
 export type T_chat = {
