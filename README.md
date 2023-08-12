@@ -4,6 +4,9 @@
 ニワン語を扱えるようにするために開発しているライブラリです  
 仕様は[こちらのwiki](https://web.archive.org/web/20161026165155id_/http://nicowiki.com/?%E3%83%8B%E3%83%AF%E3%83%B3%E8%AA%9E)に基づいています
 
+ 2023年度の未踏ジュニアに採択されました 🎉
+
+
 # 関連リンク
 - [niwango.js](https://xpadev-net.github.io/niwango.js)
 
