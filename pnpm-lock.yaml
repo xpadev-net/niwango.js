@@ -4,11 +4,6 @@ settings:
   autoInstallPeers: true
   excludeLinksFromLockfile: false
 
-dependencies:
-  lodash:
-    specifier: ^4.17.21
-    version: 4.17.21
-
 devDependencies:
   '@babel/core':
     specifier: ^7.22.8
@@ -44,8 +39,8 @@ devDependencies:
     specifier: ^5.62.0
     version: 5.62.0(eslint@8.44.0)(typescript@5.1.6)
   '@xpadev-net/niwango-core':
-    specifier: 0.0.2-canary.20230712-1
-    version: 0.0.2-canary.20230712-1
+    specifier: 0.0.2-canary.20230814-5
+    version: 0.0.2-canary.20230814-5
   copyfiles:
     specifier: ^2.4.1
     version: 2.4.1
@@ -73,6 +68,9 @@ devDependencies:
   lint-staged:
     specifier: ^13.2.3
     version: 13.2.3
+  lodash:
+    specifier: ^4.17.21
+    version: 4.17.21
   prettier:
     specifier: 2.8.8
     version: 2.8.8
@@ -2129,8 +2127,8 @@ packages:
       eslint-visitor-keys: 3.4.1
     dev: true
 
-  /@xpadev-net/niwango-core@0.0.2-canary.20230712-1:
-    resolution: {integrity: sha512-69+wX6y/F5V3Hhqe8sFtCejFLHm9oV+PfOV9DMsniOfWxy7XLhHMWqQYgQLPqlL6MnjRNIiNmvVLQiI0EwrkGg==}
+  /@xpadev-net/niwango-core@0.0.2-canary.20230814-5:
+    resolution: {integrity: sha512-skB8DFcAoJfrtquPhYPkwmCYJN7fSKzZHUFSYQHVYHdIKkYaayPnsRA/umDzFuH5ZAuTTPGI9SnWoI6niNtIqA==}
     dev: true
 
   /abab@2.0.6:
@@ -4097,7 +4095,7 @@ packages:
 
   /lodash@4.17.21:
     resolution: {integrity: sha512-v2kDEe57lecTulaDIuNTPy3Ry4gLGJ6Z1O3vE1krgXZNrsQ+LFTGHVxVjcXPs17LhbZVGedAJv8XZ1tvj5FvSg==}
-    dev: false
+    dev: true
 
   /log-update@4.0.0:
     resolution: {integrity: sha512-9fkkDevMefjg0mmzWFBW8YkFP91OrizzkW3diF7CpG+S2EYdy4+TVfGwz1zeF8x7hCx1ovSPTOE9Ngib74qqUg==}
