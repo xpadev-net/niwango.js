@@ -4,7 +4,7 @@
     <textarea id="ast" spellcheck="false" readonly></textarea>
   </div>
   <div class="item right">
-    <div id="render"></div>
+    <canvas id="render"></canvas>
     <div id="outputWrapper">
       <div><button id="clear">clear</button></div>
       <div id="output"></div>
@@ -88,7 +88,6 @@
     border: solid 1px black;
     aspect-ratio: 16/9;
     transform-origin: 0 0;
-    transform: scale(0.5,0.5);
   }
   textarea {
     height: 100%;
