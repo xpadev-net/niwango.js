@@ -21,7 +21,6 @@ import typeGuard from "@/typeGuard";
 let snapshots: ISnapshot[] = [];
 
 const saveSnapshot = (vpos: number) => {
-  console.log("create snapshot", vpos);
   snapshots.push({
     vpos,
     queue: cloneDeepWith(queue, objectToSnapshot) as IQueue[],
@@ -102,11 +101,9 @@ const resultHook = (input: unknown) => {
   if (typeof input === "object") {
     if (typeGuard.IrShapeLiteral(input)) {
       const shape = drawObjects.find((obj) => obj.__id === input.options.__id);
-      console.log("restore:", shape?.__id);
       return shape ?? new IrShape(render, input.options);
     } else if (typeGuard.IrTextLiteral(input)) {
       const text = drawObjects.find((obj) => obj.__id === input.options.__id);
-      console.log("restore:", text?.__id);
       return text ?? new IrText(render, input.options);
     }
   }

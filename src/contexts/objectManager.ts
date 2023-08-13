@@ -26,7 +26,6 @@ const draw = () => {
  * @param item
  */
 const register = (item: IrObject) => {
-  console.log(`register: ${item.__id}`);
   drawObjects.push(item);
 };
 

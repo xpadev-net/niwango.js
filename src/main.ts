@@ -2,23 +2,17 @@ import Core from "@xpadev-net/niwango-core";
 
 import { Comment } from "@/@types/comment";
 import { IRender } from "@/@types/IRender";
-import {
-  comments,
-  setComments,
-  setCurrentTime,
-  setIsWide,
-  setRender,
-} from "@/context";
+import { setComments, setCurrentTime, setIsWide, setRender } from "@/context";
 import { getComments, triggerHandlers } from "@/contexts/commentHandler";
 import { draw } from "@/contexts/objectManager";
-import { getQueue, queue } from "@/contexts/queue";
+import { getQueue } from "@/contexts/queue";
 import {
   environmentScope,
   globalScope,
   setEnvironmentScope,
   setGlobalScope,
 } from "@/contexts/scope";
-import { addScript, getScripts, scripts } from "@/contexts/scripts";
+import { addScript, getScripts } from "@/contexts/scripts";
 import {
   getLatestSnapshotVpos,
   restoreSnapshot,
@@ -87,34 +81,20 @@ class Niwango {
       if (vpos > this.lastVpos - 100) {
         return;
       }
-      console.log(`restore snapshot vpos: ${vpos}, lastVpos: ${this.lastVpos}`);
       try {
         this.lastVpos = restoreSnapshot(vpos);
       } catch (e) {
         this.lastVpos = vpos;
       }
-      console.log(
-        `restore finish: lastVpos: ${this.lastVpos}`,
-        queue,
-        scripts.length,
-        comments.length
-      );
     }
     let lastSnapshotVpos = getLatestSnapshotVpos(vpos);
     for (let i = this.lastVpos; i <= vpos; i++) {
-      console.debug(i);
       if (lastSnapshotVpos + config.snapshotIntervalVpos <= i) {
         lastSnapshotVpos = lastSnapshotVpos + config.snapshotIntervalVpos;
-        console.log(
-          `save snapshot vpos: ${lastSnapshotVpos}`,
-          queue,
-          scripts.length,
-          comments.length
-        );
         try {
           saveSnapshot(lastSnapshotVpos);
         } catch (e) {
-          console.log(e);
+          console.error(e);
         }
       }
       const tasks = [...getQueue(i), ...getScripts(i), ...getComments(i)].sort(
