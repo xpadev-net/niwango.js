@@ -6,6 +6,8 @@ import {
   IrObjectMoverQueue,
   IrObjectPos,
 } from "@/@types/IrObject";
+import { IShapeLiteral } from "@/@types/IrShape";
+import { ITextLiteral } from "@/@types/IrText";
 import { currentTime, isWide } from "@/context";
 import { register } from "@/contexts/objectManager";
 import { config } from "@/definition/config";
@@ -41,10 +43,18 @@ abstract class IrObject {
   public readonly __id: string;
 
   protected constructor(render: IRender, options: Partial<IObjectOptions>) {
-    this.__id = uuid();
+    for (const _key of Object.keys(options)) {
+      const key = _key as keyof IObjectOptions;
+      const value = options[key];
+      if (value === undefined) {
+        delete options[key];
+      }
+    }
+    options.__id ??= uuid();
     this.render = render;
     this.moverQueue = [];
     this.options = Object.assign(defaultOptions, options);
+    this.__id = this.options.__id ?? uuid();
     const canvas = document.createElement("canvas");
     canvas.width = config.canvasWidth;
     canvas.height = config.canvasHeight;
@@ -350,6 +360,10 @@ abstract class IrObject {
 
   public draw() {
     console.debug("please override this method");
+  }
+
+  public toJSON(): ITextLiteral | IShapeLiteral {
+    throw new Error("please override this method");
   }
 }
 export { IrObject };

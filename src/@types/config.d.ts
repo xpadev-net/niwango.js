@@ -35,6 +35,7 @@ export type baseConfig = {
     [key in compatWidthKey]: number;
   };
   colors: { [p: string]: string };
+  snapshotIntervalVpos: number;
 };
 
 type compatWidthKey = "aa" | "ww" | "0020" | "3000";

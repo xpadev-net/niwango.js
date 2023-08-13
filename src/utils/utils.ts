@@ -1,30 +1,7 @@
-import { A_ANY, T_scope } from "@xpadev-net/niwango-core";
+import { T_scope } from "@xpadev-net/niwango-core";
 
 import { commentFont } from "@/@types/IrText";
 import { config } from "@/definition/config";
-import typeGuard from "@/typeGuard";
-
-/**
- * 変数の参照を取得する関数
- * @param script
- * @param scopes
- */
-const resolve = (script: A_ANY, scopes: T_scope[]) => {
-  try {
-    if (typeGuard.Identifier(script)) {
-      for (const scope of scopes) {
-        if (scope[script.name] !== undefined) {
-          return scope[script.name];
-        }
-      }
-    }
-  } catch (e) {
-    if (e instanceof Error) {
-      console.error(`[resolve] ${e.name}: ${e.message}`, script, scopes);
-    }
-  }
-  return undefined;
-};
 
 /**
  * 親変数の参照を取得する関数
@@ -63,4 +40,4 @@ const getValue = <T>(value: T | undefined, fallback: T): T => {
   return value ?? fallback;
 };
 
-export { getGlobalScope, getValue, parseFont, resolve };
+export { getGlobalScope, getValue, parseFont };

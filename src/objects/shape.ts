@@ -1,3 +1,5 @@
+import { cloneDeep } from "lodash";
+
 import { IRender } from "@/@types/IRender";
 import {
   IShapeLiteral,
@@ -151,11 +153,11 @@ class IrShape extends IrObject {
     }
   }
 
-  public toJSON(): IShapeLiteral {
+  public override toJSON(): IShapeLiteral {
     return {
       __NIWANGO_LITERAL: "IrShape",
       type: "IrShape",
-      options: this.options,
+      options: cloneDeep(this.options),
     };
   }
 }

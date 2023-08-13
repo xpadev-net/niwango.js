@@ -96,6 +96,7 @@ const initConfig = () => {
     },
 
     colors: colors,
+    snapshotIntervalVpos: 1000,
   };
 };
 

@@ -25,6 +25,8 @@ import {
 import { definedFunction } from "@xpadev-net/niwango-core";
 
 import { Comment } from "@/@types/comment";
+import { IShapeLiteral } from "@/@types/IrShape";
+import { ITextLiteral } from "@/@types/IrText";
 
 const typeGuard = {
   Literal: (i: unknown): i is A_Literal =>
@@ -94,6 +96,11 @@ const typeGuard = {
       "_owner",
     ]),
   array: (i: unknown): i is unknown[] => Array.isArray(i),
+  IrTextLiteral: (i: unknown): i is ITextLiteral =>
+    typeof i === "object" && (i as ITextLiteral).__NIWANGO_LITERAL === "IrText",
+  IrShapeLiteral: (i: unknown): i is IShapeLiteral =>
+    typeof i === "object" &&
+    (i as IShapeLiteral).__NIWANGO_LITERAL === "IrShape",
 };
 
 const objectVerify = (item: unknown, keys: string[]): boolean => {

@@ -28,4 +28,5 @@ export type IObjectOptions = {
   scale: number;
   alpha: number;
   mover: IObjectMover;
+  __id?: string;
 };

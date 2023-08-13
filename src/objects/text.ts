@@ -1,3 +1,5 @@
+import { cloneDeep } from "lodash";
+
 import { parsedComment } from "@/@types/flashText";
 import { IRender } from "@/@types/IRender";
 import {
@@ -306,11 +308,11 @@ class IrText extends IrObject {
     );
   }
 
-  public toJSON(): ITextLiteral {
+  public override toJSON(): ITextLiteral {
     return {
       __NIWANGO_LITERAL: "IrText",
       type: "IrText",
-      options: this.options,
+      options: cloneDeep(this.options),
     };
   }
 }

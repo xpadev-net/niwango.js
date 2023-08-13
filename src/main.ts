@@ -1,13 +1,29 @@
-import Core, { T_scope } from "@xpadev-net/niwango-core";
+import Core from "@xpadev-net/niwango-core";
 
 import { Comment } from "@/@types/comment";
 import { IRender } from "@/@types/IRender";
-import { T_environment } from "@/@types/types";
-import { setComments, setCurrentTime, setIsWide, setRender } from "@/context";
+import {
+  comments,
+  setComments,
+  setCurrentTime,
+  setIsWide,
+  setRender,
+} from "@/context";
 import { getComments, triggerHandlers } from "@/contexts/commentHandler";
 import { draw } from "@/contexts/objectManager";
-import { getQueue } from "@/contexts/queue";
-import { addScript, getScripts } from "@/contexts/scripts";
+import { getQueue, queue } from "@/contexts/queue";
+import {
+  environmentScope,
+  globalScope,
+  setEnvironmentScope,
+  setGlobalScope,
+} from "@/contexts/scope";
+import { addScript, getScripts, scripts } from "@/contexts/scripts";
+import {
+  getLatestSnapshotVpos,
+  restoreSnapshot,
+  saveSnapshot,
+} from "@/contexts/snapshot";
 import { config, initConfig } from "@/definition/config";
 import { CanvasRender } from "@/render/canvas";
 import { DomRender } from "@/render/dom";
@@ -15,8 +31,6 @@ import { setup } from "@/utils/setup";
 import { nativeSort } from "@/utils/sort";
 
 class Niwango {
-  private readonly globalScope: T_scope;
-  private readonly environmentScope: T_environment;
   private readonly render: IRender;
   static default = Niwango;
   private lastVpos: number;
@@ -49,8 +63,8 @@ class Niwango {
     setComments(comments);
     setCurrentTime(-1);
     setRender(this.render);
-    this.globalScope = {};
-    this.environmentScope = {
+    setGlobalScope({});
+    setEnvironmentScope({
       chat: undefined,
       commentColor: null, //0xffffff
       commentPlace: null, //naka
@@ -65,11 +79,44 @@ class Niwango {
       lastVideo: "sm1", //sm1
       screenWidth: config.stageWidth.default,
       screenHeight: config.stageHeight,
-    };
+    });
   }
 
   private execute(vpos: number) {
+    if (vpos < this.lastVpos) {
+      if (vpos > this.lastVpos - 100) {
+        return;
+      }
+      console.log(`restore snapshot vpos: ${vpos}, lastVpos: ${this.lastVpos}`);
+      try {
+        this.lastVpos = restoreSnapshot(vpos);
+      } catch (e) {
+        this.lastVpos = vpos;
+      }
+      console.log(
+        `restore finish: lastVpos: ${this.lastVpos}`,
+        queue,
+        scripts.length,
+        comments.length
+      );
+    }
+    let lastSnapshotVpos = getLatestSnapshotVpos(vpos);
     for (let i = this.lastVpos; i <= vpos; i++) {
+      console.debug(i);
+      if (lastSnapshotVpos + config.snapshotIntervalVpos <= i) {
+        lastSnapshotVpos = lastSnapshotVpos + config.snapshotIntervalVpos;
+        console.log(
+          `save snapshot vpos: ${lastSnapshotVpos}`,
+          queue,
+          scripts.length,
+          comments.length
+        );
+        try {
+          saveSnapshot(lastSnapshotVpos);
+        } catch (e) {
+          console.log(e);
+        }
+      }
       const tasks = [...getQueue(i), ...getScripts(i), ...getComments(i)].sort(
         nativeSort("time")
       );
@@ -78,11 +125,9 @@ class Niwango {
         if (!queue) break;
         setCurrentTime(queue.time);
         if (i === 0) {
-          setIsWide(!!this.environmentScope.isWide);
-          this.environmentScope.screenWidth =
-            config.stageWidth[
-              this.environmentScope.isWide ? "full" : "default"
-            ];
+          setIsWide(!!environmentScope.isWide);
+          environmentScope.screenWidth =
+            config.stageWidth[environmentScope.isWide ? "full" : "default"];
         }
         if (queue.type === "comment") {
           triggerHandlers(queue.comment);
@@ -97,7 +142,7 @@ class Niwango {
             queue.script,
             queue.type === "queue"
               ? queue.scopes
-              : [this.globalScope, this.environmentScope, Core.prototypeScope],
+              : [globalScope, environmentScope, Core.prototypeScope],
             trace
           );
         } catch (e) {
