@@ -13,10 +13,10 @@ export type IrObjectMoverItem = {
   duration: number;
 };
 
-type IObjectMover = "" | "smooth" | "simple" | "rolling" | "hopping";
-type IObjectPosX = "naka" | "migi" | "hidari";
-type IObjectPosY = "naka" | "ue" | "shita";
-type IObjectOptions = {
+export type IObjectMover = "" | "smooth" | "simple" | "rolling" | "hopping";
+export type IObjectPosX = "naka" | "migi" | "hidari";
+export type IObjectPosY = "naka" | "ue" | "shita";
+export type IObjectOptions = {
   x: number;
   y: number;
   z: number;

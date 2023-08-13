@@ -10,3 +10,9 @@ type IShapeOptions = {
   rotation: number;
 } & IObjectOptions;
 type IShapeOptionsNullable = Partial<IShapeOptions>;
+
+export type IShapeLiteral = {
+  __NIWANGO_LITERAL: "IrShape";
+  type: "IrShape";
+  options: IShapeOptions;
+};

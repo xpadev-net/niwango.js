@@ -31,3 +31,9 @@ type ITextOptions = {
   filter: ITextFilter;
 } & IObjectOptions;
 type ITextOptionsNullable = Partial<ITextOptions>;
+
+export type ITextLiteral = {
+  __NIWANGO_LITERAL: "IrText";
+  type: "IrText";
+  options: ITextOptions;
+};

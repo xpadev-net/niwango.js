@@ -1,6 +1,10 @@
 import { parsedComment } from "@/@types/flashText";
 import { IRender } from "@/@types/IRender";
-import { ITextOptions, ITextOptionsNullable } from "@/@types/IrText";
+import {
+  ITextLiteral,
+  ITextOptions,
+  ITextOptionsNullable,
+} from "@/@types/IrText";
 import { config } from "@/definition/config";
 import { IrObject } from "@/objects/object";
 import { measure, parse } from "@/utils/flashText";
@@ -300,6 +304,14 @@ class IrText extends IrObject {
       this.__canvas.width,
       this.__canvas.height
     );
+  }
+
+  public toJSON(): ITextLiteral {
+    return {
+      __NIWANGO_LITERAL: "IrText",
+      type: "IrText",
+      options: this.options,
+    };
   }
 }
 export { IrText };

@@ -1,5 +1,9 @@
 import { IRender } from "@/@types/IRender";
-import { IShapeOptions, IShapeOptionsNullable } from "@/@types/IrShape";
+import {
+  IShapeLiteral,
+  IShapeOptions,
+  IShapeOptionsNullable,
+} from "@/@types/IrShape";
 import { IrObject } from "@/objects/object";
 import { number2color } from "@/utils/number2color";
 
@@ -145,6 +149,14 @@ class IrShape extends IrObject {
         targetY: this.__y,
       });
     }
+  }
+
+  public toJSON(): IShapeLiteral {
+    return {
+      __NIWANGO_LITERAL: "IrShape",
+      type: "IrShape",
+      options: this.options,
+    };
   }
 }
 export { IrShape };

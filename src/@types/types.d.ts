@@ -1,10 +1,10 @@
-import { A_ANY } from "@xpadev-net/niwango-core";
+import { A_ANY, T_scope } from "@xpadev-net/niwango-core";
 
-export type Scripts = {
+export type Script = {
   type: "script";
   script: A_ANY;
   time: number;
-}[];
+};
 
 export type T_environment = {
   chat?: T_chat;
@@ -37,4 +37,25 @@ export type T_commentPos = "ue" | "naka" | "shita";
 export type T_commentSize = "big" | "medium" | "small";
 export type Argument<T> = T & {
   NIWANGO_Identifier: null | A_ANY;
+};
+export type IQueue = {
+  script: A_ANY;
+  time: number;
+  scopes: T_scope[];
+  type: "queue";
+  trace: A_ANY[];
+};
+export type IHandler = {
+  script: A_ANY;
+  scopes: T_scope[];
+  time: number;
+  duration?: number;
+  type: "commentHandler";
+  trace: A_ANY[];
+};
+export type ISnapshot = {
+  vpos: number;
+  queue: IQueue[];
+  scripts: Script[];
+  handlers: IHandler[];
 };
