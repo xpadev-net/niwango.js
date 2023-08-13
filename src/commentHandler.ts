@@ -2,17 +2,11 @@ import type { A_ANY, T_scope } from "@xpadev-net/niwango-core";
 import Core from "@xpadev-net/niwango-core";
 
 import { Comment } from "@/@types/comment";
+import { IHandler } from "@/@types/types";
 import { comments, currentTime } from "@/context";
 import { getGlobalScope } from "@/utils/utils";
 
-let handlers: {
-  script: A_ANY;
-  scopes: T_scope[];
-  time: number;
-  duration?: number;
-  type: "commentHandler";
-  trace: A_ANY[];
-}[] = [];
+let handlers: IHandler[] = [];
 
 const resetHandlers = () => {
   handlers = [];
@@ -35,6 +29,10 @@ const addHandler = (
   });
 };
 
+const setHandlers = (newHandlers: IHandler[]) => {
+  handlers = newHandlers;
+};
+
 const triggerHandlers = (comment: Comment) => {
   if (comment.message.startsWith("/")) return;
   for (const handler of handlers) {
@@ -55,4 +53,11 @@ const getComments = (vpos: number) => {
     })) as { time: number; comment: Comment; type: "comment" }[];
 };
 
-export { addHandler, getComments, resetHandlers, triggerHandlers };
+export {
+  addHandler,
+  getComments,
+  handlers,
+  resetHandlers,
+  setHandlers,
+  triggerHandlers,
+};

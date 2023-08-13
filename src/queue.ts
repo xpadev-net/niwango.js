@@ -1,14 +1,9 @@
 import { A_ANY, T_scope } from "@xpadev-net/niwango-core";
 
+import { IQueue } from "@/@types/types";
 import { currentTime } from "@/context";
 
-let queue: {
-  script: A_ANY;
-  time: number;
-  scopes: T_scope[];
-  type: "queue";
-  trace: A_ANY[];
-}[] = [];
+let queue: IQueue[] = [];
 
 /**
  * キューの初期化
@@ -56,4 +51,13 @@ const getQueue = (time: number) => {
   queue = newQueue;
   return result;
 };
-export { addQueue, getQueue, queue, resetQueue };
+
+/**
+ * キューを上書きする
+ * @param newQueue
+ */
+const setQueue = (newQueue: IQueue[]) => {
+  queue = newQueue;
+};
+
+export { addQueue, getQueue, queue, resetQueue, setQueue };

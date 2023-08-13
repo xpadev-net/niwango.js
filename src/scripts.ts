@@ -1,8 +1,8 @@
 import { A_ANY } from "@xpadev-net/niwango-core";
 
-import { Scripts } from "@/@types/types";
+import { Script } from "@/@types/types";
 
-let scripts: Scripts = [];
+let scripts: Script[] = [];
 
 /**
  * スクリプトを追加する
@@ -35,4 +35,8 @@ const resetScripts = () => {
   scripts = [];
 };
 
-export { addScript, getScripts, resetScripts, scripts };
+const setScripts = (newScripts: Script[]) => {
+  scripts = newScripts;
+};
+
+export { addScript, getScripts, resetScripts, scripts, setScripts };
