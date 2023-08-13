@@ -7,9 +7,9 @@ import {
   IrObjectPos,
 } from "@/@types/IrObject";
 import { currentTime, isWide } from "@/context";
+import { register } from "@/contexts/objectManager";
 import { config } from "@/definition/config";
 import { getDistance, getSmoothDuration } from "@/utils/object";
-import { register } from "@/utils/objectManager";
 import { uuid } from "@/utils/uuid";
 
 const defaultOptions: IObjectOptions = {

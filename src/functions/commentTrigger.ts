@@ -2,8 +2,8 @@ import Core from "@xpadev-net/niwango-core";
 import { IrFunction } from "@xpadev-net/niwango-core";
 import { A_ANY } from "@xpadev-net/niwango-core";
 
-import { addHandler } from "@/commentHandler";
 import { currentTime } from "@/context";
+import { addHandler } from "@/contexts/commentHandler";
 
 const processCommentTrigger: IrFunction = (script, scopes, _, trace) => {
   const args = Core.utils.argumentParser(

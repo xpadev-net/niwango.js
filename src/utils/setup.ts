@@ -1,8 +1,8 @@
-import { resetHandlers } from "@/commentHandler";
+import { resetHandlers } from "@/contexts/commentHandler";
+import { resetObjects } from "@/contexts/objectManager";
+import { resetQueue } from "@/contexts/queue";
+import { resetScripts } from "@/contexts/scripts";
 import { initDefinedFunctions } from "@/functions";
-import { resetQueue } from "@/queue";
-import { resetScripts } from "@/scripts";
-import { resetObjects } from "@/utils/objectManager";
 
 /**
  * 関数を初期化する

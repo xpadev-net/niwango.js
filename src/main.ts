@@ -3,14 +3,14 @@ import Core, { T_scope } from "@xpadev-net/niwango-core";
 import { Comment } from "@/@types/comment";
 import { IRender } from "@/@types/IRender";
 import { T_environment } from "@/@types/types";
-import { getComments, triggerHandlers } from "@/commentHandler";
 import { setComments, setCurrentTime, setIsWide, setRender } from "@/context";
+import { getComments, triggerHandlers } from "@/contexts/commentHandler";
+import { draw } from "@/contexts/objectManager";
+import { getQueue } from "@/contexts/queue";
+import { addScript, getScripts } from "@/contexts/scripts";
 import { config, initConfig } from "@/definition/config";
-import { getQueue } from "@/queue";
 import { CanvasRender } from "@/render/canvas";
 import { DomRender } from "@/render/dom";
-import { addScript, getScripts } from "@/scripts";
-import { draw } from "@/utils/objectManager";
 import { setup } from "@/utils/setup";
 import { nativeSort } from "@/utils/sort";
 

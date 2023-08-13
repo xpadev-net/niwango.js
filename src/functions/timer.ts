@@ -2,7 +2,7 @@ import Core from "@xpadev-net/niwango-core";
 import { IrFunction } from "@xpadev-net/niwango-core";
 import { A_ANY, A_CallExpression, T_scope } from "@xpadev-net/niwango-core";
 
-import { addQueue } from "@/queue";
+import { addQueue } from "@/contexts/queue";
 
 const processTimer: IrFunction = (
   script: A_CallExpression,
