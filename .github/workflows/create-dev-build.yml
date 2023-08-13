@@ -29,6 +29,7 @@ jobs:
         run: |
           cp ./dist/bundle.js ./docs/niwango.js
           sed --in-place --expression='s/..\/src\/parser\/parser.js/.\/parser.js/' docs/playground.html
+          sed --in-place --expression='s/..\/dist/bundle.js/.\/niwango.js/' docs/playground.html
       - name: generate typedoc
         run: pnpm typedoc
       - name: update .gitignore
