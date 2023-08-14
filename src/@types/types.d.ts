@@ -1,7 +1,6 @@
 import { A_ANY, T_scope } from "@xpadev-net/niwango-core";
 
-import { IShapeLiteral } from "@/@types/IrShape";
-import { ITextLiteral } from "@/@types/IrText";
+import { IrObject } from "@/objects/object";
 
 export type Script = {
   type: "script";
@@ -63,7 +62,7 @@ export type ISnapshot = {
   handlers: IHandler[];
   globalScope: T_scope;
   environmentScope: T_environment;
-  drawObjects: (IShapeLiteral | ITextLiteral)[];
+  drawObjects: IrObject[];
 };
 export type ICanvas = {
   canvas: HTMLCanvasElement;

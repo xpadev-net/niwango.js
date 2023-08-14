@@ -1,8 +1,6 @@
-import Core, { T_scope } from "@xpadev-net/niwango-core";
-import { cloneDeep, cloneDeepWith, isArray, isObject, mapValues } from "lodash";
+import Core from "@xpadev-net/niwango-core";
 
-import { IHandler, IQueue, ISnapshot, T_environment } from "@/@types/types";
-import { render } from "@/context";
+import { ISnapshot } from "@/@types/types";
 import { handlers, setHandlers } from "@/contexts/commentHandler";
 import { drawObjects, resetObjects } from "@/contexts/objectManager";
 import { queue, setQueue } from "@/contexts/queue";
@@ -21,61 +19,34 @@ import typeGuard from "@/typeGuard";
 let snapshots: ISnapshot[] = [];
 
 const saveSnapshot = (vpos: number) => {
+  console.log("save snapshot", vpos);
   snapshots.push({
     vpos,
-    queue: cloneDeepWith(queue, objectToSnapshot) as IQueue[],
-    scripts: cloneDeep(scripts),
-    handlers: cloneDeepWith(handlers, objectToSnapshot) as IHandler[],
-    globalScope: cloneDeepWith(globalScope, objectToSnapshot) as T_scope,
-    environmentScope: cloneDeepWith(
-      environmentScope,
-      objectToSnapshot
-    ) as T_environment,
-    drawObjects: drawObjects.map((object) => object.toJSON()),
+    queue: structuredClone(queue),
+    scripts: structuredClone(scripts),
+    handlers: structuredClone(handlers),
+    globalScope: structuredClone(globalScope),
+    environmentScope: structuredClone(environmentScope),
+    drawObjects: structuredClone(drawObjects),
   });
 };
 
-const hasToJSON = (object: unknown): object is { toJSON: () => unknown } =>
-  typeof object === "object" &&
-  !!object &&
-  !!(object as { toJSON: () => unknown }).toJSON;
-const visitedObjects = new Set();
-const objectToSnapshot = (object: unknown): unknown => {
-  if (hasToJSON(object)) {
-    return object.toJSON();
-  } else if (isArray(object)) {
-    return object.map(
-      (item) => cloneDeepWith(item, objectToSnapshot) as unknown
-    );
-  } else if (isObject(object)) {
-    if (visitedObjects.has(object)) {
-      return object; // Already visited, return as is to break recursion
-    }
-    visitedObjects.add(object);
-    const clonedObj = mapValues(
-      object,
-      (item) => cloneDeepWith(item, objectToSnapshot) as unknown
-    );
-    visitedObjects.delete(object);
-    return clonedObj;
-  }
-  return object;
-};
-
 const restoreSnapshot = (vpos: number) => {
+  console.log("restore snapshot", vpos);
   const snapshot = getLatestSnapshot(vpos);
 
   if (!snapshot) throw new Error("snapshot not found");
   snapshots = snapshots.filter((s) => s.vpos <= snapshot.vpos);
   resetObjects();
-  for (const obj of snapshot.drawObjects) {
-    resultHook(cloneDeep(obj));
+  for (const obj of structuredClone(snapshot.drawObjects)) {
+    console.log(obj);
+    resultHook(obj);
   }
-  setQueue(cloneDeep(snapshot.queue));
-  setScripts(cloneDeep(snapshot.scripts));
-  setHandlers(cloneDeep(snapshot.handlers));
-  setGlobalScope(cloneDeep(snapshot.globalScope));
-  setEnvironmentScope(cloneDeep(snapshot.environmentScope));
+  setQueue(structuredClone(snapshot.queue));
+  setScripts(structuredClone(snapshot.scripts));
+  setHandlers(structuredClone(snapshot.handlers));
+  setGlobalScope(structuredClone(snapshot.globalScope));
+  setEnvironmentScope(structuredClone(snapshot.environmentScope));
   return snapshot.vpos;
 };
 
@@ -100,11 +71,13 @@ const getLatestSnapshotVpos = (vpos: number) => {
 const resultHook = (input: unknown) => {
   if (typeof input === "object") {
     if (typeGuard.IrShapeLiteral(input)) {
+      console.log("restore shape", input.options.__id);
       const shape = drawObjects.find((obj) => obj.__id === input.options.__id);
-      return shape ?? new IrShape(render, input.options);
+      return shape ?? new IrShape(input.options);
     } else if (typeGuard.IrTextLiteral(input)) {
+      console.log("restore text", input.options.__id);
       const text = drawObjects.find((obj) => obj.__id === input.options.__id);
-      return text ?? new IrText(render, input.options);
+      return text ?? new IrText(input.options);
     }
   }
   return input;

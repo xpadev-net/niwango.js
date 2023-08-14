@@ -12,7 +12,7 @@ type IShapeOptions = {
 type IShapeOptionsNullable = Partial<IShapeOptions>;
 
 export type IShapeLiteral = {
-  __NIWANGO_LITERAL: "IrShape";
-  type: "IrShape";
+  __NIWANGO_LITERAL: "IrObject";
+  __type: "IrShape";
   options: IShapeOptions;
 };

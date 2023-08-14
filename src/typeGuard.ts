@@ -1,4 +1,4 @@
-import {
+import type {
   A_ANY,
   A_ArrayExpression,
   A_ArrowFunctionExpression,
@@ -21,12 +21,13 @@ import {
   A_UnaryExpression,
   A_UpdateExpression,
   A_VariableDeclaration,
+  definedFunction,
 } from "@xpadev-net/niwango-core";
-import { definedFunction } from "@xpadev-net/niwango-core";
 
 import { Comment } from "@/@types/comment";
 import { IShapeLiteral } from "@/@types/IrShape";
 import { ITextLiteral } from "@/@types/IrText";
+import { IrObject } from "@/objects/object";
 
 const typeGuard = {
   Literal: (i: unknown): i is A_Literal =>
@@ -97,10 +98,17 @@ const typeGuard = {
     ]),
   array: (i: unknown): i is unknown[] => Array.isArray(i),
   IrTextLiteral: (i: unknown): i is ITextLiteral =>
-    typeof i === "object" && (i as ITextLiteral).__NIWANGO_LITERAL === "IrText",
+    typeof i === "object" &&
+    !!i &&
+    (i as ITextLiteral).__NIWANGO_LITERAL === "IrObject" &&
+    (i as ITextLiteral).__type === "IrText" &&
+    !(i instanceof IrObject),
   IrShapeLiteral: (i: unknown): i is IShapeLiteral =>
     typeof i === "object" &&
-    (i as IShapeLiteral).__NIWANGO_LITERAL === "IrShape",
+    !!i &&
+    (i as IShapeLiteral).__NIWANGO_LITERAL === "IrObject" &&
+    (i as IShapeLiteral).__type === "IrShape" &&
+    !(i instanceof IrObject),
 };
 
 const objectVerify = (item: unknown, keys: string[]): boolean => {

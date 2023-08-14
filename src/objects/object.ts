@@ -1,4 +1,3 @@
-import { IRender } from "@/@types/IRender";
 import {
   IObjectMover,
   IObjectOptions,
@@ -6,8 +5,6 @@ import {
   IrObjectMoverQueue,
   IrObjectPos,
 } from "@/@types/IrObject";
-import { IShapeLiteral } from "@/@types/IrShape";
-import { ITextLiteral } from "@/@types/IrText";
 import { currentTime, isWide } from "@/context";
 import { register } from "@/contexts/objectManager";
 import { config } from "@/definition/config";
@@ -32,15 +29,16 @@ const defaultOptions: IObjectOptions = {
  * 描画オブジェクトの基底クラス
  */
 abstract class IrObject {
-  protected readonly render: IRender;
   protected options: IObjectOptions;
   protected __width: number;
   protected __height: number;
   protected __modified: boolean;
   protected moverQueue: IrObjectMoverQueue;
   public readonly __id: string;
+  public readonly __type: string = "IrObject";
+  public readonly __NIWANGO_LITERAL: string = "IrObject";
 
-  protected constructor(render: IRender, options: Partial<IObjectOptions>) {
+  protected constructor(options: Partial<IObjectOptions>) {
     for (const _key of Object.keys(options)) {
       const key = _key as keyof IObjectOptions;
       const value = options[key];
@@ -49,18 +47,9 @@ abstract class IrObject {
       }
     }
     options.__id ??= uuid();
-    this.render = render;
     this.moverQueue = [];
     this.options = Object.assign(defaultOptions, options);
     this.__id = this.options.__id ?? uuid();
-    const canvas = document.createElement("canvas");
-    canvas.width = config.canvasWidth;
-    canvas.height = config.canvasHeight;
-    canvas.id = this.__id;
-    const __context = canvas.getContext("2d");
-    if (!__context) {
-      throw new Error("Fail to get CanvasRenderingContext2D");
-    }
     this.__width = this.__height = 0;
     this.__modified = false;
     this.__updateColor();
@@ -353,10 +342,6 @@ abstract class IrObject {
 
   public draw() {
     console.debug("please override this method");
-  }
-
-  public toJSON(): ITextLiteral | IShapeLiteral {
-    throw new Error("please override this method");
   }
 }
 export { IrObject };

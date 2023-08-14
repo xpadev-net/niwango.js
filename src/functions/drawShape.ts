@@ -1,8 +1,10 @@
+import type {
+  A_CallExpression,
+  IrFunction,
+  T_scope,
+} from "@xpadev-net/niwango-core";
 import Core from "@xpadev-net/niwango-core";
-import { IrFunction } from "@xpadev-net/niwango-core";
-import { A_CallExpression, T_scope } from "@xpadev-net/niwango-core";
 
-import { render } from "@/context";
 import { IrShape } from "@/objects/shape";
 
 /**
@@ -38,7 +40,7 @@ const processDrawShape: IrFunction = (
     ],
     trace
   );
-  return new IrShape(render, args);
+  return new IrShape(args);
 };
 
 export { processDrawShape };

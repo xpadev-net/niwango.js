@@ -33,7 +33,7 @@ type ITextOptions = {
 type ITextOptionsNullable = Partial<ITextOptions>;
 
 export type ITextLiteral = {
-  __NIWANGO_LITERAL: "IrText";
-  type: "IrText";
+  __NIWANGO_LITERAL: "IrObject";
+  __type: "IrText";
   options: ITextOptions;
 };

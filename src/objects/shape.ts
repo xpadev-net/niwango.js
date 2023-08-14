@@ -1,11 +1,5 @@
-import { cloneDeep } from "lodash";
-
-import { IRender } from "@/@types/IRender";
-import {
-  IShapeLiteral,
-  IShapeOptions,
-  IShapeOptionsNullable,
-} from "@/@types/IrShape";
+import { IShapeOptions, IShapeOptionsNullable } from "@/@types/IrShape";
+import { render } from "@/context";
 import { getCanvas } from "@/contexts/canvas";
 import { IrObject } from "@/objects/object";
 import { number2color } from "@/utils/number2color";
@@ -35,8 +29,9 @@ const defaultOptions: IShapeOptions = {
  */
 class IrShape extends IrObject {
   override options: IShapeOptions;
-  constructor(_render: IRender, _options: IShapeOptionsNullable) {
-    super(_render, _options);
+  public override readonly __type: string = "IrShape";
+  constructor(_options: IShapeOptionsNullable) {
+    super(_options);
     this.options = { ...defaultOptions, ..._options };
     this.__width = this.options.width;
     this.__height = this.options.height;
@@ -142,25 +137,17 @@ class IrShape extends IrObject {
     }
     if (this.__modified) this.__draw();
     if (this.rotation % 360 !== 0) {
-      this.render.drawImage(this, {
+      render.drawImage(this, {
         targetX: this.__x,
         targetY: this.__y,
         rotate: this.rotation,
       });
     } else {
-      this.render.drawImage(this, {
+      render.drawImage(this, {
         targetX: this.__x,
         targetY: this.__y,
       });
     }
-  }
-
-  public override toJSON(): IShapeLiteral {
-    return {
-      __NIWANGO_LITERAL: "IrShape",
-      type: "IrShape",
-      options: cloneDeep(this.options),
-    };
   }
 }
 export { IrShape };

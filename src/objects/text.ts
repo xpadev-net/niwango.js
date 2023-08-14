@@ -1,12 +1,6 @@
-import { cloneDeep } from "lodash";
-
 import { parsedComment } from "@/@types/flashText";
-import { IRender } from "@/@types/IRender";
-import {
-  ITextLiteral,
-  ITextOptions,
-  ITextOptionsNullable,
-} from "@/@types/IrText";
+import { ITextOptions, ITextOptionsNullable } from "@/@types/IrText";
+import { render } from "@/context";
 import { getCanvas } from "@/contexts/canvas";
 import { config } from "@/definition/config";
 import { IrObject } from "@/objects/object";
@@ -43,8 +37,9 @@ class IrText extends IrObject {
   private __scale: number;
   private __size: number;
   private __reverse: boolean;
-  constructor(_render: IRender, _options: ITextOptionsNullable) {
-    super(_render, _options);
+  public override readonly __type: string = "IrText";
+  constructor(_options: ITextOptionsNullable) {
+    super(_options);
     this.options = Object.assign({ ...defaultOptions }, _options);
     this.__actualHeight = this.__actualWidth = 0;
     const size = this.options.size * this.options.scale;
@@ -253,7 +248,7 @@ class IrText extends IrObject {
       return;
     }
     if (this.__modified) this.__draw();
-    this.render.drawImage(this, {
+    render.drawImage(this, {
       baseX: 0,
       baseY: 0,
       baseWidth: this.__actualWidth,
@@ -311,14 +306,6 @@ class IrText extends IrObject {
       canvas.width,
       canvas.height
     );
-  }
-
-  public override toJSON(): ITextLiteral {
-    return {
-      __NIWANGO_LITERAL: "IrText",
-      type: "IrText",
-      options: cloneDeep(this.options),
-    };
   }
 }
 export { IrText };
