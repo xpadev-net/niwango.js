@@ -1,5 +1,6 @@
 import { DrawOptionA, DrawOptions, IRender } from "@/@types/IRender";
 import { isWide } from "@/context";
+import { getCanvas } from "@/contexts/canvas";
 import { config } from "@/definition/config";
 import { IrObject } from "@/objects/object";
 
@@ -31,14 +32,15 @@ class CanvasRender implements IRender {
   }
 
   public drawImage(item: IrObject, options: DrawOptions) {
+    const { canvas } = getCanvas(item.__id);
     if (options.rotate !== undefined && options.rotate % 360 !== 0) {
       this.renderContext.save();
       this.renderContext.translate(options.targetX, options.targetY);
       this.renderContext.rotate(options.rotate * TO_RADIANS);
-      this._drawImage(item.__canvas, { ...options, targetX: 0, targetY: 0 });
+      this._drawImage(canvas, { ...options, targetX: 0, targetY: 0 });
       this.renderContext.restore();
     } else {
-      this._drawImage(item.__canvas, options);
+      this._drawImage(canvas, options);
     }
   }
 

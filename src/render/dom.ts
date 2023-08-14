@@ -1,5 +1,6 @@
 import { DrawOptionA, DrawOptions, IRender } from "@/@types/IRender";
 import { isWide } from "@/context";
+import { getCanvas } from "@/contexts/canvas";
 import { config } from "@/definition/config";
 import { IrObject } from "@/objects/object";
 
@@ -31,15 +32,16 @@ class DomRender implements IRender {
   }
 
   public drawImage(item: IrObject, options: DrawOptions) {
+    const canvas = getCanvas(item.__id).canvas;
     if (!ids.includes(item.__id)) {
-      this.renderElement.appendChild(item.__canvas);
-      item.__canvas.style.position = "absolute";
-      ids.push(item.__canvas.id);
+      this.renderElement.appendChild(canvas);
+      canvas.style.position = "absolute";
+      ids.push(item.__id);
     }
-    item.__canvas.style.display = "block";
-    item.__canvas.setAttribute("options", JSON.stringify(item));
-    item.__canvas.style.zIndex = `${item.z}`;
-    this._drawImage(item.__canvas, options);
+    canvas.style.display = "block";
+    canvas.setAttribute("options", JSON.stringify(item));
+    canvas.style.zIndex = `${item.z}`;
+    this._drawImage(canvas, options);
   }
 
   private _drawImage(image: HTMLCanvasElement, options: DrawOptions) {

@@ -33,13 +33,11 @@ const defaultOptions: IObjectOptions = {
  */
 abstract class IrObject {
   protected readonly render: IRender;
-  protected readonly __context: CanvasRenderingContext2D;
   protected options: IObjectOptions;
   protected __width: number;
   protected __height: number;
   protected __modified: boolean;
   protected moverQueue: IrObjectMoverQueue;
-  public readonly __canvas: HTMLCanvasElement;
   public readonly __id: string;
 
   protected constructor(render: IRender, options: Partial<IObjectOptions>) {
@@ -63,11 +61,6 @@ abstract class IrObject {
     if (!__context) {
       throw new Error("Fail to get CanvasRenderingContext2D");
     }
-    this.__canvas = canvas;
-    this.__context = __context;
-    this.__context.textAlign = "start";
-    this.__context.textBaseline = "alphabetic";
-    this.__context.lineWidth = 4;
     this.__width = this.__height = 0;
     this.__modified = false;
     this.__updateColor();

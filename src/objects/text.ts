@@ -7,6 +7,7 @@ import {
   ITextOptions,
   ITextOptionsNullable,
 } from "@/@types/IrText";
+import { getCanvas } from "@/contexts/canvas";
 import { config } from "@/definition/config";
 import { IrObject } from "@/objects/object";
 import { measure, parse } from "@/utils/flashText";
@@ -45,7 +46,6 @@ class IrText extends IrObject {
   constructor(_render: IRender, _options: ITextOptionsNullable) {
     super(_render, _options);
     this.options = Object.assign({ ...defaultOptions }, _options);
-    this.__context.strokeStyle = "#000000";
     this.__actualHeight = this.__actualWidth = 0;
     const size = this.options.size * this.options.scale;
     this.__reverse = size < 0;
@@ -140,15 +140,17 @@ class IrText extends IrObject {
   }
 
   __updateFont() {
-    this.__context.font = `normal 600 ${this.__size}px Arial, "ＭＳ Ｐゴシック", "MS PGothic", MSPGothic, MS-PGothic`;
+    getCanvas(
+      this.__id
+    ).context.font = `normal 600 ${this.__size}px Arial, "ＭＳ Ｐゴシック", "MS PGothic", MSPGothic, MS-PGothic`;
   }
 
   override __updateColor() {
-    this.__context.fillStyle = number2color(this.color);
+    getCanvas(this.__id).context.fillStyle = number2color(this.color);
   }
 
   __measure() {
-    const result = measure(this.__context, {
+    const result = measure(getCanvas(this.__id).context, {
       ...this.parsedComment,
       size: this.__size,
     });
@@ -156,22 +158,24 @@ class IrText extends IrObject {
     this.__actualHeight = result.height;
     this.__width = this.__actualWidth * this.__scale;
     this.__height = this.__actualHeight * this.__scale;
-    this.__canvas.width = this.__actualWidth;
-    this.__canvas.height = this.__actualHeight;
+    const { canvas } = getCanvas(this.__id);
+    canvas.width = this.__actualWidth;
+    canvas.height = this.__actualHeight;
   }
 
   override __draw() {
     this.__modified = false;
     this.__updateColor();
-    this.__context.clearRect(0, 0, this.__canvas.width, this.__canvas.height);
+    const { canvas, context } = getCanvas(this.__id);
+    context.clearRect(0, 0, canvas.width, canvas.height);
     if (this.__reverse) {
-      this.__context.scale(-1, -1);
+      context.scale(-1, -1);
     } else {
-      this.__context.scale(1, 1);
+      context.scale(1, 1);
     }
     const lineOffset = this.parsedComment.lineOffset;
-    this.__context.font = parseFont(this.parsedComment.font, this.__size);
-    this.__context.globalAlpha = (100 - this.options.alpha) / 100;
+    context.font = parseFont(this.parsedComment.font, this.__size);
+    context.globalAlpha = (100 - this.options.alpha) / 100;
     let lastFont = this.parsedComment.font;
     let leftOffset = 0;
     let lineCount = 0;
@@ -179,7 +183,7 @@ class IrText extends IrObject {
     for (const item of this.parsedComment.content) {
       if (lastFont !== getValue(item.font, this.parsedComment.font)) {
         lastFont = getValue(item.font, this.parsedComment.font);
-        this.__context.font = parseFont(lastFont, this.__size);
+        context.font = parseFont(lastFont, this.__size);
       }
       if (item.type === "normal") {
         const lines = item.content.split(/[\n\r]/g);
@@ -191,10 +195,10 @@ class IrText extends IrObject {
             this.__size * config.lineHeight * config.commentYOffset -
             reverseOffset;
           if (this.filter === "fuchi") {
-            this.__context.lineWidth = 4;
-            this.__context.strokeText(line, posX, posY);
+            context.lineWidth = 4;
+            context.strokeText(line, posX, posY);
           }
-          this.__context.fillText(line, posX, posY);
+          context.fillText(line, posX, posY);
           if (index === lines.length - 1) {
             leftOffset += getValue(item.width?.[index], 0);
             return;
@@ -214,14 +218,14 @@ class IrText extends IrObject {
         switch (part.type) {
           case "fill": {
             if (this.filter === "fuchi") {
-              this.__context.strokeRect(
+              context.strokeRect(
                 posX,
                 posY,
                 part.width * this.__size,
                 this.__size * config.lineHeight
               );
             }
-            this.__context.fillRect(
+            context.fillRect(
               posX,
               posY,
               part.width * this.__size,
@@ -231,9 +235,9 @@ class IrText extends IrObject {
           }
           case "text":
             if (this.filter === "fuchi") {
-              this.__context.strokeText(part.text, posX, posY);
+              context.strokeText(part.text, posX, posY);
             }
-            this.__context.fillText(part.text, posX, posY);
+            context.fillText(part.text, posX, posY);
         }
         leftOffset += getValue(item.width?.[index], 0);
       });
@@ -262,20 +266,21 @@ class IrText extends IrObject {
   }
 
   private kasumi() {
+    const { canvas, context } = getCanvas(this.__id);
     const canvasBlur050 = document.createElement("canvas");
-    canvasBlur050.width = this.__canvas.width * 0.5;
-    canvasBlur050.height = this.__canvas.height * 0.5;
+    canvasBlur050.width = canvas.width * 0.5;
+    canvasBlur050.height = canvas.height * 0.5;
     const canvasBlur025 = document.createElement("canvas");
-    canvasBlur025.width = this.__canvas.width * 0.25;
-    canvasBlur025.height = this.__canvas.height * 0.25;
+    canvasBlur025.width = canvas.width * 0.25;
+    canvasBlur025.height = canvas.height * 0.25;
     canvasBlur025
       .getContext("2d")
       ?.drawImage(
-        this.__canvas,
+        canvas,
         0,
         0,
-        this.__canvas.width,
-        this.__canvas.height,
+        canvas.width,
+        canvas.height,
         0,
         0,
         canvasBlur025.width,
@@ -294,8 +299,8 @@ class IrText extends IrObject {
         canvasBlur050.width,
         canvasBlur050.height
       );
-    this.__context.clearRect(0, 0, this.__canvas.width, this.__canvas.height);
-    this.__context.drawImage(
+    context.clearRect(0, 0, canvas.width, canvas.height);
+    context.drawImage(
       canvasBlur050,
       0,
       0,
@@ -303,8 +308,8 @@ class IrText extends IrObject {
       canvasBlur050.height,
       0,
       0,
-      this.__canvas.width,
-      this.__canvas.height
+      canvas.width,
+      canvas.height
     );
   }
 

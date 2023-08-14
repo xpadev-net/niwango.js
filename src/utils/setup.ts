@@ -1,5 +1,6 @@
 import Core from "@xpadev-net/niwango-core";
 
+import { resetCanvas } from "@/contexts/canvas";
 import { resetHandlers } from "@/contexts/commentHandler";
 import { resetObjects } from "@/contexts/objectManager";
 import { resetQueue } from "@/contexts/queue";
@@ -18,6 +19,7 @@ const setup = () => {
   resetObjects();
   resetHandlers();
   resetScripts();
+  resetCanvas();
 };
 
 export { setup };

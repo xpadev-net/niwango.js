@@ -65,3 +65,7 @@ export type ISnapshot = {
   environmentScope: T_environment;
   drawObjects: (IShapeLiteral | ITextLiteral)[];
 };
+export type ICanvas = {
+  canvas: HTMLCanvasElement;
+  context: CanvasRenderingContext2D;
+};

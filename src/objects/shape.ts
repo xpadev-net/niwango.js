@@ -6,6 +6,7 @@ import {
   IShapeOptions,
   IShapeOptionsNullable,
 } from "@/@types/IrShape";
+import { getCanvas } from "@/contexts/canvas";
 import { IrObject } from "@/objects/object";
 import { number2color } from "@/utils/number2color";
 
@@ -107,21 +108,22 @@ class IrShape extends IrObject {
   }
 
   override __updateColor() {
-    this.__context.fillStyle = number2color(this.color);
+    getCanvas(this.__id).context.fillStyle = number2color(this.color);
   }
 
   override __draw() {
     this.__modified = false;
-    this.__canvas.width = this.__width;
-    this.__canvas.height = this.__height;
+    const { canvas, context } = getCanvas(this.__id);
+    canvas.width = this.__width;
+    canvas.height = this.__height;
     this.__updateColor();
-    this.__context.globalAlpha = (100 - this.options.alpha) / 100;
-    this.__context.clearRect(0, 0, this.__canvas.width, this.__canvas.height);
+    context.globalAlpha = (100 - this.options.alpha) / 100;
+    context.clearRect(0, 0, canvas.width, canvas.height);
     if (this.shape === "rect") {
-      this.__context.fillRect(0, 0, this.width, this.height);
+      context.fillRect(0, 0, this.width, this.height);
     } else {
-      this.__context.beginPath();
-      this.__context.ellipse(
+      context.beginPath();
+      context.ellipse(
         this.width / 2,
         this.height / 2,
         this.width / 2,
@@ -130,7 +132,7 @@ class IrShape extends IrObject {
         0,
         360
       );
-      this.__context.fill();
+      context.fill();
     }
   }
 
