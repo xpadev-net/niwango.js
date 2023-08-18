@@ -35,7 +35,7 @@
     "@types/lodash": "^4.14.197",
     "@typescript-eslint/eslint-plugin": "^5.62.0",
     "@typescript-eslint/parser": "^5.62.0",
-    "@xpadev-net/niwango-core": "0.0.2-canary.20230814-5",
+    "@xpadev-net/niwango-core": "0.0.2-canary.20230818-4",
     "copyfiles": "^2.4.1",
     "eslint": "^8.44.0",
     "eslint-config-prettier": "^8.8.0",
