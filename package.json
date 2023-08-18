@@ -3,7 +3,7 @@
   "version": "0.0.1-canary.20230818-3",
   "description": "parse and execute niwango",
   "main": "dist/bundle.js",
-  "types": "dist/dts/types.d.ts",
+  "types": "dist/bundle.d.ts",
   "type": "module",
   "scripts": {
     "build": "npx rimraf dist&&npm run build:ts&&npm run build:dts",
