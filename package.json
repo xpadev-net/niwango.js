@@ -1,5 +1,5 @@
 {
-  "name": "niwango.js",
+  "name": "@xpadev-net/niwango.js",
   "version": "0.0.1-canary.20230818-1",
   "description": "parse and execute niwango",
   "main": "dist/bundle.js",
