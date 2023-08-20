@@ -1,8 +1,30 @@
 import { IShapeOptions, IShapeOptionsNullable } from "@/@types/IrShape";
+import { KTMap } from "@/@types/types";
 import { render } from "@/context";
 import { getCanvas } from "@/contexts/canvas";
 import { IrObject } from "@/objects/object";
 import { number2color } from "@/utils/number2color";
+import { format } from "@/utils/utils";
+
+const optionTypes: KTMap<keyof IShapeOptions> = {
+  x: "number",
+  y: "number",
+  z: "number",
+  shape: "string",
+  width: "number",
+  height: "number",
+  pos: "string",
+  posX: "string",
+  posY: "string",
+  color: "number",
+  visible: "boolean",
+  mask: "boolean",
+  commentmask: "boolean",
+  scale: "number",
+  alpha: "number",
+  rotation: "number",
+  mover: "string",
+};
 
 const defaultOptions: IShapeOptions = {
   x: 0,
@@ -31,8 +53,9 @@ class IrShape extends IrObject {
   override options: IShapeOptions;
   public override readonly __type: string = "IrShape";
   constructor(_options: IShapeOptionsNullable) {
-    super(_options);
-    this.options = { ...defaultOptions, ..._options };
+    const options = format(_options, optionTypes);
+    super(options);
+    this.options = { ...defaultOptions, ...options };
     this.__width = this.options.width;
     this.__height = this.options.height;
     this.__parsePos();
@@ -150,4 +173,5 @@ class IrShape extends IrObject {
     }
   }
 }
+
 export { IrShape };

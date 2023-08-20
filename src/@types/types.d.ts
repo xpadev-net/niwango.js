@@ -68,3 +68,6 @@ export type ICanvas = {
   canvas: HTMLCanvasElement;
   context: CanvasRenderingContext2D;
 };
+
+export type ValueType = "number" | "string" | "boolean" | "any";
+export type KTMap<T extends string> = Partial<{ [key in T]: ValueType }>;

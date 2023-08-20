@@ -48,7 +48,7 @@ abstract class IrObject {
     }
     options.__id ??= uuid();
     this.moverQueue = [];
-    this.options = Object.assign(defaultOptions, options);
+    this.options = { ...defaultOptions, ...options };
     this.__id = this.options.__id ?? uuid();
     this.__width = this.__height = 0;
     this.__modified = false;

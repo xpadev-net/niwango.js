@@ -1,6 +1,7 @@
-import { T_scope } from "@xpadev-net/niwango-core";
+import Core, { T_scope } from "@xpadev-net/niwango-core";
 
 import { commentFont } from "@/@types/IrText";
+import { ValueType } from "@/@types/types";
 import { config } from "@/definition/config";
 
 /**
@@ -40,4 +41,24 @@ const getValue = <T>(value: T | undefined, fallback: T): T => {
   return value ?? fallback;
 };
 
-export { getGlobalScope, getValue, parseFont };
+const format = (
+  options: { [key: string]: unknown },
+  types: { [key: string]: ValueType }
+) => {
+  for (const key of Object.keys(options)) {
+    const value = options[key];
+    const type = types[key];
+    if (value !== undefined && type !== "any" && typeof value !== type) {
+      if (type === "string") {
+        options[key] = Core.format(value, "string");
+      } else if (type === "number") {
+        options[key] = Core.format(value, "number");
+      } else if (type === "boolean") {
+        options[key] = Core.format(value, "boolean");
+      }
+    }
+  }
+  return options;
+};
+
+export { format, getGlobalScope, getValue, parseFont };

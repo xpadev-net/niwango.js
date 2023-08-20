@@ -1,12 +1,31 @@
 import { parsedComment } from "@/@types/flashText";
 import { ITextOptions, ITextOptionsNullable } from "@/@types/IrText";
+import { KTMap } from "@/@types/types";
 import { render } from "@/context";
 import { getCanvas } from "@/contexts/canvas";
 import { config } from "@/definition/config";
 import { IrObject } from "@/objects/object";
 import { measure, parse } from "@/utils/flashText";
 import { number2color } from "@/utils/number2color";
-import { getValue, parseFont } from "@/utils/utils";
+import { format, getValue, parseFont } from "@/utils/utils";
+
+const optionTypes: KTMap<keyof ITextOptions> = {
+  text: "string",
+  x: "number",
+  y: "number",
+  z: "number",
+  size: "number",
+  pos: "string",
+  posX: "string",
+  posY: "string",
+  color: "number",
+  bold: "boolean",
+  visible: "boolean",
+  scale: "number",
+  filter: "string",
+  alpha: "number",
+  mover: "string",
+};
 
 const defaultOptions: ITextOptions = {
   text: "",
@@ -39,8 +58,9 @@ class IrText extends IrObject {
   private __reverse: boolean;
   public override readonly __type: string = "IrText";
   constructor(_options: ITextOptionsNullable) {
-    super(_options);
-    this.options = Object.assign({ ...defaultOptions }, _options);
+    const options = format(_options, optionTypes);
+    super(options);
+    this.options = { ...defaultOptions, ...options };
     this.__actualHeight = this.__actualWidth = 0;
     const size = this.options.size * this.options.scale;
     this.__reverse = size < 0;
