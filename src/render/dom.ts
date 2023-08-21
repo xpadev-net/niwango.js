@@ -69,11 +69,11 @@ class DomRender implements IRender {
 
   public apply() {
     if (isWide) {
-      this.renderElement.style.width = `${config.stageWidth.full}px`;
-      this.innerElement.style.left = "0";
+      this.innerElement.style.width = `${config.stageWidth.full}px`;
+      this.renderElement.style.left = "0";
     } else {
-      this.renderElement.style.width = `${config.stageWidth.default}px`;
-      this.innerElement.style.left = `${
+      this.innerElement.style.width = `${config.stageWidth.default}px`;
+      this.renderElement.style.left = `${
         (config.canvasWidth - config.stageWidth.default) / 2
       }px`;
     }
