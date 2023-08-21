@@ -83,8 +83,18 @@ const resultHook = (input: unknown) => {
   return input;
 };
 
+const resetSnapshot = () => {
+  snapshots = [];
+};
+
 const initResultHook = () => {
   Core.appendResultHook(resultHook);
 };
 
-export { getLatestSnapshotVpos, initResultHook, restoreSnapshot, saveSnapshot };
+export {
+  getLatestSnapshotVpos,
+  initResultHook,
+  resetSnapshot,
+  restoreSnapshot,
+  saveSnapshot,
+};

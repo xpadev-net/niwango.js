@@ -5,7 +5,7 @@ import { resetHandlers } from "@/contexts/commentHandler";
 import { resetObjects } from "@/contexts/objectManager";
 import { resetQueue } from "@/contexts/queue";
 import { resetScripts } from "@/contexts/scripts";
-import { initResultHook } from "@/contexts/snapshot";
+import { initResultHook, resetSnapshot } from "@/contexts/snapshot";
 import { initDefinedFunctions } from "@/functions";
 
 /**
@@ -20,6 +20,7 @@ const setup = () => {
   resetHandlers();
   resetScripts();
   resetCanvas();
+  resetSnapshot();
 };
 
 export { setup };
