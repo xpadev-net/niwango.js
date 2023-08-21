@@ -74,7 +74,7 @@ class DomRender implements IRender {
     } else {
       this.innerElement.style.width = `${config.stageWidth.default}px`;
       this.renderElement.style.left = `${
-        (config.canvasWidth - config.stageWidth.default) / 2
+        (config.canvasWidth - config.stageWidth.default) / -2
       }px`;
     }
   }
