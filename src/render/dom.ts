@@ -12,6 +12,7 @@ let ids: string[] = [];
 class DomRender implements IRender {
   private readonly targetElement: HTMLDivElement;
   private readonly renderElement: HTMLDivElement;
+  private readonly innerElement: HTMLDivElement;
   constructor(targetElement: HTMLDivElement) {
     this.targetElement = targetElement;
     targetElement.innerHTML = "";
@@ -22,13 +23,21 @@ class DomRender implements IRender {
       1080 / config.canvasHeight
     })`;
     wrapperElement.style.transformOrigin = "0 0";
+    const innerElement = document.createElement("div");
+    innerElement.style.width = `${config.canvasWidth}px`;
+    innerElement.style.height = `${config.canvasHeight}px`;
+    innerElement.style.position = "relative";
+    innerElement.style.margin = "0 auto";
+    innerElement.style.overflow = "hidden";
     const renderElement = document.createElement("div");
     renderElement.style.width = `${config.canvasWidth}px`;
     renderElement.style.height = `${config.canvasHeight}px`;
     renderElement.style.position = "relative";
     this.renderElement = renderElement;
+    this.innerElement = innerElement;
     this.targetElement.appendChild(wrapperElement);
-    wrapperElement.appendChild(renderElement);
+    wrapperElement.appendChild(innerElement);
+    innerElement.appendChild(renderElement);
   }
 
   public drawImage(item: IrObject, options: DrawOptions) {
@@ -61,8 +70,12 @@ class DomRender implements IRender {
   public apply() {
     if (isWide) {
       this.renderElement.style.width = `${config.stageWidth.full}px`;
+      this.innerElement.style.left = "0";
     } else {
       this.renderElement.style.width = `${config.stageWidth.default}px`;
+      this.innerElement.style.left = `${
+        (config.canvasWidth - config.stageWidth.default) / 2
+      }px`;
     }
   }
 
