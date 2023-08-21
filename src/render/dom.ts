@@ -47,7 +47,7 @@ class DomRender implements IRender {
       canvas.style.position = "absolute";
       ids.push(item.__id);
     }
-    canvas.style.display = "block";
+    canvas.style.display = item.visible ? "block" : "none";
     canvas.setAttribute("options", JSON.stringify(item));
     canvas.style.zIndex = `${item.z}`;
     this._drawImage(canvas, options);

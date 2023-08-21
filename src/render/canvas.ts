@@ -33,6 +33,7 @@ class CanvasRender implements IRender {
 
   public drawImage(item: IrObject, options: DrawOptions) {
     const { canvas } = getCanvas(item.__id);
+    if (!item.visible) return;
     if (options.rotate !== undefined && options.rotate % 360 !== 0) {
       this.renderContext.save();
       this.renderContext.translate(options.targetX, options.targetY);
