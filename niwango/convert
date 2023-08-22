@@ -12,12 +12,13 @@ if (file_exists(__DIR__."/$filename.niwango")){
         exit(0);
     }
 }
-$json = json_decode(file_get_contents(__DIR__."/$filename.json"),true);
+$json = json_decode(file_get_contents(__DIR__."/$filename.json"),true)["data"]["threads"][0]["comments"];
+array_multisort(array_column($json,'vposMs'), SORT_ASC, $json);
 $data = [];
-foreach($json["data"]["threads"][0]["comments"] as $key => $value){
+foreach($json as $key => $value){
     if(strpos($value["body"],"/")===0){
-        $data[]=($value["vposMs"]/1000).":".implode(" ",$value["commands"]).":".$value["body"];
+        $data[]="[tm".($value["vposMs"]/1000)."]\n#".implode(" ",$value["commands"])."\n".mb_substr($value["body"],1);
     }
 }
-@unlink(__DIR__."/$filename.json");
+//@unlink(__DIR__."/$filename.json");
 file_put_contents(__DIR__."/$filename.niwango",implode("\n",$data));
