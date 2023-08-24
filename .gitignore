@@ -1,5 +1,4 @@
 /.idea
-/niconicomments.js.iml
 /node_modules
 /dist
 /.DS_Store
@@ -7,3 +6,5 @@
 /as
 /coverage
 *.iml
+/niwango/*.niwango
+/niwango/*.json
