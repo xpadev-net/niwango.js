@@ -23,6 +23,10 @@
     "prepare": "husky install",
     "test": "jest"
   },
+  "files": [
+    "dist/bundle.js",
+    "dist/bundle.d.ts"
+  ],
   "author": "xpadev(xpadev.net)",
   "license": "MIT",
   "devDependencies": {
