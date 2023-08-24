@@ -39,8 +39,8 @@ devDependencies:
     specifier: ^5.62.0
     version: 5.62.0(eslint@8.44.0)(typescript@5.1.6)
   '@xpadev-net/niwango-core':
-    specifier: 0.0.2-canary.20230824-1
-    version: 0.0.2-canary.20230824-1
+    specifier: 0.0.2-canary.20230824-2
+    version: 0.0.2-canary.20230824-2
   copyfiles:
     specifier: ^2.4.1
     version: 2.4.1
@@ -2154,8 +2154,8 @@ packages:
       eslint-visitor-keys: 3.4.1
     dev: true
 
-  /@xpadev-net/niwango-core@0.0.2-canary.20230824-1:
-    resolution: {integrity: sha512-I1biSFaICuIObh5k/jKXNPnIC1DC8F1OHB6U/y5TNZkRCo/AnaPWC/cgXPpmSS+qxNhpcB5fFMS8NHj4SNhksw==}
+  /@xpadev-net/niwango-core@0.0.2-canary.20230824-2:
+    resolution: {integrity: sha512-1h7JJPf6OqiPRvs2olwEyZGPayibuCqGnyGvnXjauu8g+4gcxYbyeDfOjyXxP/g1gY7F4mZNacnJ0BniDv5o2Q==}
     dev: true
 
   /abab@2.0.6:
