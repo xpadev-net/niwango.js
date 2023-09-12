@@ -63,13 +63,14 @@ class CanvasRender implements IRender {
     }
   }
 
-  public apply() {
-    this.targetContext.clearRect(
-      0,
-      0,
-      this.targetCanvas.width,
-      this.targetCanvas.height
-    );
+  public apply(clear: boolean) {
+    clear &&
+      this.targetContext.clearRect(
+        0,
+        0,
+        this.targetCanvas.width,
+        this.targetCanvas.height
+      );
     if (!isWide) this.drawLetterBox();
     this.targetContext.drawImage(
       this.renderCanvas,

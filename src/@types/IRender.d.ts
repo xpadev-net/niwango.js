@@ -21,7 +21,7 @@ export type DrawOptionB = {
 };
 
 export interface IRender {
-  apply(): void;
+  apply(clear: boolean): void;
   clear(): void;
   drawImage(image: IrObject, options: DrawOptions): void;
 }

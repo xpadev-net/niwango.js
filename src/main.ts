@@ -134,16 +134,17 @@ class Niwango {
     this.lastVpos = vpos;
   }
 
-  public draw(vpos: number) {
-    if (this.lastVpos === vpos) return;
+  public draw(vpos: number, clear = true) {
+    if (this.lastVpos === vpos) return false;
     this.execute(vpos);
-    this._draw();
+    this._draw(clear);
+    return true;
   }
 
-  private _draw() {
+  private _draw(clear: boolean) {
     this.render.clear();
     draw();
-    this.render.apply();
+    this.render.apply(clear);
   }
 }
 
