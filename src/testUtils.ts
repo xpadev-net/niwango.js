@@ -4,10 +4,8 @@ import { setup } from "@/utils/setup";
 
 setup();
 if (!globalThis.structuredClone) {
-  globalThis.structuredClone = function structuredClone(
-    objectToClone: unknown
-  ) {
-    return JSON.parse(JSON.stringify(objectToClone)) as unknown;
+  globalThis.structuredClone = <T>(objectToClone: T) => {
+    return JSON.parse(JSON.stringify(objectToClone)) as T;
   };
 }
 /**
