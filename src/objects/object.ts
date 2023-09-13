@@ -8,7 +8,7 @@ import {
 import { currentTime, isWide } from "@/context";
 import { register } from "@/contexts/objectManager";
 import { config } from "@/definition/config";
-import { getDistance, getSmoothDuration } from "@/utils/object";
+import { getDistance, getOptions, getSmoothDuration } from "@/utils/object";
 import { uuid } from "@/utils/uuid";
 
 const defaultOptions: IObjectOptions = {
@@ -39,16 +39,9 @@ abstract class IrObject {
   public readonly __NIWANGO_LITERAL: string = "IrObject";
 
   protected constructor(options: Partial<IObjectOptions>) {
-    for (const _key of Object.keys(options)) {
-      const key = _key as keyof IObjectOptions;
-      const value = options[key];
-      if (value === undefined) {
-        delete options[key];
-      }
-    }
     options.__id ??= uuid();
     this.moverQueue = [];
-    this.options = { ...defaultOptions, ...options };
+    this.options = getOptions(defaultOptions, options);
     this.__id = this.options.__id ?? uuid();
     this.__width = this.__height = 0;
     this.__modified = false;

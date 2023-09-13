@@ -7,6 +7,7 @@ import { config } from "@/definition/config";
 import { IrObject } from "@/objects/object";
 import { measure, parse } from "@/utils/flashText";
 import { number2color } from "@/utils/number2color";
+import { getOptions } from "@/utils/object";
 import { format, getValue, parseFont } from "@/utils/utils";
 
 const optionTypes: KTMap<keyof ITextOptions> = {
@@ -60,7 +61,7 @@ class IrText extends IrObject {
   constructor(_options: ITextOptionsNullable) {
     const options = format(_options, optionTypes);
     super(options);
-    this.options = { ...defaultOptions, ...options };
+    this.options = getOptions(defaultOptions, options);
     this.__actualHeight = this.__actualWidth = 0;
     const size = this.options.size * this.options.scale;
     this.__reverse = size < 0;

@@ -4,6 +4,7 @@ import { render } from "@/context";
 import { getCanvas } from "@/contexts/canvas";
 import { IrObject } from "@/objects/object";
 import { number2color } from "@/utils/number2color";
+import { getOptions } from "@/utils/object";
 import { format } from "@/utils/utils";
 
 const optionTypes: KTMap<keyof IShapeOptions> = {
@@ -55,7 +56,7 @@ class IrShape extends IrObject {
   constructor(_options: IShapeOptionsNullable) {
     const options = format(_options, optionTypes);
     super(options);
-    this.options = { ...defaultOptions, ...options };
+    this.options = getOptions(defaultOptions, options);
     this.__width = this.options.width;
     this.__height = this.options.height;
     this.__parsePos();
