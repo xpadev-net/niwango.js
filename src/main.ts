@@ -2,7 +2,13 @@ import Core from "@xpadev-net/niwango-core";
 
 import { Comment } from "@/@types/comment";
 import { IRender } from "@/@types/IRender";
-import { setComments, setCurrentTime, setIsWide, setRender } from "@/context";
+import {
+  comments,
+  setComments,
+  setCurrentTime,
+  setIsWide,
+  setRender,
+} from "@/context";
 import { getComments, triggerHandlers } from "@/contexts/commentHandler";
 import { draw } from "@/contexts/objectManager";
 import { getQueue } from "@/contexts/queue";
@@ -145,6 +151,23 @@ class Niwango {
     this.render.clear();
     draw();
     this.render.apply(clear);
+  }
+
+  public addComments(...newComments: Comment[]) {
+    newComments.forEach((comment) => {
+      if (comment.message.match(/^\//) && comment._owner) {
+        try {
+          const ast = {
+            ...Core.parseScript(comment.message, `${comment.no}.niwascript`),
+            __name: `${comment.no}.niwascript`,
+          };
+          addScript(ast, comment._vpos);
+        } catch (e) {
+          console.error(e);
+        }
+      }
+    });
+    setComments([...comments, ...newComments]);
   }
 }
 
