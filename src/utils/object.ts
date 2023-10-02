@@ -29,4 +29,4 @@ const getOptions = <T extends IObjectOptions>(
   return result;
 };
 
-export { getDistance, getOptions,getSmoothDuration };
+export { getDistance, getOptions, getSmoothDuration };
