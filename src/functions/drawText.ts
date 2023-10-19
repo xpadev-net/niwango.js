@@ -17,7 +17,7 @@ const processDrawText: IrFunction = (
   script: A_CallExpression,
   scopes: T_scope[],
   _,
-  trace
+  trace,
 ) => {
   const args = Core.utils.argumentParser(
     script.arguments,
@@ -37,7 +37,7 @@ const processDrawText: IrFunction = (
       "mover",
       "scale",
     ],
-    trace
+    trace,
   );
   return new IrText(args);
 };

@@ -33,7 +33,7 @@ const processRand: IrFunction = (
   script: A_CallExpression,
   scopes: T_scope[],
   _,
-  trace: A_ANY[]
+  trace: A_ANY[],
 ) => {
   if (script.arguments[0]) {
     return rand(Core.execute(script.arguments[0], scopes, trace));

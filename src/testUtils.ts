@@ -32,7 +32,7 @@ const run = (niwango: string) => {
   return Core.execute(
     ast,
     [globalScope, environmentScope, Core.prototypeScope],
-    [ast]
+    [ast],
   );
 };
 export { run };

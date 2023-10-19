@@ -149,7 +149,7 @@ class IrShape extends IrObject {
         this.height / 2,
         0,
         0,
-        360
+        360,
       );
       context.fill();
     }

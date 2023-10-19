@@ -17,7 +17,7 @@ const processDrawShape: IrFunction = (
   script: A_CallExpression,
   scopes: T_scope[],
   _,
-  trace
+  trace,
 ) => {
   const args = Core.utils.argumentParser(
     script.arguments,
@@ -38,7 +38,7 @@ const processDrawShape: IrFunction = (
       "rotation",
       "mover",
     ],
-    trace
+    trace,
   );
   return new IrShape(args);
 };

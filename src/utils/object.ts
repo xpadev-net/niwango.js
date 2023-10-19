@@ -15,7 +15,7 @@ const getDistance = (pos1: IrObjectPos, pos2: IrObjectPos) => {
 
 const getOptions = <T extends IObjectOptions>(
   defaultOptions: T,
-  options: Partial<T>
+  options: Partial<T>,
 ) => {
   let result = { ...defaultOptions };
   for (const _key of Object.keys(defaultOptions)) {

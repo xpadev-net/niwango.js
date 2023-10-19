@@ -17,7 +17,7 @@ const addHandler = (
   scopes: T_scope[],
   trace: A_ANY[],
   time: number,
-  duration?: number
+  duration?: number,
 ) => {
   handlers.push({
     script,

@@ -79,7 +79,7 @@ abstract class IrObject {
     this.options.x = input;
     if (this.mover === "") return;
     const lastQueue = this.moverQueue.filter(
-      (queue) => queue.vpos === currentTime
+      (queue) => queue.vpos === currentTime,
     )[0];
     let currentPos, targetPos;
     if (!lastQueue) {
@@ -91,7 +91,7 @@ abstract class IrObject {
     }
     console.log(
       `mover-x: ${JSON.stringify(currentPos)} to ${JSON.stringify(targetPos)}`,
-      this.mover
+      this.mover,
     );
     this.__updateMoverQueue(lastQueue, currentPos, targetPos);
   }
@@ -149,7 +149,7 @@ abstract class IrObject {
     this.options.y = input;
     if (this.mover === "") return;
     const lastQueue = this.moverQueue.filter(
-      (queue) => queue.vpos === currentTime
+      (queue) => queue.vpos === currentTime,
     )[0];
     let currentPos, targetPos;
     if (!lastQueue) {
@@ -161,7 +161,7 @@ abstract class IrObject {
     }
     console.log(
       `mover-y: ${JSON.stringify(currentPos)} to ${JSON.stringify(targetPos)}`,
-      this.mover
+      this.mover,
     );
     this.__updateMoverQueue(lastQueue, currentPos, targetPos);
   }
@@ -263,7 +263,7 @@ abstract class IrObject {
   protected __updateMoverQueue(
     lastQueue: IrObjectMoverItem | undefined,
     currentPos: IrObjectPos,
-    targetPos: IrObjectPos
+    targetPos: IrObjectPos,
   ) {
     const diff = {
       x: targetPos.x - currentPos.x,
@@ -301,7 +301,7 @@ abstract class IrObject {
   protected __filterMoverQueue() {
     if (this.mover === "") return;
     this.moverQueue = this.moverQueue.filter(
-      (item) => item.vpos + item.duration > currentTime
+      (item) => item.vpos + item.duration > currentTime,
     );
     const currentItem = this.moverQueue[0];
     if (this.mover !== "hopping" && this.moverQueue.length > 4 && currentItem) {

@@ -36,7 +36,7 @@ class Niwango {
   private lastVpos: number;
   constructor(
     targetElement: HTMLCanvasElement | HTMLDivElement,
-    comments: Comment[]
+    comments: Comment[],
   ) {
     setup();
     initConfig();
@@ -104,7 +104,7 @@ class Niwango {
         }
       }
       const tasks = [...getQueue(i), ...getScripts(i), ...getComments(i)].sort(
-        nativeSort("time")
+        nativeSort("time"),
       );
       while (tasks.length > 0) {
         const queue = tasks.shift();
@@ -129,7 +129,7 @@ class Niwango {
             queue.type === "queue"
               ? queue.scopes
               : [globalScope, environmentScope, Core.prototypeScope],
-            trace
+            trace,
           );
         } catch (e) {
           console.error(e);

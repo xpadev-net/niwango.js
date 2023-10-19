@@ -157,7 +157,7 @@ class IrText extends IrObject {
 
   __updateFont() {
     getCanvas(
-      this.__id
+      this.__id,
     ).context.font = `normal 600 ${this.__size}px Arial, "ＭＳ Ｐゴシック", "MS PGothic", MSPGothic, MS-PGothic`;
   }
 
@@ -238,14 +238,14 @@ class IrText extends IrObject {
                 posX,
                 posY,
                 part.width * this.__size,
-                this.__size * config.lineHeight
+                this.__size * config.lineHeight,
               );
             }
             context.fillRect(
               posX,
               posY,
               part.width * this.__size,
-              this.__size * config.lineHeight
+              this.__size * config.lineHeight,
             );
             break;
           }
@@ -300,7 +300,7 @@ class IrText extends IrObject {
         0,
         0,
         canvasBlur025.width,
-        canvasBlur025.height
+        canvasBlur025.height,
       );
     canvasBlur050
       .getContext("2d")
@@ -313,7 +313,7 @@ class IrText extends IrObject {
         0,
         0,
         canvasBlur050.width,
-        canvasBlur050.height
+        canvasBlur050.height,
       );
     context.clearRect(0, 0, canvas.width, canvas.height);
     context.drawImage(
@@ -325,7 +325,7 @@ class IrText extends IrObject {
       0,
       0,
       canvas.width,
-      canvas.height
+      canvas.height,
     );
   }
 }

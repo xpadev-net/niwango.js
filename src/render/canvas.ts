@@ -27,7 +27,7 @@ class CanvasRender implements IRender {
     this.renderContext = renderContext;
     this.renderContext.scale(
       1920 / config.canvasWidth,
-      1080 / config.canvasHeight
+      1080 / config.canvasHeight,
     );
   }
 
@@ -56,7 +56,7 @@ class CanvasRender implements IRender {
         options.targetX,
         options.targetY,
         options.targetWidth,
-        options.targetHeight
+        options.targetHeight,
       );
     } else {
       this.renderContext.drawImage(image, options.targetX, options.targetY);
@@ -69,7 +69,7 @@ class CanvasRender implements IRender {
         0,
         0,
         this.targetCanvas.width,
-        this.targetCanvas.height
+        this.targetCanvas.height,
       );
     if (!isWide) this.drawLetterBox();
     this.targetContext.drawImage(
@@ -81,7 +81,7 @@ class CanvasRender implements IRender {
       0,
       0,
       this.targetCanvas.width,
-      this.targetCanvas.height
+      this.targetCanvas.height,
     );
   }
 
@@ -93,7 +93,7 @@ class CanvasRender implements IRender {
       config.canvasWidth - letterBoxWidth,
       0,
       letterBoxWidth,
-      config.stageHeight
+      config.stageHeight,
     );
   }
 
@@ -102,7 +102,7 @@ class CanvasRender implements IRender {
       0,
       0,
       this.renderCanvas.width,
-      this.renderCanvas.height
+      this.renderCanvas.height,
     );
   }
 }

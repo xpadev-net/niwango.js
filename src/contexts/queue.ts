@@ -23,7 +23,7 @@ const addQueue = (
   script: A_ANY,
   offset: number,
   scopes: T_scope[],
-  trace: A_ANY[]
+  trace: A_ANY[],
 ) => {
   queue.push({
     script,

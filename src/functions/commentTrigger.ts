@@ -11,14 +11,14 @@ const processCommentTrigger: IrFunction = (script, scopes, _, trace) => {
     scopes,
     ["then", "timer"],
     trace,
-    false
+    false,
   );
   addHandler(
     args.then as A_ANY,
     scopes,
     trace,
     currentTime,
-    args.timer ? Number(Core.execute(args.timer, scopes, trace)) : undefined
+    args.timer ? Number(Core.execute(args.timer, scopes, trace)) : undefined,
   );
 };
 

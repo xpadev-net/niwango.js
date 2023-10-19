@@ -43,7 +43,7 @@ const getValue = <T>(value: T | undefined, fallback: T): T => {
 
 const format = (
   options: { [key: string]: unknown },
-  types: { [key: string]: ValueType }
+  types: { [key: string]: ValueType },
 ) => {
   for (const key of Object.keys(options)) {
     const value = options[key];

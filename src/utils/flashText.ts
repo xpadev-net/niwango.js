@@ -28,7 +28,7 @@ const getFontName = (font: string): commentFlashFont => {
  */
 const splitContents = (string: string) => {
   return Array.from(string.match(/[\n\r]|[^\n\r]+/g) || []).map((val) =>
-    Array.from(val.match(/[ -~｡-ﾟ]+|[^ -~｡-ﾟ]+/g) || [])
+    Array.from(val.match(/[ -~｡-ﾟ]+|[^ -~｡-ﾟ]+/g) || []),
   );
 };
 
@@ -83,7 +83,7 @@ const parse = (string: string, compat = false): parsedComment => {
         ...lineContent.map((val) => {
           val.font ||= firstContent.font;
           return val;
-        })
+        }),
       );
     } else {
       content.push(...lineContent);
@@ -246,7 +246,7 @@ const parseFullStr = (string: string): commentContentItem[] => {
  */
 const measure = (
   context: CanvasRenderingContext2D,
-  comment: measureTextInput
+  comment: measureTextInput,
 ) => {
   const width_arr = [];
   let currentWidth = 0;

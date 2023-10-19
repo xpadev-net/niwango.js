@@ -8,21 +8,21 @@ const processTimer: IrFunction = (
   script: A_CallExpression,
   scopes: T_scope[],
   _,
-  trace: A_ANY[]
+  trace: A_ANY[],
 ) => {
   const args = Core.utils.argumentParser(
     script.arguments,
     scopes,
     ["timer", "then"],
     trace,
-    false
+    false,
   );
   typeof args.then === "object" &&
     addQueue(
       args.then as A_ANY,
       Number(Core.execute(args.timer, scopes, trace)),
       scopes,
-      [...trace]
+      [...trace],
     );
 };
 
