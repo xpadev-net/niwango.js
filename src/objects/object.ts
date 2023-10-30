@@ -63,6 +63,14 @@ abstract class IrObject {
     this.__height = val;
   }
   get scale() {
+    this.__filterMoverQueue();
+    const currentQueue = this.moverQueue[0];
+    if (this.mover === "hopping" && currentQueue) {
+      return (
+        this.options.scale *
+        this.calcMover(currentQueue, this.options.x, "scale")
+      );
+    }
     return this.options.scale;
   }
   set scale(val: number) {
@@ -99,25 +107,7 @@ abstract class IrObject {
   get __x() {
     this.__filterMoverQueue();
     const currentQueue = this.moverQueue[0];
-    const posX = (() => {
-      if (!currentQueue || this.mover === "") return this.options.x;
-      if (this.mover === "simple") {
-        return (
-          currentQueue.current.x +
-          (currentQueue.diff.x * (currentTime - currentQueue.vpos)) / 50
-        );
-      } else if (this.mover === "rolling") {
-        //todo: feat rolling
-      } else if (this.mover === "smooth") {
-        const stepCount = Math.floor((currentTime - currentQueue.vpos) / 5);
-        let x = currentQueue.diff.x;
-        for (let i = 0; i < stepCount; i++) {
-          x -= x / 14 + 1;
-        }
-        return currentQueue.target.x - x;
-      }
-      return currentQueue.current.x;
-    })();
+    const posX = this.calcMover(currentQueue, this.options.x, "x");
     const paddingLeft = isWide
       ? 0
       : (config.stageWidth.full - config.stageWidth.default) / 2;
@@ -169,25 +159,7 @@ abstract class IrObject {
   get __y() {
     this.__filterMoverQueue();
     const currentQueue = this.moverQueue[0];
-    const posY = (() => {
-      if (!currentQueue || this.mover === "") return this.options.y;
-      if (this.mover === "simple") {
-        return (
-          currentQueue.current.y +
-          (currentQueue.diff.y * (currentTime - currentQueue.vpos)) / 50
-        );
-      } else if (this.mover === "rolling") {
-        //todo: feat rolling
-      } else if (this.mover === "smooth") {
-        const stepCount = Math.floor((currentTime - currentQueue.vpos) / 5);
-        let y = currentQueue.diff.y;
-        for (let i = 0; i < stepCount; i++) {
-          y -= y / 14 + 1;
-        }
-        return currentQueue.target.y - y;
-      }
-      return currentQueue.current.y;
-    })();
+    const posY = this.calcMover(currentQueue, this.options.y, "y");
     if (this.options.posY === "ue") {
       return posY;
     } else if (this.options.posY === "shita") {
@@ -256,7 +228,6 @@ abstract class IrObject {
 
   set mover(val: IObjectMover) {
     this.options.mover = val;
-    console.log(`mover: ${val}`);
     this.moverQueue = [];
   }
 
@@ -300,9 +271,13 @@ abstract class IrObject {
 
   protected __filterMoverQueue() {
     if (this.mover === "") return;
+    const lastLength = this.moverQueue.length;
     this.moverQueue = this.moverQueue.filter(
       (item) => item.vpos + item.duration > currentTime,
     );
+    if (lastLength !== this.moverQueue.length) {
+      this.__modified = true;
+    }
     const currentItem = this.moverQueue[0];
     if (this.mover !== "hopping" && this.moverQueue.length > 4 && currentItem) {
       this.moverQueue = [currentItem, ...this.moverQueue.slice(-3)];
@@ -333,8 +308,60 @@ abstract class IrObject {
     console.debug("please override this method");
   }
 
+  protected get __isModified() {
+    return (
+      this.__modified ||
+      (this.mover === "hopping" && this.moverQueue.length > 0)
+    );
+  }
+
   public draw() {
     console.debug("please override this method");
   }
+
+  protected calcMover(
+    queue: IrObjectMoverItem | undefined,
+    basePos: number,
+    axis: "x" | "y" | "scale",
+  ) {
+    if (axis === "scale") {
+      if (queue && this.mover === "hopping") {
+        const _steps = 10;
+        const _step = Math.floor((currentTime - queue.vpos) / 10);
+        return 1 + (_step * _step - (_steps + 1) * _step + _steps) / -50;
+      }
+      return 1;
+    }
+    if (!queue || this.mover === "") return basePos;
+    if (this.mover === "simple") {
+      return (
+        queue.current[axis] +
+        (queue.diff[axis] * (currentTime - queue.vpos)) / 50
+      );
+    } else if (this.mover === "hopping") {
+      return (
+        queue.current[axis] +
+        (queue.diff[axis] * (currentTime - queue.vpos)) / 100
+      );
+    } else if (this.mover === "rolling") {
+      const _steps = 20;
+      const _step = Math.floor((currentTime - queue.vpos) / 2.5);
+      const val1 = ((2 * Math.PI) / _steps) * (_step - 1);
+      const val2 = (_step * _step - (_steps + 1) * _step + _steps) / -5;
+      const posY =
+        queue.current[axis] +
+        (queue.diff[axis] * (currentTime - queue.vpos)) / 100;
+      return posY + val2 * (axis === "x" ? Math.cos(val1) : Math.sin(val1));
+    } else if (this.mover === "smooth") {
+      const stepCount = Math.floor((currentTime - queue.vpos) / 5);
+      let pos = queue.diff[axis];
+      for (let i = 0; i < stepCount; i++) {
+        pos -= pos / 14 + 1;
+      }
+      return queue.target[axis] - pos;
+    }
+    return queue.target[axis];
+  }
 }
+
 export { IrObject };

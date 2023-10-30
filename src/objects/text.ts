@@ -109,14 +109,23 @@ class IrText extends IrObject {
     return this.options.text;
   }
 
+  //なぜか親のscaleが呼ばれないのでオーバーライド
+  override get scale() {
+    this.__filterMoverQueue();
+    const currentQueue = this.moverQueue[0];
+    if (this.mover === "hopping" && currentQueue) {
+      return (
+        this.options.scale *
+        this.calcMover(currentQueue, this.options.x, "scale")
+      );
+    }
+    return this.options.scale;
+  }
+
   set text(string) {
     this.options.text = `${string}`;
     this.parsedComment = parse(this.text, this.options.size < 3);
     this.__modified = true;
-  }
-
-  override get scale() {
-    return this.options.scale;
   }
 
   override set scale(val: number) {
@@ -166,6 +175,18 @@ class IrText extends IrObject {
   }
 
   __measure() {
+    const size = Math.abs(this.size * this.scale);
+    if (size < 10) {
+      this.__scale = size / 10;
+      this.__size = 10;
+    } else if (size > 100 && this.size >= 3) {
+      this.__scale = size / 100;
+      this.__size = 100;
+    } else {
+      this.__scale = 1;
+      this.__size = size;
+    }
+    this.__updateFont();
     const result = measure(getCanvas(this.__id).context, {
       ...this.parsedComment,
       size: this.__size,
@@ -264,11 +285,11 @@ class IrText extends IrObject {
   }
 
   override draw() {
-    if (this.__modified) this.__measure();
+    if (this.__isModified) this.__measure();
     if (!(this.width > 0 && this.height > 0)) {
       return;
     }
-    if (this.__modified) this.__draw();
+    if (this.__isModified) this.__draw();
     render.drawImage(this, {
       baseX: 0,
       baseY: 0,

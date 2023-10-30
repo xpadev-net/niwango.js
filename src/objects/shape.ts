@@ -57,8 +57,8 @@ class IrShape extends IrObject {
     const options = format(_options, optionTypes);
     super(options);
     this.options = getOptions(defaultOptions, options);
-    this.__width = this.options.width;
-    this.__height = this.options.height;
+    this.__width = this.options.width * this.options.scale;
+    this.__height = this.options.height * this.options.scale;
     this.__parsePos();
     this.__draw();
   }
@@ -92,16 +92,6 @@ class IrShape extends IrObject {
     this.__modified = true;
   }
 
-  override get scale() {
-    return this.options.scale;
-  }
-
-  override set scale(val) {
-    this.options.scale = val;
-    this.__width = this.options.width * val;
-    this.__modified = true;
-  }
-
   get mask() {
     return this.options.mask;
   }
@@ -131,6 +121,8 @@ class IrShape extends IrObject {
   }
 
   override __draw() {
+    this.__width = this.options.width * this.scale;
+    this.__height = this.options.height * this.scale;
     this.__modified = false;
     const { canvas, context } = getCanvas(this.__id);
     canvas.width = this.__width;
@@ -139,14 +131,14 @@ class IrShape extends IrObject {
     context.globalAlpha = (100 - this.options.alpha) / 100;
     context.clearRect(0, 0, canvas.width, canvas.height);
     if (this.shape === "rect") {
-      context.fillRect(0, 0, this.width, this.height);
+      context.fillRect(0, 0, this.__width, this.__height);
     } else {
       context.beginPath();
       context.ellipse(
-        this.width / 2,
-        this.height / 2,
-        this.width / 2,
-        this.height / 2,
+        this.__width / 2,
+        this.__height / 2,
+        this.__width / 2,
+        this.__height / 2,
         0,
         0,
         360,
@@ -159,7 +151,7 @@ class IrShape extends IrObject {
     if (!(Math.floor(this.width) > 0 && Math.floor(this.height) > 0)) {
       return;
     }
-    if (this.__modified) this.__draw();
+    if (this.__isModified) this.__draw();
     if (this.rotation % 360 !== 0) {
       render.drawImage(this, {
         targetX: this.__x,
