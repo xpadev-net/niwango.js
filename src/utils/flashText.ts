@@ -254,7 +254,7 @@ const measure = (
     const widths = [];
     context.font = parseFont(getValue(item.font, comment.font), comment.size);
     if (item.type === "normal") {
-      const lines = item.content.split(/[\n\r]/);
+      const lines = item.content.replace(/\r\n?/g, "\n").split(/\n/);
       let count = 0;
       for (const value of lines) {
         const measure = context.measureText(value);
