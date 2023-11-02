@@ -66,7 +66,7 @@ class IrText extends IrObject {
     const size = this.options.size * this.options.scale;
     this.__reverse = size < 0;
     if (Math.abs(size) < 10) {
-      this.__scale = Math.abs(size / 10);
+      this.__scale = Math.max(Math.abs(size / 10), 0.16);
       this.__size = 10;
     } else {
       this.__scale = 1;
@@ -90,7 +90,7 @@ class IrText extends IrObject {
     }
     const size = Math.abs(val * this.options.scale);
     if (size < 10) {
-      this.__scale = size / 10;
+      this.__scale = Math.max(size / 10, 0.16);
       this.__size = 10;
     } else if (size > 100 && val >= 3) {
       this.__scale = size / 100;
@@ -132,7 +132,7 @@ class IrText extends IrObject {
     const size = Math.abs(val * this.options.size);
     this.__reverse = val < 0;
     if (size < 10) {
-      this.__scale = size / 10;
+      this.__scale = Math.max(size / 10, 0.16);
       this.__size = 10;
     } else if (size > 100 && this.options.size >= 3) {
       this.__scale = size / 100;
@@ -177,7 +177,7 @@ class IrText extends IrObject {
   __measure() {
     const size = Math.abs(this.size * this.scale);
     if (size < 10) {
-      this.__scale = size / 10;
+      this.__scale = Math.max(size / 10, 0.16);
       this.__size = 10;
     } else if (size > 100 && this.size >= 3) {
       this.__scale = size / 100;
