@@ -141,7 +141,6 @@ class Niwango {
   }
 
   public draw(vpos: number, clear = true) {
-    setCurrentTime(vpos);
     if (this.lastVpos === vpos) return false;
     this.execute(vpos);
     this._draw(clear);
