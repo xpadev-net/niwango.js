@@ -1,0 +1,1 @@
+{"version":3,"file":"typeGuard.d.ts","sourceRoot":"","sources":["../../src/typeGuard.ts"],"names":[],"mappings":"AAAA,OAAO,EAAE,OAAO,EAAE,MAAM,kBAAkB,CAAC;AAC3C,OAAO,EAAE,aAAa,EAAE,MAAM,kBAAkB,CAAC;AACjD,OAAO,EAAE,YAAY,EAAE,MAAM,iBAAiB,CAAC;AAG/C,QAAA,MAAM,SAAS;iBACA,OAAO;uBAcD,OAAO;wBAMN,OAAO;CAM5B,CAAC;AAaF,eAAe,SAAS,CAAC"}
