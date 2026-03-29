@@ -165,9 +165,8 @@ class IrText extends IrObject {
   }
 
   __updateFont() {
-    getCanvas(
-      this.__id,
-    ).context.font = `normal 600 ${this.__size}px Arial, "ＭＳ Ｐゴシック", "MS PGothic", MSPGothic, MS-PGothic`;
+    getCanvas(this.__id).context.font =
+      `normal 600 ${this.__size}px Arial, "ＭＳ Ｐゴシック", "MS PGothic", MSPGothic, MS-PGothic`;
   }
 
   override __updateColor() {
@@ -205,10 +204,9 @@ class IrText extends IrObject {
     this.__updateColor();
     const { canvas, context } = getCanvas(this.__id);
     context.clearRect(0, 0, canvas.width, canvas.height);
+    context.save();
     if (this.__reverse) {
       context.scale(-1, -1);
-    } else {
-      context.scale(1, 1);
     }
     const lineOffset = this.parsedComment.lineOffset;
     context.font = parseFont(this.parsedComment.font, this.__size);
@@ -279,6 +277,7 @@ class IrText extends IrObject {
         leftOffset += getValue(item.width?.[index], 0);
       });
     }
+    context.restore();
     if (this.filter === "kasumi") {
       this.kasumi();
     }

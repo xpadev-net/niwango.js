@@ -48,7 +48,8 @@ const format = (
   for (const key of Object.keys(options)) {
     const value = options[key];
     const type = types[key];
-    if (value !== undefined && type !== "any" && typeof value !== type) {
+    if (!type || type === "any") continue;
+    if (value !== undefined && typeof value !== type) {
       if (type === "string") {
         options[key] = Core.format(value, "string");
       } else if (type === "number") {
