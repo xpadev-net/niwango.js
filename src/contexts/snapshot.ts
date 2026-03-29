@@ -19,7 +19,6 @@ import typeGuard from "@/typeGuard";
 let snapshots: ISnapshot[] = [];
 
 const saveSnapshot = (vpos: number) => {
-  console.log("save snapshot", vpos);
   snapshots.push({
     vpos,
     queue: structuredClone(queue),
@@ -32,14 +31,12 @@ const saveSnapshot = (vpos: number) => {
 };
 
 const restoreSnapshot = (vpos: number) => {
-  console.log("restore snapshot", vpos);
   const snapshot = getLatestSnapshot(vpos);
 
   if (!snapshot) throw new Error("snapshot not found");
   snapshots = snapshots.filter((s) => s.vpos <= snapshot.vpos);
   resetObjects();
   for (const obj of structuredClone(snapshot.drawObjects)) {
-    console.log(obj);
     resultHook(obj);
   }
   setQueue(structuredClone(snapshot.queue));
@@ -71,11 +68,9 @@ const getLatestSnapshotVpos = (vpos: number) => {
 const resultHook = (input: unknown) => {
   if (typeof input === "object") {
     if (typeGuard.IrShapeLiteral(input)) {
-      console.log("restore shape", input.options.__id);
       const shape = drawObjects.find((obj) => obj.__id === input.options.__id);
       return shape ?? new IrShape(input.options);
     } else if (typeGuard.IrTextLiteral(input)) {
-      console.log("restore text", input.options.__id);
       const text = drawObjects.find((obj) => obj.__id === input.options.__id);
       return text ?? new IrText(input.options);
     }

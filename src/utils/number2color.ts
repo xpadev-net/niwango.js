@@ -3,7 +3,7 @@
  * @param input
  */
 const number2color = (input: number) => {
-  const hex = `000000${input.toString(16)}`.slice(-6);
+  const hex = `000000${(input & 0xffffff).toString(16)}`.slice(-6);
   return `#${hex}`;
 };
 

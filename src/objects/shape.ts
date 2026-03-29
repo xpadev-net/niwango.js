@@ -141,7 +141,7 @@ class IrShape extends IrObject {
         this.__height / 2,
         0,
         0,
-        360,
+        Math.PI * 2,
       );
       context.fill();
     }

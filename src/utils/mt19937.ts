@@ -14,8 +14,8 @@ const __init_genrand = (seed: number): void => {
 
   while (mti < N) {
     mt[mti] =
-      0x6c078965 * ((mt[mti - 1] || 0) ^ ((mt[mti - 1] || 0) >>> 30)) + mti;
-    mt[mti] &= 0xffffffff;
+      (0x6c078965 * ((mt[mti - 1] || 0) ^ ((mt[mti - 1] || 0) >>> 30)) + mti) &
+      0xffffffff;
     mti++;
   }
 };
@@ -31,10 +31,10 @@ const __init_by_array = (seed: number[], length: number) => {
     const value = getNumber(mt[key1]);
     const lastValue = getNumber(mt[key1 - 1]);
     mt[key1] =
-      (value ^ ((lastValue ^ (lastValue >>> 30)) * 0x0019660d)) +
-      (seed[key2] || 0) +
-      key2;
-    mt[key1] &= 0xffffffff;
+      ((value ^ ((lastValue ^ (lastValue >>> 30)) * 0x0019660d)) +
+        (seed[key2] || 0) +
+        key2) &
+      0xffffffff;
     key1++;
     key2++;
 
@@ -53,8 +53,9 @@ const __init_by_array = (seed: number[], length: number) => {
   for (let i = 0; i < range; i++) {
     const value = getNumber(mt[key1]);
     const lastValue = getNumber(mt[key1 - 1]);
-    mt[key1] = (value ^ ((lastValue ^ (lastValue >>> 30)) * 0x5d588b65)) - key1;
-    mt[key1] &= 0xffffffff;
+    mt[key1] =
+      ((value ^ ((lastValue ^ (lastValue >>> 30)) * 0x5d588b65)) - key1) &
+      0xffffffff;
     key1++;
 
     if (key1 >= N) {

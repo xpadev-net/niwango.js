@@ -97,10 +97,6 @@ abstract class IrObject {
       currentPos = { x: lastVal, y: lastQueue.current.y };
       targetPos = { x: input, y: lastQueue.target.y };
     }
-    console.log(
-      `mover-x: ${JSON.stringify(currentPos)} to ${JSON.stringify(targetPos)}`,
-      this.mover,
-    );
     this.__updateMoverQueue(lastQueue, currentPos, targetPos);
   }
 
@@ -149,10 +145,6 @@ abstract class IrObject {
       currentPos = { x: lastQueue.current.x, y: lastVal };
       targetPos = { x: lastQueue.target.x, y: input };
     }
-    console.log(
-      `mover-y: ${JSON.stringify(currentPos)} to ${JSON.stringify(targetPos)}`,
-      this.mover,
-    );
     this.__updateMoverQueue(lastQueue, currentPos, targetPos);
   }
 
@@ -208,17 +200,8 @@ abstract class IrObject {
   }
 
   set alpha(val: unknown) {
-    let value: number;
-    if (typeof val !== "number") {
-      value = Number(val) || 0;
-    } else if (val > 100) {
-      value = 100;
-    } else if (val < 0) {
-      value = 0;
-    } else {
-      value = val;
-    }
-    this.options.alpha = value;
+    const value = typeof val === "number" ? val : Number(val) || 0;
+    this.options.alpha = Math.max(0, Math.min(100, value));
     this.__modified = true;
   }
 
