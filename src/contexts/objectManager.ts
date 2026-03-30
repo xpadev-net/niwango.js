@@ -12,7 +12,7 @@ const draw = () => {
     } else if (a.z > b.z) {
       return 1;
     }
-    return 0;
+    return a.__creationVpos - b.__creationVpos;
   });
   for (const object of drawObjects) {
     if (object.visible) {

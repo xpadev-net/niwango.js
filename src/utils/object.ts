@@ -1,12 +1,18 @@
 import { IObjectOptions, IrObjectPos } from "@/@types/IrObject";
 
+// AS 40fps frame timing: 1 tick = 2.5 vpos
+const AS_TICK_VPOS = 2.5;
+// AS smooth mover: velocity = remaining / 28 + 1 per tick
+const SMOOTH_DECAY_DIVISOR = 28;
+const SMOOTH_MIN_STEP = 1;
+
 const getSmoothDuration = (distance: number) => {
   let step = 0;
   while (distance > 0) {
-    distance -= distance / 14 + 1;
+    distance -= distance / SMOOTH_DECAY_DIVISOR + SMOOTH_MIN_STEP;
     step++;
   }
-  return step * 5;
+  return step * AS_TICK_VPOS;
 };
 
 const getDistance = (pos1: IrObjectPos, pos2: IrObjectPos) => {
@@ -29,4 +35,11 @@ const getOptions = <T extends IObjectOptions>(
   return result;
 };
 
-export { getDistance, getOptions, getSmoothDuration };
+export {
+  AS_TICK_VPOS,
+  getDistance,
+  getOptions,
+  getSmoothDuration,
+  SMOOTH_DECAY_DIVISOR,
+  SMOOTH_MIN_STEP,
+};

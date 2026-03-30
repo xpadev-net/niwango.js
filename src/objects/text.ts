@@ -37,7 +37,7 @@ const defaultOptions: ITextOptions = {
   pos: "naka",
   posX: "naka",
   posY: "naka",
-  color: 0,
+  color: 16777215,
   bold: false,
   visible: true,
   scale: 1,
@@ -78,6 +78,14 @@ class IrText extends IrObject {
     this.__parsePos();
     this.__measure();
     this.__draw();
+  }
+
+  protected override get __baseWidth(): number {
+    return this.__actualWidth * this.__scale;
+  }
+
+  protected override get __baseHeight(): number {
+    return this.__actualHeight * this.__scale;
   }
 
   get size() {
@@ -191,11 +199,16 @@ class IrText extends IrObject {
     });
     this.__actualWidth = result.width;
     this.__actualHeight = result.height;
-    this.__width = this.__actualWidth * this.__scale;
-    this.__height = this.__actualHeight * this.__scale;
+    // Expand canvas for kage shadow overflow (offset + blur radius)
+    const kagePadding =
+      this.filter === "kage"
+        ? this.__kageShadowOffset() + Math.ceil(this.__size * 0.17)
+        : 0;
+    this.__width = (this.__actualWidth + kagePadding) * this.__scale;
+    this.__height = (this.__actualHeight + kagePadding) * this.__scale;
     const { canvas } = getCanvas(this.__id);
-    canvas.width = this.__actualWidth;
-    canvas.height = this.__actualHeight;
+    canvas.width = this.__actualWidth + kagePadding;
+    canvas.height = this.__actualHeight + kagePadding;
   }
 
   override __draw() {
@@ -210,6 +223,17 @@ class IrText extends IrObject {
     const lineOffset = this.parsedComment.lineOffset;
     context.font = parseFont(this.parsedComment.font, this.__size);
     context.globalAlpha = (100 - this.options.alpha) / 100;
+    if (this.filter === "kage") {
+      const offset = this.__kageShadowOffset();
+      context.shadowColor = "rgba(0, 0, 0, 1)";
+      context.shadowOffsetX = offset * Math.cos(Math.PI / 4);
+      context.shadowOffsetY = offset * Math.sin(Math.PI / 4);
+      context.shadowBlur = this.__size * 0.17;
+    }
+    if (this.filter === "fuchi") {
+      context.lineWidth = 8;
+      context.lineJoin = "round";
+    }
     let lastFont = this.parsedComment.font;
     let leftOffset = 0;
     let lineCount = 0;
@@ -229,7 +253,6 @@ class IrText extends IrObject {
             this.__size * config.lineHeight * config.commentYOffset -
             reverseOffset;
           if (this.filter === "fuchi") {
-            context.lineWidth = 4;
             context.strokeText(line, posX, posY);
           }
           context.fillText(line, posX, posY);
@@ -288,16 +311,22 @@ class IrText extends IrObject {
       return;
     }
     if (this.__isModified) this.__draw();
+    const { canvas } = getCanvas(this.__id);
     render.drawImage(this, {
       baseX: 0,
       baseY: 0,
-      baseWidth: this.__actualWidth,
-      baseHeight: this.__actualHeight,
+      baseWidth: canvas.width,
+      baseHeight: canvas.height,
       targetX: this.__x,
       targetY: this.__y + this.__size / 16,
       targetWidth: this.__width,
       targetHeight: this.__height,
     });
+  }
+
+  // AS DropShadowFilter distance=49 at default size 30; scale proportionally
+  private __kageShadowOffset(): number {
+    return (this.__size / 30) * 49;
   }
 
   private kasumi() {
