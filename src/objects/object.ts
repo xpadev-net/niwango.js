@@ -11,6 +11,13 @@ import { config } from "@/definition/config";
 import { getDistance, getOptions, getSmoothDuration } from "@/utils/object";
 import { uuid } from "@/utils/uuid";
 
+// AS 40fps frame timing: 1 tick = 1000ms/40fps / (1000ms/100vpos) = 2.5 vpos
+const AS_TICK_VPOS = 2.5;
+// AS smooth mover exponential decay divisor (velocity = remaining / 28 + 1)
+const SMOOTH_DECAY_DIVISOR = 28;
+// AS smooth mover minimum step size per tick
+const SMOOTH_MIN_STEP = 1;
+
 const defaultOptions: IObjectOptions = {
   x: 0,
   y: 0,
@@ -327,7 +334,7 @@ abstract class IrObject {
       if (queue && this.mover === "hopping") {
         const _steps = 10;
         const _step = Math.min(
-          Math.floor((currentTime - queue.vpos) / 2.5),
+          Math.floor((currentTime - queue.vpos) / AS_TICK_VPOS),
           _steps,
         );
         return 1 + (_step * _step - (_steps + 1) * _step + _steps) / -50;
@@ -348,7 +355,7 @@ abstract class IrObject {
     } else if (this.mover === "rolling") {
       const _steps = 20;
       const _step = Math.min(
-        Math.floor((currentTime - queue.vpos) / 2.5),
+        Math.floor((currentTime - queue.vpos) / AS_TICK_VPOS),
         _steps,
       );
       const val1 = ((2 * Math.PI) / _steps) * (_step - 1);
@@ -358,10 +365,11 @@ abstract class IrObject {
         (queue.diff[axis] * (currentTime - queue.vpos)) / 50;
       return posY + val2 * (axis === "x" ? Math.cos(val1) : Math.sin(val1));
     } else if (this.mover === "smooth") {
-      const stepCount = Math.floor((currentTime - queue.vpos) / 2.5);
+      // Each step = one AS frame at 40fps
+      const stepCount = Math.floor((currentTime - queue.vpos) / AS_TICK_VPOS);
       let pos = queue.diff[axis];
       for (let i = 0; i < stepCount; i++) {
-        pos -= pos / 28 + 1;
+        pos -= pos / SMOOTH_DECAY_DIVISOR + SMOOTH_MIN_STEP;
       }
       return queue.target[axis] - pos;
     }
