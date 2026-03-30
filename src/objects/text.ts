@@ -303,11 +303,12 @@ class IrText extends IrObject {
       return;
     }
     if (this.__isModified) this.__draw();
+    const { canvas } = getCanvas(this.__id);
     render.drawImage(this, {
       baseX: 0,
       baseY: 0,
-      baseWidth: this.__actualWidth,
-      baseHeight: this.__actualHeight,
+      baseWidth: canvas.width,
+      baseHeight: canvas.height,
       targetX: this.__x,
       targetY: this.__y + this.__size / 16,
       targetWidth: this.__width,
