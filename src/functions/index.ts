@@ -2,7 +2,7 @@ import Core from "@xpadev-net/niwango-core";
 
 import { processCommentTrigger } from "@/functions/commentTrigger";
 import { processDrawShape } from "@/functions/drawShape";
-import { processDrawText,processDt } from "@/functions/drawText";
+import { processDrawText, processDt } from "@/functions/drawText";
 import { processRand } from "@/functions/rand";
 import { processTimer } from "@/functions/timer";
 

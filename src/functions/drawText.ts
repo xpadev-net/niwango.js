@@ -65,4 +65,4 @@ const processDt: IrFunction = (
   return new IrText(args);
 };
 
-export { processDrawText,processDt };
+export { processDrawText, processDt };
