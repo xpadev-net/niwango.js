@@ -80,6 +80,14 @@ class IrText extends IrObject {
     this.__draw();
   }
 
+  protected override get __baseWidth(): number {
+    return this.__actualWidth * this.__scale;
+  }
+
+  protected override get __baseHeight(): number {
+    return this.__actualHeight * this.__scale;
+  }
+
   get size() {
     return this.options.size;
   }

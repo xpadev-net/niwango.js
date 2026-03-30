@@ -133,11 +133,10 @@ abstract class IrObject {
     const paddingLeft = isWide
       ? 0
       : (config.stageWidth.full - config.stageWidth.default) / 2;
-    const commentMaskOffset =
-      isWide && commentmask
-        ? -(config.commentLayerWidth.full - config.commentLayerWidth.default) /
-          2
-        : 0;
+    const mode = isWide ? "full" : "default";
+    const commentMaskOffset = commentmask
+      ? -(config.commentLayerWidth[mode] - config.videoLayerWidth[mode]) / 2
+      : 0;
     const w = this.__baseWidth;
     if (this.options.posX === "migi") {
       return activeWidth + posX - w + paddingLeft + commentMaskOffset;
@@ -369,7 +368,14 @@ abstract class IrObject {
       const stepCount = Math.floor((currentTime - queue.vpos) / AS_TICK_VPOS);
       let pos = queue.diff[axis];
       for (let i = 0; i < stepCount; i++) {
-        pos -= pos / SMOOTH_DECAY_DIVISOR + SMOOTH_MIN_STEP;
+        const step =
+          Math.sign(pos) *
+          (Math.abs(pos) / SMOOTH_DECAY_DIVISOR + SMOOTH_MIN_STEP);
+        if (Math.abs(step) >= Math.abs(pos)) {
+          pos = 0;
+          break;
+        }
+        pos -= step;
       }
       return queue.target[axis] - pos;
     }
