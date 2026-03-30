@@ -101,7 +101,6 @@ class IrText extends IrObject {
     }
     this.options.size = val;
     this.__updateFont();
-    this.parsedComment = parse(this.text, val < 3);
     this.__modified = true;
   }
 

@@ -44,6 +44,7 @@ class DomRender implements IRender {
     const canvas = getCanvas(item.__id).canvas;
     if (!ids.includes(item.__id)) {
       this.renderElement.appendChild(canvas);
+      canvas.id = item.__id;
       canvas.style.position = "absolute";
       ids.push(item.__id);
     }
