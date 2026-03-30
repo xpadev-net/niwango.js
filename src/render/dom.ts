@@ -7,12 +7,11 @@ import { IrObject } from "@/objects/object";
 const isDrawOptionA = (i: DrawOptions): i is DrawOptionA =>
   (i as DrawOptionA).baseX !== undefined;
 
-let ids: string[] = [];
-
 class DomRender implements IRender {
   private readonly targetElement: HTMLDivElement;
   private readonly renderElement: HTMLDivElement;
   private readonly innerElement: HTMLDivElement;
+  private ids: string[] = [];
   constructor(targetElement: HTMLDivElement) {
     this.targetElement = targetElement;
     targetElement.innerHTML = "";
@@ -42,10 +41,11 @@ class DomRender implements IRender {
 
   public drawImage(item: IrObject, options: DrawOptions) {
     const canvas = getCanvas(item.__id).canvas;
-    if (!ids.includes(item.__id)) {
+    if (!this.ids.includes(item.__id)) {
       this.renderElement.appendChild(canvas);
+      canvas.id = item.__id;
       canvas.style.position = "absolute";
-      ids.push(item.__id);
+      this.ids.push(item.__id);
     }
     canvas.style.display = item.visible ? "block" : "none";
     canvas.setAttribute("options", JSON.stringify(item));
@@ -80,11 +80,11 @@ class DomRender implements IRender {
   }
 
   public clear() {
-    for (const id of ids) {
+    for (const id of this.ids) {
       const element = document.getElementById(id);
       element && (element.style.display = "none");
     }
-    ids = [];
+    this.ids = [];
   }
 }
 

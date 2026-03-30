@@ -36,6 +36,7 @@ const processDrawShape: IrFunction = (
       "commentmask",
       "alpha",
       "rotation",
+      "scale",
       "mover",
     ],
     trace,
