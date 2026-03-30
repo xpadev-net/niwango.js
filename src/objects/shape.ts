@@ -92,6 +92,14 @@ class IrShape extends IrObject {
     this.__modified = true;
   }
 
+  protected override get __baseWidth(): number {
+    return this.__width * this.scale;
+  }
+
+  protected override get __baseHeight(): number {
+    return this.__height * this.scale;
+  }
+
   protected override get __commentmask(): boolean {
     return this.options.commentmask;
   }
@@ -156,17 +164,22 @@ class IrShape extends IrObject {
       return;
     }
     if (this.__isModified) this.__draw();
+    const targetWidth = this.__baseWidth;
+    const targetHeight = this.__baseHeight;
+    const options = {
+      baseX: 0,
+      baseY: 0,
+      baseWidth: this.__width,
+      baseHeight: this.__height,
+      targetX: this.__x,
+      targetY: this.__y,
+      targetWidth,
+      targetHeight,
+    };
     if (this.rotation % 360 !== 0) {
-      render.drawImage(this, {
-        targetX: this.__x,
-        targetY: this.__y,
-        rotate: this.rotation,
-      });
+      render.drawImage(this, { ...options, rotate: this.rotation });
     } else {
-      render.drawImage(this, {
-        targetX: this.__x,
-        targetY: this.__y,
-      });
+      render.drawImage(this, options);
     }
   }
 }
