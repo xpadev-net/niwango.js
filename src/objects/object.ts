@@ -8,15 +8,15 @@ import {
 import { currentTime, isWide } from "@/context";
 import { register } from "@/contexts/objectManager";
 import { config } from "@/definition/config";
-import { getDistance, getOptions, getSmoothDuration } from "@/utils/object";
+import {
+  AS_TICK_VPOS,
+  getDistance,
+  getOptions,
+  getSmoothDuration,
+  SMOOTH_DECAY_DIVISOR,
+  SMOOTH_MIN_STEP,
+} from "@/utils/object";
 import { uuid } from "@/utils/uuid";
-
-// AS 40fps frame timing: 1 tick = 1000ms/40fps / (1000ms/100vpos) = 2.5 vpos
-const AS_TICK_VPOS = 2.5;
-// AS smooth mover exponential decay divisor (velocity = remaining / 28 + 1)
-const SMOOTH_DECAY_DIVISOR = 28;
-// AS smooth mover minimum step size per tick
-const SMOOTH_MIN_STEP = 1;
 
 const defaultOptions: IObjectOptions = {
   x: 0,

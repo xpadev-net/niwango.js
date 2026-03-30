@@ -35,4 +35,11 @@ const getOptions = <T extends IObjectOptions>(
   return result;
 };
 
-export { getDistance, getOptions, getSmoothDuration };
+export {
+  AS_TICK_VPOS,
+  getDistance,
+  getOptions,
+  getSmoothDuration,
+  SMOOTH_DECAY_DIVISOR,
+  SMOOTH_MIN_STEP,
+};
