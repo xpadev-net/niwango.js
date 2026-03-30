@@ -32,6 +32,14 @@ const initConfig = () => {
       default: 512,
       full: 672,
     },
+    videoLayerWidth: {
+      default: 512,
+      full: 640,
+    },
+    commentLayerWidth: {
+      default: 544,
+      full: 672,
+    },
     stageHeight: 384,
     canvasWidth: 672,
     canvasHeight: 384,

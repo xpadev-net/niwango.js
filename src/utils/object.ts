@@ -3,10 +3,10 @@ import { IObjectOptions, IrObjectPos } from "@/@types/IrObject";
 const getSmoothDuration = (distance: number) => {
   let step = 0;
   while (distance > 0) {
-    distance -= distance / 14 + 1;
+    distance -= distance / 28 + 1;
     step++;
   }
-  return step * 5;
+  return step * 2.5;
 };
 
 const getDistance = (pos1: IrObjectPos, pos2: IrObjectPos) => {

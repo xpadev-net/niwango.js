@@ -57,8 +57,8 @@ class IrShape extends IrObject {
     const options = format(_options, optionTypes);
     super(options);
     this.options = getOptions(defaultOptions, options);
-    this.__width = this.options.width * this.options.scale;
-    this.__height = this.options.height * this.options.scale;
+    this.__width = this.options.width;
+    this.__height = this.options.height;
     this.__parsePos();
     this.__draw();
   }
@@ -78,7 +78,7 @@ class IrShape extends IrObject {
 
   override set width(val) {
     this.options.width = val;
-    this.__width = val * this.options.scale;
+    this.__width = val;
     this.__modified = true;
   }
 
@@ -88,8 +88,12 @@ class IrShape extends IrObject {
 
   override set height(val) {
     this.options.height = val;
-    this.__height = val * this.options.scale;
+    this.__height = val;
     this.__modified = true;
+  }
+
+  protected override get __commentmask(): boolean {
+    return this.options.commentmask;
   }
 
   get mask() {
@@ -121,8 +125,8 @@ class IrShape extends IrObject {
   }
 
   override __draw() {
-    this.__width = this.options.width * this.scale;
-    this.__height = this.options.height * this.scale;
+    this.__width = this.options.width;
+    this.__height = this.options.height;
     this.__modified = false;
     const { canvas, context } = getCanvas(this.__id);
     canvas.width = this.__width;

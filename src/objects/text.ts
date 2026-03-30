@@ -37,7 +37,7 @@ const defaultOptions: ITextOptions = {
   pos: "naka",
   posX: "naka",
   posY: "naka",
-  color: 0,
+  color: 16777215,
   bold: false,
   visible: true,
   scale: 1,
@@ -210,6 +210,12 @@ class IrText extends IrObject {
     const lineOffset = this.parsedComment.lineOffset;
     context.font = parseFont(this.parsedComment.font, this.__size);
     context.globalAlpha = (100 - this.options.alpha) / 100;
+    if (this.filter === "kage") {
+      context.shadowColor = "rgba(0, 0, 0, 1)";
+      context.shadowOffsetX = 34.6;
+      context.shadowOffsetY = 34.6;
+      context.shadowBlur = 5;
+    }
     let lastFont = this.parsedComment.font;
     let leftOffset = 0;
     let lineCount = 0;
@@ -229,7 +235,8 @@ class IrText extends IrObject {
             this.__size * config.lineHeight * config.commentYOffset -
             reverseOffset;
           if (this.filter === "fuchi") {
-            context.lineWidth = 4;
+            context.lineWidth = 8;
+            context.lineJoin = "round";
             context.strokeText(line, posX, posY);
           }
           context.fillText(line, posX, posY);
@@ -252,6 +259,8 @@ class IrText extends IrObject {
         switch (part.type) {
           case "fill": {
             if (this.filter === "fuchi") {
+              context.lineWidth = 8;
+              context.lineJoin = "round";
               context.strokeRect(
                 posX,
                 posY,
@@ -269,6 +278,8 @@ class IrText extends IrObject {
           }
           case "text":
             if (this.filter === "fuchi") {
+              context.lineWidth = 8;
+              context.lineJoin = "round";
               context.strokeText(part.text, posX, posY);
             }
             context.fillText(part.text, posX, posY);

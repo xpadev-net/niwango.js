@@ -18,7 +18,7 @@ const defaultOptions: IObjectOptions = {
   pos: "naka",
   posX: "naka",
   posY: "naka",
-  color: 0,
+  color: 16777215,
   visible: true,
   alpha: 0,
   scale: 1,
@@ -35,6 +35,7 @@ abstract class IrObject {
   protected __modified: boolean;
   protected moverQueue: IrObjectMoverQueue;
   public readonly __id: string;
+  public readonly __creationVpos: number;
   public readonly __type: string = "IrObject";
   public readonly __NIWANGO_LITERAL: string = "IrObject";
 
@@ -43,6 +44,7 @@ abstract class IrObject {
     this.moverQueue = [];
     this.options = getOptions(defaultOptions, options);
     this.__id = this.options.__id ?? uuid();
+    this.__creationVpos = currentTime;
     this.__width = this.__height = 0;
     this.__modified = false;
     this.__updateColor();
@@ -100,29 +102,42 @@ abstract class IrObject {
     this.__updateMoverQueue(lastQueue, currentPos, targetPos);
   }
 
+  protected get __commentmask(): boolean {
+    return false;
+  }
+
+  protected get __baseWidth(): number {
+    return this.__width;
+  }
+
+  protected get __baseHeight(): number {
+    return this.__height;
+  }
+
   get __x() {
     this.__filterMoverQueue();
     const currentQueue = this.moverQueue[0];
     const posX = this.calcMover(currentQueue, this.options.x, "x");
+    const commentmask = this.__commentmask;
+    const layerWidth = commentmask
+      ? config.commentLayerWidth
+      : config.videoLayerWidth;
+    const activeWidth = layerWidth[isWide ? "full" : "default"];
     const paddingLeft = isWide
       ? 0
       : (config.stageWidth.full - config.stageWidth.default) / 2;
+    const commentMaskOffset =
+      isWide && commentmask
+        ? -(config.commentLayerWidth.full - config.commentLayerWidth.default) /
+          2
+        : 0;
+    const w = this.__baseWidth;
     if (this.options.posX === "migi") {
-      return (
-        config.stageWidth[isWide ? "full" : "default"] +
-        posX -
-        this.width +
-        paddingLeft
-      );
+      return activeWidth + posX - w + paddingLeft + commentMaskOffset;
     } else if (this.options.posX === "hidari") {
-      return posX + paddingLeft;
+      return posX + paddingLeft + commentMaskOffset;
     }
-    return (
-      config.stageWidth[isWide ? "full" : "default"] / 2 +
-      posX -
-      this.width / 2 +
-      paddingLeft
-    );
+    return activeWidth / 2 + posX - w / 2 + paddingLeft + commentMaskOffset;
   }
 
   get y() {
@@ -152,12 +167,13 @@ abstract class IrObject {
     this.__filterMoverQueue();
     const currentQueue = this.moverQueue[0];
     const posY = this.calcMover(currentQueue, this.options.y, "y");
+    const h = this.__baseHeight;
     if (this.options.posY === "ue") {
       return posY;
     } else if (this.options.posY === "shita") {
-      return config.canvasHeight + posY - this.height;
+      return config.canvasHeight + posY - h;
     }
-    return config.canvasHeight / 2 + posY - this.height / 2;
+    return config.canvasHeight / 2 + posY - h / 2;
   }
 
   get z() {
@@ -246,7 +262,7 @@ abstract class IrObject {
         target: targetPos,
         diff: diff,
         vpos: currentTime,
-        duration: this.mover === "simple" ? 50 : 100,
+        duration: this.mover === "simple" || this.mover === "hopping" ? 25 : 50,
       });
     }
     this.__filterMoverQueue();
@@ -310,7 +326,10 @@ abstract class IrObject {
     if (axis === "scale") {
       if (queue && this.mover === "hopping") {
         const _steps = 10;
-        const _step = Math.floor((currentTime - queue.vpos) / 10);
+        const _step = Math.min(
+          Math.floor((currentTime - queue.vpos) / 2.5),
+          _steps,
+        );
         return 1 + (_step * _step - (_steps + 1) * _step + _steps) / -50;
       }
       return 1;
@@ -319,27 +338,30 @@ abstract class IrObject {
     if (this.mover === "simple") {
       return (
         queue.current[axis] +
-        (queue.diff[axis] * (currentTime - queue.vpos)) / 50
+        (queue.diff[axis] * (currentTime - queue.vpos)) / 25
       );
     } else if (this.mover === "hopping") {
       return (
         queue.current[axis] +
-        (queue.diff[axis] * (currentTime - queue.vpos)) / 100
+        (queue.diff[axis] * (currentTime - queue.vpos)) / 25
       );
     } else if (this.mover === "rolling") {
       const _steps = 20;
-      const _step = Math.floor((currentTime - queue.vpos) / 2.5);
+      const _step = Math.min(
+        Math.floor((currentTime - queue.vpos) / 2.5),
+        _steps,
+      );
       const val1 = ((2 * Math.PI) / _steps) * (_step - 1);
       const val2 = (_step * _step - (_steps + 1) * _step + _steps) / -5;
       const posY =
         queue.current[axis] +
-        (queue.diff[axis] * (currentTime - queue.vpos)) / 100;
+        (queue.diff[axis] * (currentTime - queue.vpos)) / 50;
       return posY + val2 * (axis === "x" ? Math.cos(val1) : Math.sin(val1));
     } else if (this.mover === "smooth") {
-      const stepCount = Math.floor((currentTime - queue.vpos) / 5);
+      const stepCount = Math.floor((currentTime - queue.vpos) / 2.5);
       let pos = queue.diff[axis];
       for (let i = 0; i < stepCount; i++) {
-        pos -= pos / 14 + 1;
+        pos -= pos / 28 + 1;
       }
       return queue.target[axis] - pos;
     }
