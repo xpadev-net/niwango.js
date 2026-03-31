@@ -1,4 +1,4 @@
-name: Typescript Jest
+name: Typescript Vitest
 
 on:
   push:
@@ -10,8 +10,8 @@ defaults:
     shell: bash
 
 jobs:
-  typescript-jest:
-    name: Typescript Jest
+  typescript-vitest:
+    name: Typescript Vitest
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v3
