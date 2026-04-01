@@ -7,4 +7,3 @@ test("rand", () => {
   expect(rand1).toBe(rand2);
   expect(rand3).not.toBe(rand1);
 });
-export {};

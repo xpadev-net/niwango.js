@@ -30,8 +30,7 @@ type ITextOptions = {
   bold: boolean;
   filter: ITextFilter;
 } & IObjectOptions;
-type ITextOptionsNullable = Partial<ITextOptions>;
-
+export type ITextOptionsNullable = Partial<ITextOptions>;
 export type ITextLiteral = {
   __NIWANGO_LITERAL: "IrObject";
   __type: "IrText";

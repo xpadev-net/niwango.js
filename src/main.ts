@@ -1,7 +1,7 @@
 import Core from "@xpadev-net/niwango-core";
 
-import { Comment } from "@/@types/comment";
-import { IRender } from "@/@types/IRender";
+import type { Comment } from "@/@types/comment";
+import type { IRender } from "@/@types/IRender";
 import {
   comments,
   setComments,
@@ -89,7 +89,7 @@ class Niwango {
       }
       try {
         this.lastVpos = restoreSnapshot(vpos);
-      } catch (e) {
+      } catch (_e) {
         this.lastVpos = vpos;
       }
     }

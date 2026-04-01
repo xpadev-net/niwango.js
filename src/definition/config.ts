@@ -1,4 +1,4 @@
-import { baseConfig } from "@/@types/config";
+import type { baseConfig } from "@/@types/config";
 import type { platform } from "@/@types/fonts";
 import { colors } from "@/definition/colors";
 import { fonts } from "@/definition/fonts";
@@ -11,7 +11,7 @@ let config: baseConfig;
  * コンフィグ初期化
  */
 const initConfig = () => {
-  const platform: platform = (function (ua) {
+  const platform: platform = ((ua) => {
     if (ua.match(/windows nt 6\.[12]/i)) {
       return "win7";
     } else if (ua.match(/windows nt (6\.3|10\.\d+)/i)) {

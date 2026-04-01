@@ -1,7 +1,7 @@
-import Core, { T_scope } from "@xpadev-net/niwango-core";
+import Core, { type T_scope } from "@xpadev-net/niwango-core";
 
-import { commentFont } from "@/@types/IrText";
-import { ValueType } from "@/@types/types";
+import type { commentFont } from "@/@types/IrText";
+import type { ValueType } from "@/@types/types";
 import { config } from "@/definition/config";
 
 /**

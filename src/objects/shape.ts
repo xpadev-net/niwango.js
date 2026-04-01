@@ -1,5 +1,5 @@
-import { IShapeOptions, IShapeOptionsNullable } from "@/@types/IrShape";
-import { KTMap } from "@/@types/types";
+import type { IShapeOptions, IShapeOptionsNullable } from "@/@types/IrShape";
+import type { KTMap } from "@/@types/types";
 import { render } from "@/context";
 import { getCanvas } from "@/contexts/canvas";
 import { IrObject } from "@/objects/object";

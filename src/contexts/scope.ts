@@ -1,6 +1,6 @@
-import { T_scope } from "@xpadev-net/niwango-core";
+import type { T_scope } from "@xpadev-net/niwango-core";
 
-import { T_environment } from "@/@types/types";
+import type { T_environment } from "@/@types/types";
 
 let globalScope: T_scope;
 let environmentScope: T_environment;

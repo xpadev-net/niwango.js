@@ -1,5 +1,9 @@
-import { charItem, measureTextInput, parsedComment } from "@/@types/flashText";
-import {
+import type {
+  charItem,
+  measureTextInput,
+  parsedComment,
+} from "@/@types/flashText";
+import type {
   commentContentIndex,
   commentContentItem,
   commentFlashFont,
@@ -44,18 +48,21 @@ const getFontIndex = (string: string): commentContentIndex[] => {
     gothic: new RegExp(config.flashChar.gothic),
   };
   const index: commentContentIndex[] = [];
-  let match;
-  if ((match = regex.simsunStrong.exec(string)) !== null) {
-    index.push({ font: "simsunStrong", index: match.index });
+  const simsunStrongMatch = regex.simsunStrong.exec(string);
+  if (simsunStrongMatch !== null) {
+    index.push({ font: "simsunStrong", index: simsunStrongMatch.index });
   }
-  if ((match = regex.simsunWeak.exec(string)) !== null) {
-    index.push({ font: "simsunWeak", index: match.index });
+  const simsunWeakMatch = regex.simsunWeak.exec(string);
+  if (simsunWeakMatch !== null) {
+    index.push({ font: "simsunWeak", index: simsunWeakMatch.index });
   }
-  if ((match = regex.gulim.exec(string)) !== null) {
-    index.push({ font: "gulim", index: match.index });
+  const gulimMatch = regex.gulim.exec(string);
+  if (gulimMatch !== null) {
+    index.push({ font: "gulim", index: gulimMatch.index });
   }
-  if ((match = regex.gothic.exec(string)) !== null) {
-    index.push({ font: "gothic", index: match.index });
+  const gothicMatch = regex.gothic.exec(string);
+  if (gothicMatch !== null) {
+    index.push({ font: "gothic", index: gothicMatch.index });
   }
   return index;
 };
