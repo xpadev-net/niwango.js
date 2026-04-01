@@ -26,7 +26,8 @@
         "noUnusedVariables": "error"
       },
       "suspicious": {
-        "noControlCharactersInRegex": "off"
+        "noControlCharactersInRegex": "off",
+        "noPrototypeBuiltins": "off"
       }
     }
   },

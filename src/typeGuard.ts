@@ -37,7 +37,7 @@ const objectVerify = (item: unknown, keys: string[]): boolean => {
     return false;
   }
   for (const key of keys) {
-    if (!Object.hasOwn(item, key)) {
+    if (!Object.prototype.hasOwnProperty.call(item, key)) {
       return false;
     }
   }
