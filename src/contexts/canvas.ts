@@ -1,4 +1,4 @@
-import { ICanvas } from "@/@types/types";
+import type { ICanvas } from "@/@types/types";
 import { config } from "@/definition/config";
 
 let internalCanvas: { [id: string]: ICanvas } = {};
