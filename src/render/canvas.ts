@@ -1,8 +1,8 @@
-import { DrawOptionA, DrawOptions, IRender } from "@/@types/IRender";
+import type { DrawOptionA, DrawOptions, IRender } from "@/@types/IRender";
 import { isWide } from "@/context";
 import { getCanvas } from "@/contexts/canvas";
 import { config } from "@/definition/config";
-import { IrObject } from "@/objects/object";
+import type { IrObject } from "@/objects/object";
 
 const isDrawOptionA = (i: DrawOptions): i is DrawOptionA =>
   (i as DrawOptionA).baseX !== undefined;

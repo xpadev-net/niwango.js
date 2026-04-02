@@ -1,6 +1,6 @@
-import { Comment } from "@/@types/comment";
-import { IShapeLiteral } from "@/@types/IrShape";
-import { ITextLiteral } from "@/@types/IrText";
+import type { Comment } from "@/@types/comment";
+import type { IShapeLiteral } from "@/@types/IrShape";
+import type { ITextLiteral } from "@/@types/IrText";
 import { IrObject } from "@/objects/object";
 
 const typeGuard = {

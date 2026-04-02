@@ -1,5 +1,5 @@
-import { Comment } from "@/@types/comment";
-import { IRender } from "@/@types/IRender";
+import type { Comment } from "@/@types/comment";
+import type { IRender } from "@/@types/IRender";
 
 let render: IRender;
 

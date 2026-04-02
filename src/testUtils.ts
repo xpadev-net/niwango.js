@@ -28,7 +28,7 @@ const run = (niwango: string) => {
     isWide: null, //false
     lastVideo: "sm1", //sm1
   };
-  const ast = Core.parseScript(niwango, "vitest");
+  const ast = Core.parseScript(niwango, "test.niwascript");
   return Core.execute(
     ast,
     [globalScope, environmentScope, Core.prototypeScope],

@@ -1,11 +1,15 @@
-import Core, { A_ANY, IrFunction } from "@xpadev-net/niwango-core";
-import { A_CallExpression, T_scope } from "@xpadev-net/niwango-core";
+import Core, {
+  type A_ANY,
+  type A_CallExpression,
+  type IrFunction,
+  type T_scope,
+} from "@xpadev-net/niwango-core";
 
 import typeGuard from "@/typeGuard";
 import { mt19937 } from "@/utils/mt19937";
 
 let randCalledCount = 0;
-const onload = new Date().getTime();
+const onload = Date.now();
 /**
  * mt19937で乱数を生成する
  * オリジナルのとおりに実装してるはずだけど何故か結果が違う
