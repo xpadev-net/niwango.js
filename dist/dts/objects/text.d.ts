@@ -1,0 +1,33 @@
+import type { ITextOptions, ITextOptionsNullable } from "./../@types/IrText";
+import { IrObject } from "./../objects/object";
+declare class IrText extends IrObject {
+    protected options: ITextOptions;
+    private parsedComment;
+    private __actualWidth;
+    private __actualHeight;
+    private __scale;
+    private __size;
+    private __reverse;
+    readonly __type: string;
+    constructor(_options: ITextOptionsNullable);
+    protected get __baseWidth(): number;
+    protected get __baseHeight(): number;
+    get size(): number;
+    set size(val: number);
+    get text(): string;
+    get scale(): number;
+    set text(string: string);
+    set scale(val: number);
+    get bold(): boolean;
+    set bold(val: boolean);
+    get filter(): import("./../@types/IrText").ITextFilter;
+    set filter(val: import("./../@types/IrText").ITextFilter);
+    __updateFont(): void;
+    __updateColor(): void;
+    __measure(): void;
+    __draw(): void;
+    draw(): void;
+    private __kageShadowOffset;
+    private kasumi;
+}
+export { IrText };
