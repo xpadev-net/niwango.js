@@ -1,17 +1,25 @@
-name: Typescript Jest
+name: Typescript Vitest
 
 on:
   push:
     paths:
       - "src/**"
+      - "types/**"
+      - "vitest.config.ts"
+      - "tsconfig.json"
+      - "package.json"
+      - "pnpm-lock.yaml"
+      - "rolldown.config*.mjs"
+      - "rolldown.config*.dts.mjs"
+      - ".github/workflows/vitest.yml"
 
 defaults:
   run:
     shell: bash
 
 jobs:
-  typescript-jest:
-    name: Typescript Jest
+  typescript-vitest:
+    name: Typescript Vitest
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v3
