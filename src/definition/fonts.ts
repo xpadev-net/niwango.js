@@ -74,4 +74,5 @@ const fonts: { [key in platform]: platformFont } = {
     defont: build([fontTemplates.sansSerif600]),
   },
 };
+
 export { fonts, fontTemplates };

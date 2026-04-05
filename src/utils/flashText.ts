@@ -1,5 +1,9 @@
-import { charItem, measureTextInput, parsedComment } from "@/@types/flashText";
-import {
+import type {
+  charItem,
+  measureTextInput,
+  parsedComment,
+} from "@/@types/flashText";
+import type {
   commentContentIndex,
   commentContentItem,
   commentFlashFont,
@@ -44,17 +48,21 @@ const getFontIndex = (string: string): commentContentIndex[] => {
     gothic: new RegExp(config.flashChar.gothic),
   };
   const index: commentContentIndex[] = [];
-  let match;
-  if ((match = regex.simsunStrong.exec(string)) !== null) {
+  let match: RegExpExecArray | null;
+  match = regex.simsunStrong.exec(string);
+  if (match !== null) {
     index.push({ font: "simsunStrong", index: match.index });
   }
-  if ((match = regex.simsunWeak.exec(string)) !== null) {
+  match = regex.simsunWeak.exec(string);
+  if (match !== null) {
     index.push({ font: "simsunWeak", index: match.index });
   }
-  if ((match = regex.gulim.exec(string)) !== null) {
+  match = regex.gulim.exec(string);
+  if (match !== null) {
     index.push({ font: "gulim", index: match.index });
   }
-  if ((match = regex.gothic.exec(string)) !== null) {
+  match = regex.gothic.exec(string);
+  if (match !== null) {
     index.push({ font: "gothic", index: match.index });
   }
   return index;
@@ -285,4 +293,5 @@ const measure = (
     config.commentYPaddingTop;
   return { width: Math.max(...width_arr, 0), height };
 };
+
 export { measure, parse };

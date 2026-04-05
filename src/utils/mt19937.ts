@@ -123,4 +123,5 @@ const mt19937 = (seed: number): number => {
   __init_by_array([seed], 1);
   return __genrand_int32();
 };
+
 export { mt19937 };

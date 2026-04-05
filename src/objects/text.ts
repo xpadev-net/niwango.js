@@ -1,6 +1,6 @@
-import { parsedComment } from "@/@types/flashText";
-import { ITextOptions, ITextOptionsNullable } from "@/@types/IrText";
-import { KTMap } from "@/@types/types";
+import type { parsedComment } from "@/@types/flashText";
+import type { ITextOptions, ITextOptionsNullable } from "@/@types/IrText";
+import type { KTMap } from "@/@types/types";
 import { render } from "@/context";
 import { getCanvas } from "@/contexts/canvas";
 import { config } from "@/definition/config";
@@ -377,4 +377,5 @@ class IrText extends IrObject {
     );
   }
 }
+
 export { IrText };

@@ -1,4 +1,4 @@
-import {
+import type {
   IObjectMover,
   IObjectOptions,
   IrObjectMoverItem,
@@ -98,7 +98,8 @@ abstract class IrObject {
     const lastQueue = this.moverQueue.filter(
       (queue) => queue.vpos === currentTime,
     )[0];
-    let currentPos, targetPos;
+    let currentPos: IrObjectPos;
+    let targetPos: IrObjectPos;
     if (!lastQueue) {
       currentPos = { x: lastVal, y: this.options.y };
       targetPos = { x: input, y: this.options.y };
@@ -158,7 +159,8 @@ abstract class IrObject {
     const lastQueue = this.moverQueue.filter(
       (queue) => queue.vpos === currentTime,
     )[0];
-    let currentPos, targetPos;
+    let currentPos: IrObjectPos;
+    let targetPos: IrObjectPos;
     if (!lastQueue) {
       currentPos = { x: this.options.x, y: lastVal };
       targetPos = { x: this.options.x, y: input };

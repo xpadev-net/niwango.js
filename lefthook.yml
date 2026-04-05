@@ -1,0 +1,11 @@
+pre-commit:
+  commands:
+    biome:
+      glob: "src/**/*.{ts,tsx}"
+      run: pnpm biome check --write --staged {staged_files}
+      stage_fixed: true
+    check-types:
+      glob: "src/**/*.{ts,tsx}"
+      run: pnpm check-types
+    test:
+      run: pnpm test

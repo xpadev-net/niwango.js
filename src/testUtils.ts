@@ -35,4 +35,5 @@ const run = (niwango: string) => {
     [ast],
   );
 };
+
 export { run };

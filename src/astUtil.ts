@@ -20,4 +20,5 @@ const makeLiteral = (value: string): A_Literal => {
     value: value,
   } as A_Literal;
 };
+
 export { makeIdentifier, makeLiteral };

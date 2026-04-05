@@ -1,6 +1,6 @@
-import { A_ANY } from "@xpadev-net/niwango-core";
+import type { A_ANY } from "@xpadev-net/niwango-core";
 
-import { Script } from "@/@types/types";
+import type { Script } from "@/@types/types";
 
 let scripts: Script[] = [];
 

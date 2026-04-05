@@ -1,4 +1,4 @@
-import { IrObject } from "@/objects/object";
+import type { IrObject } from "@/objects/object";
 
 let drawObjects: IrObject[] = [];
 
@@ -35,4 +35,5 @@ const register = (item: IrObject) => {
 const resetObjects = () => {
   drawObjects = [];
 };
+
 export { draw, drawObjects, register, resetObjects };

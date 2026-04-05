@@ -1,6 +1,6 @@
-import { A_ANY, T_scope } from "@xpadev-net/niwango-core";
+import type { A_ANY, T_scope } from "@xpadev-net/niwango-core";
 
-import { IQueue } from "@/@types/types";
+import type { IQueue } from "@/@types/types";
 import { currentTime } from "@/context";
 
 let queue: IQueue[] = [];

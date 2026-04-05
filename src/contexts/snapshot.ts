@@ -1,6 +1,6 @@
 import Core from "@xpadev-net/niwango-core";
 
-import { ISnapshot } from "@/@types/types";
+import type { ISnapshot } from "@/@types/types";
 import { handlers, setHandlers } from "@/contexts/commentHandler";
 import { drawObjects, resetObjects } from "@/contexts/objectManager";
 import { queue, setQueue } from "@/contexts/queue";
