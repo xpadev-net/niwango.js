@@ -1,0 +1,15 @@
+allowBuilds:
+  esbuild: set this to true or false
+  lefthook: true
+minimumReleaseAgeExclude:
+  - esbuild@0.24.3
+  - vite@6.4.2
+  - postcss@8.5.10
+  - ws@8.20.1
+  - vitest@3.2.6
+  - esbuild@0.28.1
+overrides:
+  esbuild@<=0.24.2: ^0.24.3
+  esbuild@>=0.17.0 <0.28.1: ^0.28.1
+  vite@<=6.4.1: ^6.4.2
+  vitest@<3.2.6: ^3.2.6
