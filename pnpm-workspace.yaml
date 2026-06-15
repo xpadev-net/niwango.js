@@ -1,5 +1,5 @@
 allowBuilds:
-  esbuild: set this to true or false
+  esbuild: true
   lefthook: true
 minimumReleaseAgeExclude:
   - esbuild@0.24.3
