@@ -30,6 +30,29 @@ import { DomRender } from "@/render/dom";
 import { setup } from "@/utils/setup";
 import { nativeSort } from "@/utils/sort";
 
+const MAX_DRAW_VPOS_STEP_WINDOW = 100_000;
+
+const validateDrawVpos = (vpos: number) => {
+  if (!Number.isFinite(vpos)) {
+    throw new RangeError("Niwango.draw vpos must be a finite number.");
+  }
+  if (vpos < 0) {
+    throw new RangeError("Niwango.draw vpos must be non-negative.");
+  }
+  if (!Number.isInteger(vpos)) {
+    throw new RangeError("Niwango.draw vpos must be an integer.");
+  }
+};
+
+const validateDrawStepWindow = (fromVpos: number, toVpos: number) => {
+  const stepWindow = toVpos - fromVpos;
+  if (stepWindow > MAX_DRAW_VPOS_STEP_WINDOW) {
+    throw new RangeError(
+      `Niwango.draw cannot process more than ${MAX_DRAW_VPOS_STEP_WINDOW} vpos steps at once. Requested ${stepWindow} steps.`,
+    );
+  }
+};
+
 class Niwango {
   private readonly render: IRender;
   static default = Niwango;
@@ -93,6 +116,7 @@ class Niwango {
         this.lastVpos = vpos;
       }
     }
+    validateDrawStepWindow(this.lastVpos, vpos);
     let lastSnapshotVpos = getLatestSnapshotVpos(vpos);
     for (let i = this.lastVpos; i <= vpos; i++) {
       if (lastSnapshotVpos + config.snapshotIntervalVpos <= i) {
@@ -141,6 +165,7 @@ class Niwango {
   }
 
   public draw(vpos: number, clear = true) {
+    validateDrawVpos(vpos);
     if (this.lastVpos === vpos) return false;
     this.execute(vpos);
     this._draw(clear);
