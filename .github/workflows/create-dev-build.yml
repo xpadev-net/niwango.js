@@ -34,10 +34,8 @@ jobs:
         run: sed -i -e '/\/dist/d' .gitignore
       - name: generate dev build
         run: pnpm build
-      - name: setup sandbox
-        run: |
-          cp ./dist/bundle.js ./docs/niwango.js
-          sed --in-place --expression='s/..\/dist\/bundle.js/.\/niwango.js/' docs/playground.html
+      - name: copy playground bundle
+        run: cp ./dist/browser/niwango.js ./docs/niwango.js
       - name: generate typedoc
         run: pnpm typedoc
       - name: update .gitignore
