@@ -47,6 +47,12 @@ const defaultOptions: IShapeOptions = {
   mover: "",
 };
 
+const assertMaskSupported = (mask: unknown) => {
+  if (mask === true) {
+    throw new Error("drawShape mask option is not supported");
+  }
+};
+
 /**
  * 図形オブジェクトのクラス
  */
@@ -55,6 +61,7 @@ class IrShape extends IrObject {
   public override readonly __type: string = "IrShape";
   constructor(_options: IShapeOptionsNullable) {
     const options = format(_options, optionTypes);
+    assertMaskSupported(options.mask);
     super(options);
     this.options = getOptions(defaultOptions, options);
     this.__width = this.options.width;
@@ -109,6 +116,7 @@ class IrShape extends IrObject {
   }
 
   set mask(val) {
+    assertMaskSupported(val);
     this.options.mask = val;
   }
 
