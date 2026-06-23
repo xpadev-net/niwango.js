@@ -45,7 +45,7 @@ const validateDrawVpos = (vpos: number) => {
 };
 
 const validateDrawStepWindow = (fromVpos: number, toVpos: number) => {
-  const stepWindow = toVpos - fromVpos;
+  const stepWindow = toVpos - Math.max(0, fromVpos);
   if (stepWindow > MAX_DRAW_VPOS_STEP_WINDOW) {
     throw new RangeError(
       `Niwango.draw cannot process more than ${MAX_DRAW_VPOS_STEP_WINDOW} vpos steps at once. Requested ${stepWindow} steps.`,

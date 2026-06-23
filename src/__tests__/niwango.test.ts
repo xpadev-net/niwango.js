@@ -49,7 +49,7 @@ test("draw rejects fractional vpos values", () => {
 test("draw rejects huge forward seek windows", () => {
   const niwango = createNiwango();
 
-  expect(() => niwango.draw(100_000)).toThrow(
+  expect(() => niwango.draw(100_001)).toThrow(
     "Niwango.draw cannot process more than 100000 vpos steps at once. Requested 100001 steps.",
   );
 });
