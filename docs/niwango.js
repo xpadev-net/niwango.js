@@ -3,7 +3,7 @@ niwango.js v0.0.1-canary.20231002-1
 (c) 2023 xpadev-net https://xpadev.net
 Released under the MIT License.
 
-build at: 1782241705183
+build at: 1782242228610
 */
 (function(global, factory) {
 	typeof exports === "object" && typeof module !== "undefined" ? module.exports = factory() : typeof define === "function" && define.amd ? define([], factory) : (global = typeof globalThis !== "undefined" ? globalThis : global || self, global.Niwango = factory());
@@ -12616,18 +12616,33 @@ build at: 1782241705183
 	//#region src/render/canvas.ts
 	const isDrawOptionA$1 = (i) => i.baseX !== void 0;
 	const TO_RADIANS = Math.PI / 180;
+	const RENDER_CANVAS_WIDTH = 1920;
+	const RENDER_CANVAS_HEIGHT = 1080;
+	const DEFAULT_CANVAS_WIDTH = 300;
+	const DEFAULT_CANVAS_HEIGHT = 150;
+	const hasDefaultIntrinsicSize = (canvas) => !canvas.hasAttribute("width") && !canvas.hasAttribute("height") && canvas.width === DEFAULT_CANVAS_WIDTH && canvas.height === DEFAULT_CANVAS_HEIGHT;
+	const hasRenderAspectRatio = (canvas) => canvas.width > 0 && canvas.height > 0 && canvas.width * RENDER_CANVAS_HEIGHT === canvas.height * RENDER_CANVAS_WIDTH;
+	const initializeTargetCanvasSize = (canvas) => {
+		if (hasDefaultIntrinsicSize(canvas)) {
+			canvas.width = RENDER_CANVAS_WIDTH;
+			canvas.height = RENDER_CANVAS_HEIGHT;
+			return;
+		}
+		if (!hasRenderAspectRatio(canvas)) throw new Error(`CanvasRender target canvas must use a 16:9 intrinsic size. Received ${canvas.width}x${canvas.height}.`);
+	};
 	var CanvasRender = class {
 		constructor(targetCanvas) {
 			this.targetCanvas = targetCanvas;
+			initializeTargetCanvasSize(this.targetCanvas);
 			this.renderCanvas = document.createElement("canvas");
-			this.renderCanvas.width = 1920;
-			this.renderCanvas.height = 1080;
+			this.renderCanvas.width = RENDER_CANVAS_WIDTH;
+			this.renderCanvas.height = RENDER_CANVAS_HEIGHT;
 			const targetContext = this.targetCanvas.getContext("2d");
 			const renderContext = this.renderCanvas.getContext("2d");
 			if (!targetContext || !renderContext) throw new Error("failed to get context");
 			this.targetContext = targetContext;
 			this.renderContext = renderContext;
-			this.renderContext.scale(1920 / config.canvasWidth, 1080 / config.canvasHeight);
+			this.renderContext.scale(RENDER_CANVAS_WIDTH / config.canvasWidth, RENDER_CANVAS_HEIGHT / config.canvasHeight);
 		}
 		drawImage(item, options) {
 			const { canvas } = getCanvas(item.__id);

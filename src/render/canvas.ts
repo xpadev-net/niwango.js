@@ -8,6 +8,35 @@ const isDrawOptionA = (i: DrawOptions): i is DrawOptionA =>
   (i as DrawOptionA).baseX !== undefined;
 
 const TO_RADIANS = Math.PI / 180;
+const RENDER_CANVAS_WIDTH = 1920;
+const RENDER_CANVAS_HEIGHT = 1080;
+const DEFAULT_CANVAS_WIDTH = 300;
+const DEFAULT_CANVAS_HEIGHT = 150;
+
+const hasDefaultIntrinsicSize = (canvas: HTMLCanvasElement) =>
+  !canvas.hasAttribute("width") &&
+  !canvas.hasAttribute("height") &&
+  canvas.width === DEFAULT_CANVAS_WIDTH &&
+  canvas.height === DEFAULT_CANVAS_HEIGHT;
+
+const hasRenderAspectRatio = (canvas: HTMLCanvasElement) =>
+  canvas.width > 0 &&
+  canvas.height > 0 &&
+  canvas.width * RENDER_CANVAS_HEIGHT === canvas.height * RENDER_CANVAS_WIDTH;
+
+const initializeTargetCanvasSize = (canvas: HTMLCanvasElement) => {
+  if (hasDefaultIntrinsicSize(canvas)) {
+    canvas.width = RENDER_CANVAS_WIDTH;
+    canvas.height = RENDER_CANVAS_HEIGHT;
+    return;
+  }
+
+  if (!hasRenderAspectRatio(canvas)) {
+    throw new Error(
+      `CanvasRender target canvas must use a 16:9 intrinsic size. Received ${canvas.width}x${canvas.height}.`,
+    );
+  }
+};
 
 class CanvasRender implements IRender {
   private readonly targetCanvas: HTMLCanvasElement;
@@ -16,9 +45,10 @@ class CanvasRender implements IRender {
   private readonly renderContext: CanvasRenderingContext2D;
   constructor(targetCanvas: HTMLCanvasElement) {
     this.targetCanvas = targetCanvas;
+    initializeTargetCanvasSize(this.targetCanvas);
     this.renderCanvas = document.createElement("canvas");
-    this.renderCanvas.width = 1920;
-    this.renderCanvas.height = 1080;
+    this.renderCanvas.width = RENDER_CANVAS_WIDTH;
+    this.renderCanvas.height = RENDER_CANVAS_HEIGHT;
     const targetContext = this.targetCanvas.getContext("2d");
     const renderContext = this.renderCanvas.getContext("2d");
     if (!targetContext || !renderContext)
@@ -26,8 +56,8 @@ class CanvasRender implements IRender {
     this.targetContext = targetContext;
     this.renderContext = renderContext;
     this.renderContext.scale(
-      1920 / config.canvasWidth,
-      1080 / config.canvasHeight,
+      RENDER_CANVAS_WIDTH / config.canvasWidth,
+      RENDER_CANVAS_HEIGHT / config.canvasHeight,
     );
   }
 
