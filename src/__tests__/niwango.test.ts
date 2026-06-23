@@ -46,19 +46,17 @@ test("draw floors fractional vpos values", () => {
   expect(niwango.draw(1.1)).toBe(true);
 });
 
-test("draw rejects huge forward seek windows", () => {
+test("draw skips huge forward seek windows", () => {
   const niwango = createNiwango();
 
-  expect(() => niwango.draw(100_001)).toThrow(
-    "Niwango.draw cannot process more than 100000 vpos steps at once. Requested 100001 steps.",
-  );
+  expect(niwango.draw(100_001)).toBe(false);
+  expect(niwango.draw(100_002)).toBe(true);
 });
 
 test("draw limits forward seeks from the current vpos", () => {
   const niwango = createNiwango();
 
   expect(niwango.draw(10)).toBe(true);
-  expect(() => niwango.draw(100_011)).toThrow(
-    "Niwango.draw cannot process more than 100000 vpos steps at once. Requested 100001 steps.",
-  );
+  expect(niwango.draw(100_011)).toBe(false);
+  expect(niwango.draw(100_012)).toBe(true);
 });

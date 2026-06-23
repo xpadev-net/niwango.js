@@ -42,13 +42,9 @@ const normalizeDrawVpos = (vpos: number) => {
   return Math.floor(vpos);
 };
 
-const validateDrawStepWindow = (fromVpos: number, toVpos: number) => {
+const canProcessDrawStepWindow = (fromVpos: number, toVpos: number) => {
   const stepWindow = toVpos - Math.max(0, fromVpos);
-  if (stepWindow > MAX_DRAW_VPOS_STEP_WINDOW) {
-    throw new RangeError(
-      `Niwango.draw cannot process more than ${MAX_DRAW_VPOS_STEP_WINDOW} vpos steps at once. Requested ${stepWindow} steps.`,
-    );
-  }
+  return stepWindow <= MAX_DRAW_VPOS_STEP_WINDOW;
 };
 
 class Niwango {
@@ -103,10 +99,17 @@ class Niwango {
     });
   }
 
+  private skipToVpos(vpos: number) {
+    getQueue(vpos);
+    getScripts(vpos);
+    setCurrentTime(vpos);
+    this.lastVpos = vpos;
+  }
+
   private execute(vpos: number) {
     if (vpos < this.lastVpos) {
       if (vpos > this.lastVpos - 100) {
-        return;
+        return true;
       }
       try {
         this.lastVpos = restoreSnapshot(vpos);
@@ -114,7 +117,10 @@ class Niwango {
         this.lastVpos = vpos;
       }
     }
-    validateDrawStepWindow(this.lastVpos, vpos);
+    if (!canProcessDrawStepWindow(this.lastVpos, vpos)) {
+      this.skipToVpos(vpos);
+      return false;
+    }
     let lastSnapshotVpos = getLatestSnapshotVpos(vpos);
     for (let i = this.lastVpos; i <= vpos; i++) {
       if (lastSnapshotVpos + config.snapshotIntervalVpos <= i) {
@@ -160,12 +166,13 @@ class Niwango {
       }
     }
     this.lastVpos = vpos;
+    return true;
   }
 
   public draw(vpos: number, clear = true) {
     vpos = normalizeDrawVpos(vpos);
     if (this.lastVpos === vpos) return false;
-    this.execute(vpos);
+    if (!this.execute(vpos)) return false;
     this._draw(clear);
     return true;
   }
