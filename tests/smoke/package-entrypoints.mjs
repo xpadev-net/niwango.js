@@ -26,13 +26,14 @@ mkdirSync(consumerDirectory, { recursive: true });
 
 const packOutput = execFileSync(
   "npm",
-  ["pack", "--ignore-scripts", "--pack-destination", packDirectory],
+  ["pack", "--json", "--ignore-scripts", "--pack-destination", packDirectory],
   {
     cwd: repoRoot,
     encoding: "utf8",
   },
 ).trim();
-const tarball = join(packDirectory, packOutput.split("\n").at(-1));
+const [{ filename: tarballFilename }] = JSON.parse(packOutput);
+const tarball = join(packDirectory, tarballFilename);
 
 writeFileSync(
   join(consumerDirectory, "package.json"),

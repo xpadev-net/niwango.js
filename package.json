@@ -10,10 +10,12 @@
   "exports": {
     ".": {
       "types": "./dist/index.d.ts",
+      "browser": "./dist/browser/niwango.js",
       "import": "./dist/index.mjs",
       "require": "./dist/index.cjs",
       "default": "./dist/index.mjs"
     },
+    "./browser": "./dist/browser/niwango.js",
     "./package.json": "./package.json"
   },
   "scripts": {
