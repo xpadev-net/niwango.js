@@ -14,12 +14,26 @@ const banner = `/*!
 
 export default defineConfig({
   input: 'src/main.ts',
-  output: {
-    file: 'dist/bundle.js',
-    format: 'umd',
-    name: 'Niwango',
-    banner,
-  },
+  output: [
+    {
+      file: 'dist/index.mjs',
+      format: 'es',
+      banner,
+    },
+    {
+      file: 'dist/index.cjs',
+      format: 'cjs',
+      exports: 'default',
+      banner,
+    },
+    {
+      file: 'dist/browser/niwango.js',
+      format: 'umd',
+      name: 'Niwango',
+      exports: 'default',
+      banner,
+    },
+  ],
   resolve: {
     alias: {
       '@': './src',
