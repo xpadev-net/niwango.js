@@ -5,13 +5,16 @@ on:
     branches: [ master ]
   workflow_dispatch:
 
-permissions:
-  contents: write
-  pull-requests: read
+concurrency:
+  group: dev-build-publish
+  cancel-in-progress: false
 
 jobs:
   build:
     runs-on: ubuntu-latest
+    permissions:
+      contents: write
+      pull-requests: read
 
     steps:
       - uses: actions/checkout@v4
