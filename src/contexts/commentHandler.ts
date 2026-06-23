@@ -12,6 +12,18 @@ const resetHandlers = () => {
   handlers = [];
 };
 
+const isExpiredHandler = (handler: IHandler, time: number) =>
+  handler.duration !== undefined && handler.time + handler.duration <= time;
+
+const removeExpiredHandlers = (time: number) => {
+  for (let i = handlers.length - 1; i >= 0; i--) {
+    const handler = handlers[i];
+    if (handler && isExpiredHandler(handler, time)) {
+      handlers.splice(i, 1);
+    }
+  }
+};
+
 const addHandler = (
   script: A_ANY,
   scopes: T_scope[],
@@ -19,6 +31,7 @@ const addHandler = (
   time: number,
   duration?: number,
 ) => {
+  removeExpiredHandlers(time);
   handlers.push({
     script,
     scopes,
@@ -34,6 +47,7 @@ const setHandlers = (newHandlers: IHandler[]) => {
 };
 
 const triggerHandlers = (comment: Comment) => {
+  removeExpiredHandlers(comment._vpos);
   if (comment.message.startsWith("/")) return;
   for (const handler of handlers) {
     const globalScope = getGlobalScope(handler.scopes);
