@@ -159,6 +159,7 @@ class IrText extends IrObject {
 
   set bold(val) {
     this.options.bold = val;
+    this.__updateFont();
     this.__modified = true;
   }
 
