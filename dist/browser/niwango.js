@@ -3,7 +3,7 @@ niwango.js v0.0.1-canary.20231002-1
 (c) 2023 xpadev-net https://xpadev.net
 Released under the MIT License.
 
-build at: 1782242228610
+build at: 1782257459167
 */
 (function(global, factory) {
 	typeof exports === "object" && typeof module !== "undefined" ? module.exports = factory() : typeof define === "function" && define.amd ? define([], factory) : (global = typeof globalThis !== "undefined" ? globalThis : global || self, global.Niwango = factory());
@@ -11294,17 +11294,49 @@ build at: 1782242228610
 		if (scopes.length < 3) return;
 		else return scopes[scopes.length - 3];
 	};
+	const FONT_WEIGHT_KEYWORDS = new Set([
+		"normal",
+		"bold",
+		"bolder",
+		"lighter"
+	]);
+	const isFontWeight = (weight) => {
+		return /^\d+$/.test(weight) || FONT_WEIGHT_KEYWORDS.has(weight.toLowerCase());
+	};
+	const toBoldWeight = (weight) => {
+		const value = `${weight}`;
+		const normalized = value.trim().toLowerCase();
+		if (/^\d+$/.test(normalized)) return `${Math.max(Number(normalized), 700)}`;
+		if (normalized === "bold" || normalized === "bolder") return value;
+		return "bold";
+	};
+	const applyBoldToFontString = (font) => {
+		const sizeMatch = font.match(/\b\d+(?:\.\d+)?px\b/);
+		if (!sizeMatch || sizeMatch.index === void 0) return `700 ${font}`;
+		const prefix = font.slice(0, sizeMatch.index);
+		const suffix = font.slice(sizeMatch.index);
+		const tokens = prefix.trim().split(/\s+/).filter(Boolean);
+		for (let index = tokens.length - 1; index >= 0; index -= 1) {
+			const token = tokens[index];
+			if (token !== void 0 && isFontWeight(token)) {
+				tokens[index] = toBoldWeight(token);
+				return `${tokens.join(" ")} ${suffix}`;
+			}
+		}
+		return tokens.length > 0 ? `${tokens.join(" ")} 700 ${suffix}` : `700 ${suffix}`;
+	};
 	/**
 	* フォント名とサイズをもとにcontextで使えるフォントを生成する
 	* @param font
 	* @param size
 	* @returns
 	*/
-	const parseFont = (font, size) => {
+	const parseFont = (font, size, options = {}) => {
+		const bold = options.bold ?? false;
 		switch (font) {
 			case "gulim":
-			case "simsun": return config.font[font].replace("[size]", `${size}`);
-			default: return `${config.fonts.defont.weight} ${size}px ${config.fonts.defont.font}`;
+			case "simsun": return bold ? applyBoldToFontString(config.font[font].replace("[size]", `${size}`)) : config.font[font].replace("[size]", `${size}`);
+			default: return `${bold ? toBoldWeight(config.fonts.defont.weight) : config.fonts.defont.weight} ${size}px ${config.fonts.defont.font}`;
 		}
 	};
 	/**
@@ -11334,7 +11366,15 @@ build at: 1782242228610
 	const resetHandlers = () => {
 		handlers = [];
 	};
+	const isExpiredHandler = (handler, time) => handler.duration !== void 0 && handler.time + handler.duration <= time;
+	const removeExpiredHandlers = (time) => {
+		for (let i = handlers.length - 1; i >= 0; i--) {
+			const handler = handlers[i];
+			if (handler && isExpiredHandler(handler, time)) handlers.splice(i, 1);
+		}
+	};
 	const addHandler = (script, scopes, trace, time, duration) => {
+		removeExpiredHandlers(time);
 		handlers.push({
 			script,
 			scopes,
@@ -11348,6 +11388,7 @@ build at: 1782242228610
 		handlers = newHandlers;
 	};
 	const triggerHandlers = (comment) => {
+		removeExpiredHandlers(comment._vpos);
 		if (comment.message.startsWith("/")) return;
 		for (const handler of handlers) {
 			const globalScope = getGlobalScope(handler.scopes);
@@ -11876,12 +11917,16 @@ build at: 1782242228610
 		rotation: 0,
 		mover: ""
 	};
+	const assertMaskSupported = (mask) => {
+		if (mask === true) throw new Error("drawShape mask option is not supported");
+	};
 	/**
 	* 図形オブジェクトのクラス
 	*/
 	var IrShape = class extends IrObject {
 		constructor(_options) {
 			const options = format(_options, optionTypes$1);
+			assertMaskSupported(options.mask);
 			super(options);
 			this.__type = "IrShape";
 			this.options = getOptions(defaultOptions$1, options);
@@ -11926,6 +11971,7 @@ build at: 1782242228610
 			return this.options.mask;
 		}
 		set mask(val) {
+			assertMaskSupported(val);
 			this.options.mask = val;
 		}
 		get commentmask() {
@@ -12009,6 +12055,11 @@ build at: 1782242228610
 		return "gulim";
 	};
 	/**
+	* Flash処理用に改行コードを統一する
+	* @param string
+	*/
+	const normalizeNewlines = (string) => string.replace(/\r\n?/g, "\n");
+	/**
 	* Flash処理用にコメントを分割する
 	* @param string
 	*/
@@ -12055,8 +12106,9 @@ build at: 1782242228610
 	* @param compat
 	*/
 	const parse = (string, compat = false) => {
+		const normalizedString = normalizeNewlines(string);
 		const content = [];
-		const lines = splitContents(string);
+		const lines = splitContents(normalizedString);
 		for (const line of lines) {
 			const lineContent = [];
 			for (const part of line) {
@@ -12073,12 +12125,12 @@ build at: 1782242228610
 			}));
 			else content.push(...lineContent);
 		}
-		const lineCount = Array.from(string.match(/[\n\r]/g) || []).length + 1;
+		const lineCount = Array.from(normalizedString.match(/\n/g) || []).length + 1;
 		return {
 			content,
 			font: content[0]?.font || "defont",
 			lineCount,
-			lineOffset: (string.match(new RegExp(config.flashScriptChar.super, "g"))?.length || 0) * -1 * config.scriptCharOffset + (string.match(new RegExp(config.flashScriptChar.sub, "g"))?.length || 0) * config.scriptCharOffset
+			lineOffset: (normalizedString.match(new RegExp(config.flashScriptChar.super, "g"))?.length || 0) * -1 * config.scriptCharOffset + (normalizedString.match(new RegExp(config.flashScriptChar.sub, "g"))?.length || 0) * config.scriptCharOffset
 		};
 	};
 	/**
@@ -12242,9 +12294,9 @@ build at: 1782242228610
 		let currentWidth = 0;
 		for (const item of comment.content) {
 			const widths = [];
-			context.font = parseFont(getValue(item.font, comment.font), comment.size);
+			context.font = parseFont(getValue(item.font, comment.font), comment.size, { bold: comment.bold });
 			if (item.type === "normal") {
-				const lines = item.content.replace(/\r\n?/g, "\n").split(/\n/);
+				const lines = normalizeNewlines(item.content).split(/\n/);
 				let count = 0;
 				for (const value of lines) {
 					const measure = context.measureText(value);
@@ -12396,6 +12448,7 @@ build at: 1782242228610
 		}
 		set bold(val) {
 			this.options.bold = val;
+			this.__updateFont();
 			this.__modified = true;
 		}
 		get filter() {
@@ -12406,7 +12459,7 @@ build at: 1782242228610
 			this.__modified = true;
 		}
 		__updateFont() {
-			getCanvas(this.__id).context.font = `normal 600 ${this.__size}px Arial, "ＭＳ Ｐゴシック", "MS PGothic", MSPGothic, MS-PGothic`;
+			getCanvas(this.__id).context.font = parseFont(this.parsedComment.font, this.__size, { bold: this.bold });
 		}
 		__updateColor() {
 			getCanvas(this.__id).context.fillStyle = number2color(this.color);
@@ -12426,7 +12479,8 @@ build at: 1782242228610
 			this.__updateFont();
 			const result = measure(getCanvas(this.__id).context, {
 				...this.parsedComment,
-				size: this.__size
+				size: this.__size,
+				bold: this.bold
 			});
 			this.__actualWidth = result.width;
 			this.__actualHeight = result.height;
@@ -12445,7 +12499,7 @@ build at: 1782242228610
 			context.save();
 			if (this.__reverse) context.scale(-1, -1);
 			const lineOffset = this.parsedComment.lineOffset;
-			context.font = parseFont(this.parsedComment.font, this.__size);
+			context.font = parseFont(this.parsedComment.font, this.__size, { bold: this.bold });
 			context.globalAlpha = (100 - this.options.alpha) / 100;
 			if (this.filter === "kage") {
 				const offset = this.__kageShadowOffset();
@@ -12465,10 +12519,10 @@ build at: 1782242228610
 			for (const item of this.parsedComment.content) {
 				if (lastFont !== getValue(item.font, this.parsedComment.font)) {
 					lastFont = getValue(item.font, this.parsedComment.font);
-					context.font = parseFont(lastFont, this.__size);
+					context.font = parseFont(lastFont, this.__size, { bold: this.bold });
 				}
 				if (item.type === "normal") {
-					const lines = item.content.split(/[\n\r]/g);
+					const lines = normalizeNewlines(item.content).split(/\n/g);
 					lines.forEach((line, index) => {
 						const posX = leftOffset - reverseOffset;
 						const posY = (lineOffset + lineCount + 1) * (this.__size * config.lineHeight) + config.commentYPaddingTop + this.__size * config.lineHeight * config.commentYOffset - reverseOffset;
@@ -12536,6 +12590,42 @@ build at: 1782242228610
 	};
 	//#endregion
 	//#region src/typeGuard.ts
+	const textOptionTypes = {
+		text: "string",
+		x: "number",
+		y: "number",
+		z: "number",
+		size: "number",
+		pos: "string",
+		posX: "string",
+		posY: "string",
+		color: "number",
+		bold: "boolean",
+		visible: "boolean",
+		scale: "number",
+		filter: "string",
+		alpha: "number",
+		mover: "string"
+	};
+	const shapeOptionTypes = {
+		x: "number",
+		y: "number",
+		z: "number",
+		shape: "string",
+		width: "number",
+		height: "number",
+		pos: "string",
+		posX: "string",
+		posY: "string",
+		color: "number",
+		visible: "boolean",
+		mask: "boolean",
+		commentmask: "boolean",
+		scale: "number",
+		alpha: "number",
+		rotation: "number",
+		mover: "string"
+	};
 	const typeGuard = {
 		comment: (i) => objectVerify(i, [
 			"message",
@@ -12550,8 +12640,16 @@ build at: 1782242228610
 			"_vpos",
 			"_owner"
 		]),
-		IrTextLiteral: (i) => typeof i === "object" && !!i && i.__NIWANGO_LITERAL === "IrObject" && i.__type === "IrText" && !(i instanceof IrObject),
-		IrShapeLiteral: (i) => typeof i === "object" && !!i && i.__NIWANGO_LITERAL === "IrObject" && i.__type === "IrShape" && !(i instanceof IrObject)
+		IrTextLiteral: (i) => isLiteralObject(i, "IrText") && objectHasTypes(i.options, textOptionTypes),
+		IrShapeLiteral: (i) => isLiteralObject(i, "IrShape") && objectHasTypes(i.options, shapeOptionTypes)
+	};
+	const isRecord = (item) => typeof item === "object" && item !== null && !Array.isArray(item);
+	const isLiteralObject = (item, type) => isRecord(item) && item.__NIWANGO_LITERAL === "IrObject" && item.__type === type && !(item instanceof IrObject);
+	const objectHasTypes = (item, properties) => {
+		if (!isRecord(item)) return false;
+		for (const [key, type] of Object.entries(properties)) if (!Object.prototype.hasOwnProperty.call(item, key) || typeof item[key] !== type) return false;
+		if (Object.prototype.hasOwnProperty.call(item, "__id") && typeof item.__id !== "string") return false;
+		return true;
 	};
 	const objectVerify = (item, keys) => {
 		if (typeof item !== "object" || !item) return false;
@@ -12927,9 +13025,43 @@ build at: 1782242228610
 	};
 	//#endregion
 	//#region src/functions/timer.ts
+	const hasObjectShape = (input) => typeof input === "object" && input !== null;
+	const hasAstListShape = (list) => Array.isArray(list) && list.every(hasAstShape);
+	const hasAstShape = (input) => {
+		if (!hasObjectShape(input) || typeof input.type !== "string") return false;
+		if (input.NIWANGO_Identifier !== void 0 && input.NIWANGO_Identifier !== null && !hasAstShape(input.NIWANGO_Identifier)) return false;
+		switch (input.type) {
+			case "Identifier": return typeof input.name === "string";
+			case "Literal": return input.value === null || typeof input.value === "boolean" || typeof input.value === "number" || typeof input.value === "string";
+			case "ExpressionStatement": return hasAstShape(input.expression);
+			case "AssignmentExpression": return typeof input.operator === "string" && hasAstShape(input.left) && hasAstShape(input.right);
+			case "ArrayExpression": return hasAstListShape(input.elements);
+			case "ArrowFunctionExpression": return hasAstShape(input.body) && input.body.type === "BlockStatement";
+			case "BinaryExpression":
+			case "LogicalExpression": return typeof input.operator === "string" && hasAstShape(input.left) && hasAstShape(input.right);
+			case "BlockStatement":
+			case "Program": return hasAstListShape(input.body);
+			case "CallExpression": return hasAstShape(input.callee) && hasAstListShape(input.arguments);
+			case "IfStatement": return hasAstShape(input.test);
+			case "LambdaExpression": return hasAstShape(input.body) && input.body.type === "BlockStatement" && (input.scopes === void 0 || Array.isArray(input.scopes));
+			case "MemberExpression": return hasAstShape(input.object) && hasAstShape(input.property) && typeof input.computed === "boolean";
+			case "ObjectExpression": return hasAstListShape(input.properties);
+			case "Property": return hasAstShape(input.key) && hasAstShape(input.value);
+			case "SequenceExpression": return hasAstListShape(input.expressions);
+			case "UnaryExpression":
+			case "UpdateExpression": return typeof input.operator === "string" && typeof input.prefix === "boolean" && hasAstShape(input.argument);
+			case "VariableDeclaration": return Array.isArray(input.declarations) && input.declarations.every(hasAstShape) && typeof input.kind === "string";
+			case "VariableDeclarator": return hasAstShape(input.id) && (input.init === null || hasAstShape(input.init));
+			case "EmptyStatement": return true;
+			case "Raw": return "value" in input;
+			default: return false;
+		}
+	};
 	const processTimer = (script, scopes, _, trace) => {
 		const args = import_niwango_core.default.utils.argumentParser(script.arguments, scopes, ["timer", "then"], trace, false);
-		typeof args.then === "object" && addQueue(args.then, Number(import_niwango_core.default.execute(args.timer, scopes, trace)), scopes, [...trace]);
+		if (!hasAstShape(args.then)) return;
+		const offset = Number(import_niwango_core.default.execute(args.timer, scopes, trace));
+		if (Number.isFinite(offset)) addQueue(args.then, offset, scopes, [...trace]);
 	};
 	//#endregion
 	//#region src/functions/index.ts
@@ -12957,6 +13089,17 @@ build at: 1782242228610
 		resetScripts();
 		resetCanvas();
 		resetSnapshot();
+	};
+	//#endregion
+	//#region src/main.ts
+	const MAX_DRAW_VPOS_STEP_WINDOW = 1e5;
+	const normalizeDrawVpos = (vpos) => {
+		if (!Number.isFinite(vpos)) throw new RangeError("Niwango.draw vpos must be a finite number.");
+		if (vpos < 0) throw new RangeError("Niwango.draw vpos must be non-negative.");
+		return Math.floor(vpos);
+	};
+	const canProcessDrawStepWindow = (fromVpos, toVpos) => {
+		return toVpos - Math.max(0, fromVpos) <= MAX_DRAW_VPOS_STEP_WINDOW;
 	};
 	//#endregion
 	return class Niwango {
@@ -13000,14 +13143,24 @@ build at: 1782242228610
 				screenHeight: config.stageHeight
 			});
 		}
+		skipToVpos(vpos) {
+			getQueue(vpos);
+			getScripts(vpos);
+			setCurrentTime(vpos);
+			this.lastVpos = vpos;
+		}
 		execute(vpos) {
 			if (vpos < this.lastVpos) {
-				if (vpos > this.lastVpos - 100) return;
+				if (vpos > this.lastVpos - 100) return true;
 				try {
 					this.lastVpos = restoreSnapshot(vpos);
 				} catch (_e) {
 					this.lastVpos = vpos;
 				}
+			}
+			if (!canProcessDrawStepWindow(this.lastVpos, vpos)) {
+				this.skipToVpos(vpos);
+				return false;
 			}
 			let lastSnapshotVpos = getLatestSnapshotVpos(vpos);
 			for (let i = this.lastVpos; i <= vpos; i++) {
@@ -13053,10 +13206,12 @@ build at: 1782242228610
 				}
 			}
 			this.lastVpos = vpos;
+			return true;
 		}
 		draw(vpos, clear = true) {
+			vpos = normalizeDrawVpos(vpos);
 			if (this.lastVpos === vpos) return false;
-			this.execute(vpos);
+			if (!this.execute(vpos)) return false;
 			this._draw(clear);
 			return true;
 		}

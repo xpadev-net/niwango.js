@@ -12,6 +12,7 @@ export type measureTextInput = {
   font: commentFont;
   lineCount: number;
   size: number;
+  bold?: boolean;
 };
 
 export type charItem = compatFillItem | normalCharItem | compatSpaceItem;

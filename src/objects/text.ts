@@ -5,7 +5,7 @@ import { render } from "@/context";
 import { getCanvas } from "@/contexts/canvas";
 import { config } from "@/definition/config";
 import { IrObject } from "@/objects/object";
-import { measure, parse } from "@/utils/flashText";
+import { measure, normalizeNewlines, parse } from "@/utils/flashText";
 import { number2color } from "@/utils/number2color";
 import { getOptions } from "@/utils/object";
 import { format, getValue, parseFont } from "@/utils/utils";
@@ -159,6 +159,7 @@ class IrText extends IrObject {
 
   set bold(val) {
     this.options.bold = val;
+    this.__updateFont();
     this.__modified = true;
   }
 
@@ -172,8 +173,11 @@ class IrText extends IrObject {
   }
 
   __updateFont() {
-    getCanvas(this.__id).context.font =
-      `normal 600 ${this.__size}px Arial, "ＭＳ Ｐゴシック", "MS PGothic", MSPGothic, MS-PGothic`;
+    getCanvas(this.__id).context.font = parseFont(
+      this.parsedComment.font,
+      this.__size,
+      { bold: this.bold },
+    );
   }
 
   override __updateColor() {
@@ -196,6 +200,7 @@ class IrText extends IrObject {
     const result = measure(getCanvas(this.__id).context, {
       ...this.parsedComment,
       size: this.__size,
+      bold: this.bold,
     });
     this.__actualWidth = result.width;
     this.__actualHeight = result.height;
@@ -221,7 +226,9 @@ class IrText extends IrObject {
       context.scale(-1, -1);
     }
     const lineOffset = this.parsedComment.lineOffset;
-    context.font = parseFont(this.parsedComment.font, this.__size);
+    context.font = parseFont(this.parsedComment.font, this.__size, {
+      bold: this.bold,
+    });
     context.globalAlpha = (100 - this.options.alpha) / 100;
     if (this.filter === "kage") {
       const offset = this.__kageShadowOffset();
@@ -241,10 +248,10 @@ class IrText extends IrObject {
     for (const item of this.parsedComment.content) {
       if (lastFont !== getValue(item.font, this.parsedComment.font)) {
         lastFont = getValue(item.font, this.parsedComment.font);
-        context.font = parseFont(lastFont, this.__size);
+        context.font = parseFont(lastFont, this.__size, { bold: this.bold });
       }
       if (item.type === "normal") {
-        const lines = item.content.split(/[\n\r]/g);
+        const lines = normalizeNewlines(item.content).split(/\n/g);
         lines.forEach((line, index) => {
           const posX = leftOffset - reverseOffset;
           const posY =

@@ -1,6 +1,7 @@
 declare const saveSnapshot: (vpos: number) => void;
 declare const restoreSnapshot: (vpos: number) => number;
 declare const getLatestSnapshotVpos: (vpos: number) => number;
+declare const resultHook: (input: unknown) => unknown;
 declare const resetSnapshot: () => void;
 declare const initResultHook: () => void;
-export { getLatestSnapshotVpos, initResultHook, resetSnapshot, restoreSnapshot, saveSnapshot, };
+export { getLatestSnapshotVpos, initResultHook, resetSnapshot, restoreSnapshot, resultHook, saveSnapshot, };

@@ -2,9 +2,22 @@
   "name": "@xpadev-net/niwango",
   "version": "0.0.1-canary.20231002-1",
   "description": "parse and execute niwango",
-  "main": "dist/bundle.js",
-  "types": "dist/bundle.d.ts",
+  "main": "./dist/index.cjs",
+  "module": "./dist/index.mjs",
+  "types": "./dist/index.d.ts",
+  "browser": "./dist/browser/niwango.js",
   "type": "module",
+  "exports": {
+    ".": {
+      "types": "./dist/index.d.ts",
+      "browser": "./dist/browser/niwango.js",
+      "import": "./dist/index.mjs",
+      "require": "./dist/index.cjs",
+      "default": "./dist/index.mjs"
+    },
+    "./browser": "./dist/browser/niwango.js",
+    "./package.json": "./package.json"
+  },
   "scripts": {
     "build": "npx rimraf dist&&npm run build:ts&&npm run build:dts",
     "build:ts": "rolldown -c rolldown.config.mjs",
@@ -19,11 +32,14 @@
     "lint": "biome check src && pnpm check-types",
     "lint:fix": "biome check --write src && pnpm check-types",
     "prepare": "lefthook install",
+    "smoke:package": "node tests/smoke/package-entrypoints.mjs",
     "test": "vitest run"
   },
   "files": [
-    "dist/bundle.js",
-    "dist/bundle.d.ts"
+    "dist/index.mjs",
+    "dist/index.cjs",
+    "dist/index.d.ts",
+    "dist/browser/niwango.js"
   ],
   "author": "xpadev(xpadev.net)",
   "license": "MIT",
@@ -41,6 +57,6 @@
     "typedoc": "^0.25.13",
     "typedoc-plugin-missing-exports": "^2.3.0",
     "typescript": "^5.9.3",
-    "vitest": "^1.6.1"
+    "vitest": "^3.2.6"
   }
 }

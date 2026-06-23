@@ -1,1 +1,1 @@
-{"version":3,"file":"timer.d.ts","sourceRoot":"","sources":["../../../src/functions/timer.ts"],"names":[],"mappings":"AAAA,OAAa,EAGX,KAAK,UAAU,EAEhB,MAAM,0BAA0B,CAAC;AAIlC,QAAA,MAAM,YAAY,EAAE,UAoBnB,CAAC;AAEF,OAAO,EAAE,YAAY,EAAE,CAAC"}
+{"version":3,"file":"timer.d.ts","sourceRoot":"","sources":["../../../src/functions/timer.ts"],"names":[],"mappings":"AAAA,OAAa,EAGX,KAAK,UAAU,EAEhB,MAAM,0BAA0B,CAAC;AAwGlC,QAAA,MAAM,YAAY,EAAE,UAqBnB,CAAC;AAEF,OAAO,EAAE,YAAY,EAAE,CAAC"}

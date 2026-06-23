@@ -19,6 +19,7 @@ declare class Niwango {
   static default: typeof Niwango;
   private lastVpos;
   constructor(targetElement: HTMLCanvasElement | HTMLDivElement, comments: Comment[]);
+  private skipToVpos;
   private execute;
   draw(vpos: number, clear?: boolean): boolean;
   private _draw;
@@ -26,4 +27,4 @@ declare class Niwango {
 }
 //#endregion
 export { Niwango as default };
-//# sourceMappingURL=bundle.d.ts.map
+//# sourceMappingURL=index.d.ts.map
