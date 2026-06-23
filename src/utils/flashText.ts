@@ -27,6 +27,12 @@ const getFontName = (font: string): commentFlashFont => {
 };
 
 /**
+ * Flash処理用に改行コードを統一する
+ * @param string
+ */
+const normalizeNewlines = (string: string) => string.replace(/\r\n?/g, "\n");
+
+/**
  * Flash処理用にコメントを分割する
  * @param string
  */
@@ -73,8 +79,9 @@ const getFontIndex = (string: string): commentContentIndex[] => {
  * @param compat
  */
 const parse = (string: string, compat = false): parsedComment => {
+  const normalizedString = normalizeNewlines(string);
   const content: commentContentItem[] = [];
-  const lines = splitContents(string);
+  const lines = splitContents(normalizedString);
   for (const line of lines) {
     const lineContent: commentContentItem[] = [];
     for (const part of line) {
@@ -96,13 +103,15 @@ const parse = (string: string, compat = false): parsedComment => {
       content.push(...lineContent);
     }
   }
-  const lineCount = Array.from(string.match(/[\n\r]/g) || []).length + 1;
+  const lineCount = Array.from(normalizedString.match(/\n/g) || []).length + 1;
   const font = content[0]?.font || "defont";
   const lineOffset =
-    (string.match(new RegExp(config.flashScriptChar.super, "g"))?.length || 0) *
+    (normalizedString.match(new RegExp(config.flashScriptChar.super, "g"))
+      ?.length || 0) *
       -1 *
       config.scriptCharOffset +
-    (string.match(new RegExp(config.flashScriptChar.sub, "g"))?.length || 0) *
+    (normalizedString.match(new RegExp(config.flashScriptChar.sub, "g"))
+      ?.length || 0) *
       config.scriptCharOffset;
   return { content, font, lineCount, lineOffset };
 };
@@ -263,7 +272,7 @@ const measure = (
       bold: comment.bold,
     });
     if (item.type === "normal") {
-      const lines = item.content.replace(/\r\n?/g, "\n").split(/\n/);
+      const lines = normalizeNewlines(item.content).split(/\n/);
       let count = 0;
       for (const value of lines) {
         const measure = context.measureText(value);
@@ -294,4 +303,4 @@ const measure = (
     config.commentYPaddingTop;
   return { width: Math.max(...width_arr, 0), height };
 };
-export { measure, parse };
+export { measure, normalizeNewlines, parse };

@@ -5,7 +5,7 @@ import { render } from "@/context";
 import { getCanvas } from "@/contexts/canvas";
 import { config } from "@/definition/config";
 import { IrObject } from "@/objects/object";
-import { measure, parse } from "@/utils/flashText";
+import { measure, normalizeNewlines, parse } from "@/utils/flashText";
 import { number2color } from "@/utils/number2color";
 import { getOptions } from "@/utils/object";
 import { format, getValue, parseFont } from "@/utils/utils";
@@ -251,7 +251,7 @@ class IrText extends IrObject {
         context.font = parseFont(lastFont, this.__size, { bold: this.bold });
       }
       if (item.type === "normal") {
-        const lines = item.content.split(/[\n\r]/g);
+        const lines = normalizeNewlines(item.content).split(/\n/g);
         lines.forEach((line, index) => {
           const posX = leftOffset - reverseOffset;
           const posY =
