@@ -254,12 +254,17 @@ const parseFullStr = (string: string): commentContentItem[] => {
 const measure = (
   context: CanvasRenderingContext2D,
   comment: measureTextInput,
+  bold = false,
 ) => {
   const width_arr = [];
   let currentWidth = 0;
   for (const item of comment.content) {
     const widths = [];
-    context.font = parseFont(getValue(item.font, comment.font), comment.size);
+    context.font = parseFont(
+      getValue(item.font, comment.font),
+      comment.size,
+      bold,
+    );
     if (item.type === "normal") {
       const lines = item.content.replace(/\r\n?/g, "\n").split(/\n/);
       let count = 0;

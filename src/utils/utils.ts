@@ -22,13 +22,27 @@ const getGlobalScope = (scopes: T_scope[]): T_scope | undefined => {
  * @param size
  * @returns
  */
-const parseFont = (font: commentFont, size: string | number): string => {
+const formatFontWeight = (font: string, bold: boolean): string => {
+  if (!bold) return font;
+  return font.replace(/^(\S+\s+)(?:\d+|bold)(\s+)/, "$1bold$2");
+};
+
+const parseFont = (
+  font: commentFont,
+  size: string | number,
+  bold = false,
+): string => {
   switch (font) {
     case "gulim":
     case "simsun":
-      return config.font[font].replace("[size]", `${size}`);
+      return formatFontWeight(
+        config.font[font].replace("[size]", `${size}`),
+        bold,
+      );
     default:
-      return `${config.fonts.defont.weight} ${size}px ${config.fonts.defont.font}`;
+      return `${bold ? "bold" : config.fonts.defont.weight} ${size}px ${
+        config.fonts.defont.font
+      }`;
   }
 };
 
