@@ -10,7 +10,7 @@ export type HTML5Fonts = "defont";
 export type FontItem = {
   font: string;
   offset: number;
-  weight: number;
+  weight: number | string;
 };
 export type platformFont = {
   [key in HTML5Fonts]: FontItem;
