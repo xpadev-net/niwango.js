@@ -38,12 +38,12 @@ test("draw rejects negative vpos values", () => {
   );
 });
 
-test("draw rejects fractional vpos values", () => {
+test("draw floors fractional vpos values", () => {
   const niwango = createNiwango();
 
-  expect(() => niwango.draw(0.5)).toThrow(
-    "Niwango.draw vpos must be an integer.",
-  );
+  expect(niwango.draw(0.5)).toBe(true);
+  expect(niwango.draw(0.9)).toBe(false);
+  expect(niwango.draw(1.1)).toBe(true);
 });
 
 test("draw rejects huge forward seek windows", () => {

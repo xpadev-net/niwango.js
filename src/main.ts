@@ -32,16 +32,14 @@ import { nativeSort } from "@/utils/sort";
 
 const MAX_DRAW_VPOS_STEP_WINDOW = 100_000;
 
-const validateDrawVpos = (vpos: number) => {
+const normalizeDrawVpos = (vpos: number) => {
   if (!Number.isFinite(vpos)) {
     throw new RangeError("Niwango.draw vpos must be a finite number.");
   }
   if (vpos < 0) {
     throw new RangeError("Niwango.draw vpos must be non-negative.");
   }
-  if (!Number.isInteger(vpos)) {
-    throw new RangeError("Niwango.draw vpos must be an integer.");
-  }
+  return Math.floor(vpos);
 };
 
 const validateDrawStepWindow = (fromVpos: number, toVpos: number) => {
@@ -165,7 +163,7 @@ class Niwango {
   }
 
   public draw(vpos: number, clear = true) {
-    validateDrawVpos(vpos);
+    vpos = normalizeDrawVpos(vpos);
     if (this.lastVpos === vpos) return false;
     this.execute(vpos);
     this._draw(clear);
