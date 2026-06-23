@@ -5,7 +5,7 @@ export default defineConfig({
   input: './dist/dts/main.d.ts',
   plugins: [dts()],
   output: {
-    file: 'dist/bundle.d.ts',
+    file: 'dist/index.d.ts',
     format: 'es',
   },
 });
