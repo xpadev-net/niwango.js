@@ -91,5 +91,6 @@ export {
   initResultHook,
   resetSnapshot,
   restoreSnapshot,
+  resultHook,
   saveSnapshot,
 };

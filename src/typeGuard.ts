@@ -3,6 +3,53 @@ import type { IShapeLiteral } from "@/@types/IrShape";
 import type { ITextLiteral } from "@/@types/IrText";
 import { IrObject } from "@/objects/object";
 
+type PrimitiveTypeName = "boolean" | "number" | "string";
+type RecordValue = Record<string, unknown>;
+
+const textOptionTypes = {
+  text: "string",
+  x: "number",
+  y: "number",
+  z: "number",
+  size: "number",
+  pos: "string",
+  posX: "string",
+  posY: "string",
+  color: "number",
+  bold: "boolean",
+  visible: "boolean",
+  scale: "number",
+  filter: "string",
+  alpha: "number",
+  mover: "string",
+} satisfies Record<
+  Exclude<keyof ITextLiteral["options"], "__id">,
+  PrimitiveTypeName
+>;
+
+const shapeOptionTypes = {
+  x: "number",
+  y: "number",
+  z: "number",
+  shape: "string",
+  width: "number",
+  height: "number",
+  pos: "string",
+  posX: "string",
+  posY: "string",
+  color: "number",
+  visible: "boolean",
+  mask: "boolean",
+  commentmask: "boolean",
+  scale: "number",
+  alpha: "number",
+  rotation: "number",
+  mover: "string",
+} satisfies Record<
+  Exclude<keyof IShapeLiteral["options"], "__id">,
+  PrimitiveTypeName
+>;
+
 const typeGuard = {
   comment: (i: unknown): i is Comment =>
     objectVerify(i, [
@@ -19,17 +66,50 @@ const typeGuard = {
       "_owner",
     ]),
   IrTextLiteral: (i: unknown): i is ITextLiteral =>
-    typeof i === "object" &&
-    !!i &&
-    (i as ITextLiteral).__NIWANGO_LITERAL === "IrObject" &&
-    (i as ITextLiteral).__type === "IrText" &&
-    !(i instanceof IrObject),
+    isLiteralObject(i, "IrText") && objectHasTypes(i.options, textOptionTypes),
   IrShapeLiteral: (i: unknown): i is IShapeLiteral =>
-    typeof i === "object" &&
-    !!i &&
-    (i as IShapeLiteral).__NIWANGO_LITERAL === "IrObject" &&
-    (i as IShapeLiteral).__type === "IrShape" &&
-    !(i instanceof IrObject),
+    isLiteralObject(i, "IrShape") &&
+    objectHasTypes(i.options, shapeOptionTypes),
+};
+
+const isRecord = (item: unknown): item is RecordValue =>
+  typeof item === "object" && item !== null && !Array.isArray(item);
+
+const isLiteralObject = (
+  item: unknown,
+  type: IShapeLiteral["__type"] | ITextLiteral["__type"],
+): item is RecordValue & {
+  __NIWANGO_LITERAL: "IrObject";
+  __type: typeof type;
+  options: unknown;
+} =>
+  isRecord(item) &&
+  item.__NIWANGO_LITERAL === "IrObject" &&
+  item.__type === type &&
+  !(item instanceof IrObject);
+
+const objectHasTypes = (
+  item: unknown,
+  properties: Record<string, PrimitiveTypeName>,
+): item is RecordValue => {
+  if (!isRecord(item)) {
+    return false;
+  }
+  for (const [key, type] of Object.entries(properties)) {
+    if (
+      !Object.prototype.hasOwnProperty.call(item, key) ||
+      typeof item[key] !== type
+    ) {
+      return false;
+    }
+  }
+  if (
+    Object.prototype.hasOwnProperty.call(item, "__id") &&
+    typeof item.__id !== "string"
+  ) {
+    return false;
+  }
+  return true;
 };
 
 const objectVerify = (item: unknown, keys: string[]): boolean => {
