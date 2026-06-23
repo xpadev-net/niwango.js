@@ -5,15 +5,21 @@ on:
     branches: [ master ]
   workflow_dispatch:
 
+permissions:
+  contents: write
+  pull-requests: read
+
 jobs:
   build:
     runs-on: ubuntu-latest
 
     steps:
-      - uses: actions/checkout@v3
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
 
       - name: setup Node
-        uses: actions/setup-node@v3
+        uses: actions/setup-node@v4
         with:
           node-version: 22.x
           registry-url: 'https://registry.npmjs.org'
@@ -33,13 +39,49 @@ jobs:
         run: pnpm typedoc
       - name: update .gitignore
         run: sed -i -e '/\/docs\/type/d' .gitignore
-      - name: Create new Branch
+      - name: Publish dev build
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          DEFAULT_BRANCH: ${{ github.event.repository.default_branch }}
+          TARGET_BRANCH: dev-build
         run: |
+          set -euo pipefail
+
+          if [ "${GITHUB_REF_NAME}" != "${DEFAULT_BRANCH}" ]; then
+            echo "Refusing to publish ${TARGET_BRANCH} from non-default branch ${GITHUB_REF_NAME}."
+            exit 1
+          fi
+
+          if [ "${TARGET_BRANCH}" = "${DEFAULT_BRANCH}" ]; then
+            echo "Refusing to publish dev build to default branch ${DEFAULT_BRANCH}."
+            exit 1
+          fi
+
+          open_pr_count="$(gh pr list --repo "${GITHUB_REPOSITORY}" --head "${TARGET_BRANCH}" --state open --json number --jq 'length')"
+          if [ "${open_pr_count}" != "0" ]; then
+            echo "Refusing to publish ${TARGET_BRANCH} while it has an open pull request."
+            exit 1
+          fi
+
           git config user.email "github-actions@xpadev.net"
           git config user.name "github-actions"
-          git checkout -b dev-build
+
           git add .
+          generated_tree="$(git write-tree)"
+          git reset --hard "${GITHUB_SHA}"
+
+          if git ls-remote --exit-code --heads origin "${TARGET_BRANCH}" >/dev/null; then
+            git fetch origin "refs/heads/${TARGET_BRANCH}:refs/remotes/origin/${TARGET_BRANCH}"
+            git switch -C "${TARGET_BRANCH}" "origin/${TARGET_BRANCH}"
+          else
+            git switch -C "${TARGET_BRANCH}" "${GITHUB_SHA}"
+          fi
+
+          git read-tree --reset -u "${generated_tree}"
+          if git diff --cached --quiet; then
+            echo "No dev build changes to publish."
+            exit 0
+          fi
+
           git commit -m "auto generate" -n
-          git push -f origin dev-build
+          git push origin "HEAD:${TARGET_BRANCH}"
