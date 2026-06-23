@@ -27,22 +27,31 @@ const createMockContext = (): MockCanvasContext => ({
 
 describe("CanvasRender target canvas size", () => {
   let contexts: MockCanvasContext[];
+  let canvasContexts: Array<[HTMLCanvasElement, MockCanvasContext]>;
 
-  const getContextAt = (index: number) => {
-    const context = contexts[index];
-    if (!context) throw new Error(`missing mocked canvas context ${index}`);
+  const getContextFor = (canvas: HTMLCanvasElement) => {
+    const context = canvasContexts.find(([element]) => element === canvas)?.[1];
+    if (!context) throw new Error("missing mocked canvas context");
+    return context;
+  };
+
+  const getOtherContext = (canvas: HTMLCanvasElement) => {
+    const context = canvasContexts.find(([element]) => element !== canvas)?.[1];
+    if (!context) throw new Error("missing second mocked canvas context");
     return context;
   };
 
   beforeEach(() => {
     initConfig();
     contexts = [];
+    canvasContexts = [];
     vi.spyOn(HTMLCanvasElement.prototype, "getContext").mockImplementation(
-      (() => {
+      function (this: HTMLCanvasElement) {
         const context = createMockContext();
         contexts.push(context);
+        canvasContexts.push([this, context]);
         return context as unknown as CanvasRenderingContext2D;
-      }) as unknown as typeof HTMLCanvasElement.prototype.getContext,
+      } as unknown as typeof HTMLCanvasElement.prototype.getContext,
     );
   });
 
@@ -57,15 +66,20 @@ describe("CanvasRender target canvas size", () => {
 
     expect(targetCanvas.width).toBe(1920);
     expect(targetCanvas.height).toBe(1080);
-    expect(getContextAt(1).scale).toHaveBeenCalledWith(
+    expect(getOtherContext(targetCanvas).scale).toHaveBeenCalledWith(
       1920 / config.canvasWidth,
       1080 / config.canvasHeight,
     );
 
     render.apply(true);
 
-    expect(getContextAt(0).clearRect).toHaveBeenCalledWith(0, 0, 1920, 1080);
-    expect(getContextAt(0).drawImage).toHaveBeenCalledWith(
+    expect(getContextFor(targetCanvas).clearRect).toHaveBeenCalledWith(
+      0,
+      0,
+      1920,
+      1080,
+    );
+    expect(getContextFor(targetCanvas).drawImage).toHaveBeenCalledWith(
       expect.any(HTMLCanvasElement),
       0,
       0,
@@ -90,7 +104,7 @@ describe("CanvasRender target canvas size", () => {
 
     render.apply(true);
 
-    expect(getContextAt(0).drawImage).toHaveBeenCalledWith(
+    expect(getContextFor(targetCanvas).drawImage).toHaveBeenCalledWith(
       expect.any(HTMLCanvasElement),
       0,
       0,
