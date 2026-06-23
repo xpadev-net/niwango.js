@@ -16,19 +16,68 @@ const getGlobalScope = (scopes: T_scope[]): T_scope | undefined => {
   }
 };
 
+type FontOptions = {
+  bold?: boolean;
+};
+
+const FONT_WEIGHT_KEYWORDS = new Set(["normal", "bold", "bolder", "lighter"]);
+
+const isFontWeight = (weight: string): boolean => {
+  return /^\d+$/.test(weight) || FONT_WEIGHT_KEYWORDS.has(weight.toLowerCase());
+};
+
+const toBoldWeight = (weight: string | number): string => {
+  const value = `${weight}`;
+  const normalized = value.trim().toLowerCase();
+  if (/^\d+$/.test(normalized)) {
+    return `${Math.max(Number(normalized), 700)}`;
+  }
+  if (normalized === "bold" || normalized === "bolder") {
+    return value;
+  }
+  return "bold";
+};
+
+const applyBoldToFontString = (font: string): string => {
+  const sizeMatch = font.match(/\b\d+(?:\.\d+)?px\b/);
+  if (!sizeMatch || sizeMatch.index === undefined) {
+    return `700 ${font}`;
+  }
+  const prefix = font.slice(0, sizeMatch.index);
+  const suffix = font.slice(sizeMatch.index);
+  const tokens = prefix.trim().split(/\s+/).filter(Boolean);
+  for (let index = tokens.length - 1; index >= 0; index -= 1) {
+    const token = tokens[index];
+    if (token !== undefined && isFontWeight(token)) {
+      tokens[index] = toBoldWeight(token);
+      return `${tokens.join(" ")} ${suffix}`;
+    }
+  }
+  return tokens.length > 0
+    ? `${tokens.join(" ")} 700 ${suffix}`
+    : `700 ${suffix}`;
+};
+
 /**
  * フォント名とサイズをもとにcontextで使えるフォントを生成する
  * @param font
  * @param size
  * @returns
  */
-const parseFont = (font: commentFont, size: string | number): string => {
+const parseFont = (
+  font: commentFont,
+  size: string | number,
+  options: FontOptions = {},
+): string => {
+  const bold = options.bold ?? false;
   switch (font) {
     case "gulim":
     case "simsun":
-      return config.font[font].replace("[size]", `${size}`);
+      return bold
+        ? applyBoldToFontString(config.font[font].replace("[size]", `${size}`))
+        : config.font[font].replace("[size]", `${size}`);
     default:
-      return `${config.fonts.defont.weight} ${size}px ${config.fonts.defont.font}`;
+      return `${bold ? toBoldWeight(config.fonts.defont.weight) : config.fonts.defont.weight} ${size}px ${config.fonts.defont.font}`;
   }
 };
 
