@@ -32,7 +32,14 @@ const packOutput = execFileSync(
     encoding: "utf8",
   },
 ).trim();
-const [{ filename: tarballFilename }] = JSON.parse(packOutput);
+const packJsonMatch = /(?:^|\n)(\[\s*\{)/.exec(packOutput);
+if (!packJsonMatch) {
+  throw new Error(`npm pack did not return JSON output:\n${packOutput}`);
+}
+const packJsonStart = packJsonMatch.index + packJsonMatch[0].indexOf("[");
+const [{ filename: tarballFilename }] = JSON.parse(
+  packOutput.slice(packJsonStart),
+);
 const tarball = join(packDirectory, tarballFilename);
 
 writeFileSync(
