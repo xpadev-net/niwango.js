@@ -10,13 +10,13 @@ import { addQueue } from "@/contexts/queue";
 const hasObjectShape = (input: unknown): input is Record<string, unknown> =>
   typeof input === "object" && input !== null;
 
+const hasAstListShape = (list: unknown): list is A_ANY[] =>
+  Array.isArray(list) && list.every(hasAstShape);
+
 const hasAstShape = (input: unknown): input is A_ANY => {
   if (!hasObjectShape(input) || typeof input.type !== "string") {
     return false;
   }
-
-  const hasAstListShape = (list: unknown): list is A_ANY[] =>
-    Array.isArray(list) && list.every(hasAstShape);
 
   if (
     input.NIWANGO_Identifier !== undefined &&

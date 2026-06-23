@@ -57,6 +57,7 @@ describe("processTimer", () => {
   test("does not enqueue timers with NaN or Infinity offsets", () => {
     runTimer(literal(Number.NaN), literal("then"));
     runTimer(literal(Number.POSITIVE_INFINITY), literal("then"));
+    runTimer(literal(Number.NEGATIVE_INFINITY), literal("then"));
 
     expect(queue).toHaveLength(0);
   });
@@ -73,11 +74,12 @@ describe("processTimer", () => {
   });
 
   test("does not enqueue a null then argument", () => {
-    const thenKey = ["t", "hen"].join("");
-    const parsedArguments = Object.fromEntries([
-      ["timer", literal(1)],
-      [thenKey, null],
-    ]);
+    const parsedArguments = new Proxy<Record<string, unknown>>(
+      { timer: literal(1) },
+      {
+        get: (target, key) => (key === "then" ? null : target[key as string]),
+      },
+    );
     vi.spyOn(Core.utils, "argumentParser").mockReturnValue(parsedArguments);
 
     processTimer(timerScript(literal(1), literal("unused")), scopes, {}, []);
