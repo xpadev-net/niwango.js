@@ -1,11 +1,19 @@
+import type { IObjectMover } from "@/@types/IrObject";
 import type { IShapeOptions, IShapeOptionsNullable } from "@/@types/IrShape";
 import type { KTMap } from "@/@types/types";
 import { render } from "@/context";
 import { getCanvas } from "@/contexts/canvas";
 import { IrObject } from "@/objects/object";
+import { objectMoverOptions } from "@/objects/options";
 import { number2color } from "@/utils/number2color";
 import { getOptions } from "@/utils/object";
-import { format } from "@/utils/utils";
+import {
+  format,
+  getAllowedString,
+  getFiniteNumber,
+  normalizeFiniteNumbers,
+  normalizeStringUnion,
+} from "@/utils/utils";
 
 const optionTypes: KTMap<keyof IShapeOptions> = {
   x: "number",
@@ -47,6 +55,32 @@ const defaultOptions: IShapeOptions = {
   mover: "",
 };
 
+const finiteNumberOptionKeys = [
+  "x",
+  "y",
+  "z",
+  "width",
+  "height",
+  "color",
+  "scale",
+  "alpha",
+  "rotation",
+] as const satisfies readonly (keyof IShapeOptions)[];
+
+const shapeOptions = ["circle", "rect"] as const;
+
+const normalizeOptions = (options: IShapeOptionsNullable) => {
+  normalizeFiniteNumbers(options, defaultOptions, finiteNumberOptionKeys);
+  normalizeStringUnion(options, "shape", shapeOptions, defaultOptions.shape);
+  normalizeStringUnion(
+    options,
+    "mover",
+    objectMoverOptions,
+    defaultOptions.mover,
+  );
+  return options;
+};
+
 const assertMaskSupported = (mask: unknown) => {
   if (mask === true) {
     throw new Error("drawShape mask option is not supported");
@@ -60,7 +94,7 @@ class IrShape extends IrObject {
   override options: IShapeOptions;
   public override readonly __type: string = "IrShape";
   constructor(_options: IShapeOptionsNullable) {
-    const options = format(_options, optionTypes);
+    const options = normalizeOptions(format(_options, optionTypes));
     assertMaskSupported(options.mask);
     super(options);
     this.options = getOptions(defaultOptions, options);
@@ -70,12 +104,40 @@ class IrShape extends IrObject {
     this.__draw();
   }
 
+  override get x() {
+    return super.x;
+  }
+
+  override set x(val: number) {
+    super.x = getFiniteNumber(val, defaultOptions.x);
+  }
+
+  override get y() {
+    return super.y;
+  }
+
+  override set y(val: number) {
+    super.y = getFiniteNumber(val, defaultOptions.y);
+  }
+
+  override get z() {
+    return super.z;
+  }
+
+  override set z(val: number) {
+    super.z = getFiniteNumber(val, defaultOptions.z);
+  }
+
   get shape() {
     return this.options.shape;
   }
 
   set shape(val) {
-    this.options.shape = val;
+    this.options.shape = getAllowedString(
+      val,
+      shapeOptions,
+      defaultOptions.shape,
+    );
     this.__modified = true;
   }
 
@@ -84,8 +146,9 @@ class IrShape extends IrObject {
   }
 
   override set width(val) {
-    this.options.width = val;
-    this.__width = val;
+    const value = getFiniteNumber(val, defaultOptions.width);
+    this.options.width = value;
+    this.__width = value;
     this.__modified = true;
   }
 
@@ -94,8 +157,9 @@ class IrShape extends IrObject {
   }
 
   override set height(val) {
-    this.options.height = val;
-    this.__height = val;
+    const value = getFiniteNumber(val, defaultOptions.height);
+    this.options.height = value;
+    this.__height = value;
     this.__modified = true;
   }
 
@@ -109,6 +173,22 @@ class IrShape extends IrObject {
 
   protected override get __commentmask(): boolean {
     return this.options.commentmask;
+  }
+
+  override get scale() {
+    return super.scale;
+  }
+
+  override set scale(val: number) {
+    super.scale = getFiniteNumber(val, defaultOptions.scale);
+  }
+
+  override get color() {
+    return super.color;
+  }
+
+  override set color(val: number) {
+    super.color = getFiniteNumber(val, defaultOptions.color);
   }
 
   get mask() {
@@ -133,7 +213,30 @@ class IrShape extends IrObject {
   }
 
   set rotation(val) {
-    this.options.rotation = val;
+    this.options.rotation = getFiniteNumber(val, defaultOptions.rotation);
+  }
+
+  override get alpha() {
+    return super.alpha;
+  }
+
+  override set alpha(val: unknown) {
+    super.alpha = getFiniteNumber(
+      typeof val === "number" ? val : Number(val),
+      defaultOptions.alpha,
+    );
+  }
+
+  override get mover() {
+    return super.mover;
+  }
+
+  override set mover(val: IObjectMover) {
+    super.mover = getAllowedString(
+      val,
+      objectMoverOptions,
+      defaultOptions.mover,
+    );
   }
 
   override __updateColor() {
