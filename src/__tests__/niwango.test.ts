@@ -4,6 +4,7 @@ import { afterEach, describe, expect, test, vi } from "vitest";
 import type { Comment } from "@/@types/comment";
 import { comments, currentTime } from "@/context";
 import { addHandler } from "@/contexts/commentHandler";
+import { addQueue } from "@/contexts/queue";
 import { environmentScope, globalScope } from "@/contexts/scope";
 import Niwango from "@/main";
 import { run } from "@/testUtils";
@@ -191,6 +192,140 @@ test("draw limits forward seeks from the current vpos", () => {
   expect(niwango.draw(10)).toBe(true);
   expect(niwango.draw(100_011)).toBe(false);
   expect(niwango.draw(100_012)).toBe(true);
+});
+
+test("constructor reports owner script parse failures through onError", () => {
+  const parseError = new Error("parse failed");
+  const onError = vi.fn();
+  const parseComment = createComment({
+    no: 10,
+    message: "/broken()",
+    _owner: true,
+  });
+  vi.spyOn(console, "error").mockImplementation(() => undefined);
+  vi.spyOn(Core, "parseScript").mockImplementation(() => {
+    throw parseError;
+  });
+
+  expect(
+    () =>
+      new Niwango(document.createElement("div"), [parseComment], { onError }),
+  ).not.toThrow();
+
+  expect(onError).toHaveBeenCalledOnce();
+  expect(onError).toHaveBeenCalledWith({
+    phase: "parse",
+    error: parseError,
+    comment: parseComment,
+  });
+  expect(console.error).not.toHaveBeenCalled();
+});
+
+test("draw reports owner script execute failures through onError", () => {
+  const executeError = new Error("execute failed");
+  const onError = vi.fn();
+  const ownerScript: A_ANY = { type: "Raw", value: "owner" };
+  vi.spyOn(console, "error").mockImplementation(() => undefined);
+  vi.spyOn(Core, "parseScript").mockReturnValue(ownerScript);
+  vi.spyOn(Core, "execute").mockImplementation(() => {
+    throw executeError;
+  });
+  const niwango = new Niwango(
+    document.createElement("div"),
+    [createComment({ message: "/owner()", _owner: true })],
+    { onError },
+  );
+
+  expect(niwango.draw(0)).toBe(true);
+
+  expect(onError).toHaveBeenCalledOnce();
+  expect(onError).toHaveBeenCalledWith({
+    phase: "execute",
+    error: executeError,
+    source: "script",
+    vpos: 0,
+  });
+  expect(console.error).not.toHaveBeenCalled();
+});
+
+test("draw reports queued timer execute failures through onError", () => {
+  const executeError = new Error("queued execute failed");
+  const onError = vi.fn();
+  const schedulerScript: A_ANY = { type: "Raw", value: "scheduler" };
+  const queuedScript: A_ANY = { type: "Raw", value: "queued" };
+  vi.spyOn(console, "error").mockImplementation(() => undefined);
+  vi.spyOn(Core, "parseScript").mockReturnValue(schedulerScript);
+  vi.spyOn(Core, "execute").mockImplementation((script, scopes, trace) => {
+    if (script === queuedScript) {
+      throw executeError;
+    }
+    addQueue(queuedScript, 0, scopes, trace);
+    return undefined;
+  });
+  const niwango = new Niwango(
+    document.createElement("div"),
+    [createComment({ message: "/timer(0, lambda(fail()))", _owner: true })],
+    { onError },
+  );
+
+  expect(niwango.draw(1)).toBe(true);
+
+  expect(onError).toHaveBeenCalledOnce();
+  expect(onError).toHaveBeenCalledWith({
+    phase: "execute",
+    error: executeError,
+    source: "queue",
+    vpos: 0,
+  });
+  expect(console.error).not.toHaveBeenCalled();
+});
+
+test("draw reports comment handler execute failures through onError", () => {
+  const executeError = new Error("handler execute failed");
+  const onError = vi.fn();
+  const handlerScript: A_ANY = { type: "Raw", value: "handler" };
+  const handlerScopes = [{}, {}, Core.prototypeScope];
+  vi.spyOn(console, "error").mockImplementation(() => undefined);
+  vi.spyOn(Core, "execute").mockImplementation(() => {
+    throw executeError;
+  });
+  const niwango = new Niwango(
+    document.createElement("div"),
+    [createComment({ message: "trigger", _vpos: 10, vpos: 10 })],
+    { onError },
+  );
+  addHandler(handlerScript, handlerScopes, [], 0);
+
+  expect(niwango.draw(10)).toBe(true);
+
+  expect(onError).toHaveBeenCalledOnce();
+  expect(onError).toHaveBeenCalledWith({
+    phase: "execute",
+    error: executeError,
+    source: "commentHandler",
+    vpos: 10,
+  });
+  expect(console.error).toHaveBeenCalledOnce();
+  expect(console.error).toHaveBeenCalledWith(executeError);
+});
+
+test("draw logs comment handler execute failures once without onError", () => {
+  const executeError = new Error("handler execute failed");
+  const handlerScript: A_ANY = { type: "Raw", value: "handler" };
+  const handlerScopes = [{}, {}, Core.prototypeScope];
+  vi.spyOn(console, "error").mockImplementation(() => undefined);
+  vi.spyOn(Core, "execute").mockImplementation(() => {
+    throw executeError;
+  });
+  const niwango = new Niwango(document.createElement("div"), [
+    createComment({ message: "trigger", _vpos: 10, vpos: 10 }),
+  ]);
+  addHandler(handlerScript, handlerScopes, [], 0);
+
+  expect(niwango.draw(10)).toBe(true);
+
+  expect(console.error).toHaveBeenCalledOnce();
+  expect(console.error).toHaveBeenCalledWith(executeError);
 });
 
 test("draw treats small rewinds under 100 vpos as a no-op draw", () => {

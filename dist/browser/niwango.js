@@ -3,7 +3,7 @@ niwango.js v0.0.1-canary.20231002-1
 (c) 2023 xpadev-net https://xpadev.net
 Released under the MIT License.
 
-build at: 1782284373620
+build at: 1782286254806
 */
 (function(global, factory) {
 	typeof exports === "object" && typeof module !== "undefined" ? module.exports = factory() : typeof define === "function" && define.amd ? define([], factory) : (global = typeof globalThis !== "undefined" ? globalThis : global || self, global.Niwango = factory());
@@ -11406,7 +11406,7 @@ build at: 1782284373620
 	const setHandlers = (newHandlers) => {
 		handlers = newHandlers;
 	};
-	const triggerHandlers = (comment) => {
+	const triggerHandlers = (comment, reportError) => {
 		removeExpiredHandlers(comment._vpos);
 		if (comment.message.startsWith("/")) return;
 		for (const handler of handlers) {
@@ -11417,6 +11417,7 @@ build at: 1782284373620
 				import_niwango_core.default.execute(handler.script, handler.scopes, [handler.script]);
 			} catch (e) {
 				console.error(e);
+				reportError?.(e, comment);
 			}
 		}
 	};
@@ -13306,14 +13307,29 @@ build at: 1782284373620
 		}
 		return normalizedComments;
 	};
-	const addCommentScript = (comment) => {
+	const reportError = (onError, event) => {
+		if (!onError) {
+			console.error(event.error);
+			return;
+		}
+		try {
+			onError(event);
+		} catch (e) {
+			console.error(e);
+		}
+	};
+	const addCommentScript = (comment, onError) => {
 		if (comment.message.match(/^\//) && comment._owner) try {
 			addScript({
 				...import_niwango_core.default.parseScript(comment.message, `${comment.no}.niwascript`),
 				__name: `${comment.no}.niwascript`
 			}, comment._vpos);
 		} catch (e) {
-			console.error(e);
+			reportError(onError, {
+				phase: "parse",
+				error: e,
+				comment
+			});
 		}
 	};
 	const HTML_NAMESPACE = "http://www.w3.org/1999/xhtml";
@@ -13339,13 +13355,16 @@ build at: 1782284373620
 		static {
 			this.default = Niwango;
 		}
-		constructor(targetElement, comments) {
+		constructor(targetElement, comments, options = {}) {
 			setup();
 			initConfig();
 			this.render = createRender(targetElement);
+			this.onError = options.onError;
 			this.lastVpos = -1;
 			const normalizedComments = normalizeComments(comments);
-			normalizedComments.forEach(addCommentScript);
+			normalizedComments.forEach((comment) => {
+				addCommentScript(comment, this.onError);
+			});
 			setComments(normalizedComments);
 			setCurrentTime(-1);
 			setRender(this.render);
@@ -13410,7 +13429,15 @@ build at: 1782284373620
 						environmentScope.screenWidth = config.stageWidth[environmentScope.isWide ? "full" : "default"];
 					}
 					if (queue.type === "comment") {
-						triggerHandlers(queue.comment);
+						const reportHandlerError = this.onError ? (error, comment) => {
+							reportError(this.onError, {
+								phase: "execute",
+								error,
+								source: "commentHandler",
+								vpos: comment._vpos
+							});
+						} : void 0;
+						triggerHandlers(queue.comment, reportHandlerError);
 						continue;
 					}
 					try {
@@ -13424,7 +13451,12 @@ build at: 1782284373620
 							import_niwango_core.default.prototypeScope
 						], trace);
 					} catch (e) {
-						console.error(e);
+						reportError(this.onError, {
+							phase: "execute",
+							error: e,
+							source: queue.type,
+							vpos: queue.time
+						});
 					}
 					tasks.sort(nativeSort("time"));
 				}
@@ -13446,7 +13478,9 @@ build at: 1782284373620
 		}
 		addComments(...newComments) {
 			const futureComments = normalizeComments(newComments).filter((comment) => comment._vpos > this.lastVpos);
-			futureComments.forEach(addCommentScript);
+			futureComments.forEach((comment) => {
+				addCommentScript(comment, this.onError);
+			});
 			setComments([...comments, ...futureComments]);
 		}
 	};
