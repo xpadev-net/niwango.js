@@ -96,19 +96,7 @@ const normalizeComment = (item: unknown): Comment | null => {
     ) {
       return null;
     }
-    return {
-      message,
-      vpos,
-      isYourPost,
-      mail,
-      fromButton,
-      isPremium,
-      color,
-      size,
-      no,
-      _vpos,
-      _owner,
-    };
+    return item as unknown as Comment;
   } catch (_e) {
     return null;
   }

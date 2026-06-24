@@ -43,6 +43,7 @@ const expectBoundaryToSkipOnlyInvalid = (
 
   expect(() => useBoundary([validComment, ...invalidInputs])).not.toThrow();
   expect(comments).toEqual([validComment]);
+  expect(comments[0]).toBe(validComment);
 };
 
 test("rand", () => {
