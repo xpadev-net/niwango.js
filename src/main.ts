@@ -176,6 +176,7 @@ class Niwango {
 
   private execute(vpos: number) {
     if (vpos < this.lastVpos) {
+      // Small rewinds keep the current execution state and intentionally no-op.
       if (vpos > this.lastVpos - 100) {
         return true;
       }
