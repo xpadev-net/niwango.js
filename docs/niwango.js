@@ -3,7 +3,7 @@ niwango.js v0.0.1-canary.20231002-1
 (c) 2023 xpadev-net https://xpadev.net
 Released under the MIT License.
 
-build at: 1782273713368
+build at: 1782274567537
 */
 (function(global, factory) {
 	typeof exports === "object" && typeof module !== "undefined" ? module.exports = factory() : typeof define === "function" && define.amd ? define([], factory) : (global = typeof globalThis !== "undefined" ? globalThis : global || self, global.Niwango = factory());
@@ -12846,6 +12846,7 @@ build at: 1782273713368
 	const saveSnapshot = (vpos) => {
 		snapshots.push({
 			vpos,
+			currentTime,
 			queue: structuredClone(queue),
 			scripts: structuredClone(scripts),
 			handlers: structuredClone(handlers),
@@ -12865,6 +12866,7 @@ build at: 1782273713368
 		setHandlers(structuredClone(snapshot.handlers));
 		setGlobalScope(structuredClone(snapshot.globalScope));
 		setEnvironmentScope(structuredClone(snapshot.environmentScope));
+		setCurrentTime(snapshot.currentTime);
 		return snapshot.vpos;
 	};
 	const getLatestSnapshot = (vpos) => {

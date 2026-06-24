@@ -3,7 +3,7 @@ niwango.js v0.0.1-canary.20231002-1
 (c) 2023 xpadev-net https://xpadev.net
 Released under the MIT License.
 
-build at: 1782273713368
+build at: 1782274567537
 */
 //#region \0rolldown/runtime.js
 var __create = Object.create;
@@ -12843,6 +12843,7 @@ let snapshots = [];
 const saveSnapshot = (vpos) => {
 	snapshots.push({
 		vpos,
+		currentTime,
 		queue: structuredClone(queue),
 		scripts: structuredClone(scripts),
 		handlers: structuredClone(handlers),
@@ -12862,6 +12863,7 @@ const restoreSnapshot = (vpos) => {
 	setHandlers(structuredClone(snapshot.handlers));
 	setGlobalScope(structuredClone(snapshot.globalScope));
 	setEnvironmentScope(structuredClone(snapshot.environmentScope));
+	setCurrentTime(snapshot.currentTime);
 	return snapshot.vpos;
 };
 const getLatestSnapshot = (vpos) => {

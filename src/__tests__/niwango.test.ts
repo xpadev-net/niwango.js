@@ -1,7 +1,9 @@
+import type { A_ANY } from "@xpadev-net/niwango-core";
+import Core from "@xpadev-net/niwango-core";
 import { afterEach, describe, expect, test, vi } from "vitest";
-
 import type { Comment } from "@/@types/comment";
-import { comments } from "@/context";
+import { comments, currentTime } from "@/context";
+import { addHandler } from "@/contexts/commentHandler";
 import Niwango from "@/main";
 import { run } from "@/testUtils";
 
@@ -172,6 +174,34 @@ test("draw limits forward seeks from the current vpos", () => {
   expect(niwango.draw(10)).toBe(true);
   expect(niwango.draw(100_011)).toBe(false);
   expect(niwango.draw(100_012)).toBe(true);
+});
+
+test("draw restores processed comment time when rewinding to a snapshot", () => {
+  const handlerScript: A_ANY = { type: "Raw", value: "handler" };
+  const handlerScopes = [{}, {}, {}];
+  const execute = vi.spyOn(Core, "execute").mockReturnValue(undefined);
+  const niwango = new Niwango(document.createElement("div"), [
+    createComment({ no: 1, message: "before snapshot", _vpos: 900 }),
+    createComment({ no: 2, message: "after snapshot", _vpos: 1050 }),
+  ]);
+  addHandler(handlerScript, handlerScopes, [], 0);
+
+  expect(niwango.draw(1500)).toBe(true);
+  expect(execute).toHaveBeenCalledTimes(2);
+  expect(currentTime).toBe(1050);
+
+  expect(niwango.draw(1050)).toBe(true);
+
+  expect(execute).toHaveBeenCalledTimes(3);
+  expect(execute).toHaveBeenLastCalledWith(handlerScript, handlerScopes, [
+    handlerScript,
+  ]);
+  const replayedScopes = execute.mock.calls[2]?.[1];
+  expect(replayedScopes).not.toBe(handlerScopes);
+  expect(replayedScopes?.[0]).toMatchObject({
+    chat: expect.objectContaining({ message: "after snapshot", _vpos: 1050 }),
+  });
+  expect(currentTime).toBe(1050);
 });
 
 test("constructor treats non-array comments input as empty", () => {

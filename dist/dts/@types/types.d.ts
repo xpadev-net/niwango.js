@@ -57,6 +57,7 @@ export type IHandler = {
 };
 export type ISnapshot = {
   vpos: number;
+  currentTime: number;
   queue: IQueue[];
   scripts: Script[];
   handlers: IHandler[];
