@@ -8,6 +8,8 @@ import { getGlobalScope } from "@/utils/utils";
 
 let handlers: IHandler[] = [];
 
+type HandlerErrorReporter = (error: unknown, comment: Comment) => void;
+
 const resetHandlers = () => {
   handlers = [];
 };
@@ -46,7 +48,10 @@ const setHandlers = (newHandlers: IHandler[]) => {
   handlers = newHandlers;
 };
 
-const triggerHandlers = (comment: Comment) => {
+const triggerHandlers = (
+  comment: Comment,
+  reportError?: HandlerErrorReporter,
+) => {
   removeExpiredHandlers(comment._vpos);
   if (comment.message.startsWith("/")) return;
   for (const handler of handlers) {
@@ -56,7 +61,11 @@ const triggerHandlers = (comment: Comment) => {
     try {
       Core.execute(handler.script, handler.scopes, [handler.script]);
     } catch (e) {
-      console.error(e);
+      if (reportError) {
+        reportError(e, comment);
+      } else {
+        console.error(e);
+      }
     }
   }
 };

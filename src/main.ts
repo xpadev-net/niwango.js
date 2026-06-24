@@ -62,7 +62,46 @@ const normalizeComments = (commentInputs: unknown) => {
   return normalizedComments;
 };
 
-const addCommentScript = (comment: Comment) => {
+type NiwangoParseErrorEvent = {
+  phase: "parse";
+  error: unknown;
+  comment: Comment;
+};
+
+type NiwangoExecuteErrorEvent = {
+  phase: "execute";
+  error: unknown;
+  source: "script" | "queue" | "commentHandler";
+  vpos: number;
+};
+
+export type NiwangoErrorEvent =
+  | NiwangoParseErrorEvent
+  | NiwangoExecuteErrorEvent;
+
+export type NiwangoOptions = {
+  onError?: (event: NiwangoErrorEvent) => void;
+};
+
+const reportError = (
+  onError: NiwangoOptions["onError"],
+  event: NiwangoErrorEvent,
+) => {
+  console.error(event.error);
+  if (!onError) {
+    return;
+  }
+  try {
+    onError(event);
+  } catch (e) {
+    console.error(e);
+  }
+};
+
+const addCommentScript = (
+  comment: Comment,
+  onError?: NiwangoOptions["onError"],
+) => {
   if (comment.message.match(/^\//) && comment._owner) {
     try {
       const ast = {
@@ -71,7 +110,7 @@ const addCommentScript = (comment: Comment) => {
       };
       addScript(ast, comment._vpos);
     } catch (e) {
-      console.error(e);
+      reportError(onError, { phase: "parse", error: e, comment });
     }
   }
 };
@@ -132,19 +171,24 @@ const createRender = (targetElement: unknown): IRender => {
 
 class Niwango {
   private readonly render: IRender;
+  private readonly onError?: NiwangoOptions["onError"];
   static default = Niwango;
   private lastVpos: number;
   constructor(
     targetElement: HTMLCanvasElement | HTMLDivElement,
     comments: Comment[],
+    options: NiwangoOptions = {},
   ) {
     setup();
     initConfig();
     this.render = createRender(targetElement);
+    this.onError = options.onError;
     this.lastVpos = -1;
 
     const normalizedComments = normalizeComments(comments);
-    normalizedComments.forEach(addCommentScript);
+    normalizedComments.forEach((comment) => {
+      addCommentScript(comment, this.onError);
+    });
     setComments(normalizedComments);
     setCurrentTime(-1);
     setRender(this.render);
@@ -213,7 +257,14 @@ class Niwango {
             config.stageWidth[environmentScope.isWide ? "full" : "default"];
         }
         if (queue.type === "comment") {
-          triggerHandlers(queue.comment);
+          triggerHandlers(queue.comment, (error, comment) => {
+            reportError(this.onError, {
+              phase: "execute",
+              error,
+              source: "commentHandler",
+              vpos: comment._vpos,
+            });
+          });
           continue;
         }
         try {
@@ -229,7 +280,12 @@ class Niwango {
             trace,
           );
         } catch (e) {
-          console.error(e);
+          reportError(this.onError, {
+            phase: "execute",
+            error: e,
+            source: queue.type,
+            vpos: queue.time,
+          });
         }
         tasks.sort(nativeSort("time"));
       }
@@ -257,7 +313,9 @@ class Niwango {
     const futureComments = normalizedComments.filter(
       (comment) => comment._vpos > this.lastVpos,
     );
-    futureComments.forEach(addCommentScript);
+    futureComments.forEach((comment) => {
+      addCommentScript(comment, this.onError);
+    });
     setComments([...comments, ...futureComments]);
   }
 }
