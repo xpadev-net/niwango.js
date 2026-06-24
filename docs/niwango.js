@@ -3,7 +3,7 @@ niwango.js v0.0.1-canary.20231002-1
 (c) 2023 xpadev-net https://xpadev.net
 Released under the MIT License.
 
-build at: 1782273533674
+build at: 1782273713368
 */
 (function(global, factory) {
 	typeof exports === "object" && typeof module !== "undefined" ? module.exports = factory() : typeof define === "function" && define.amd ? define([], factory) : (global = typeof globalThis !== "undefined" ? globalThis : global || self, global.Niwango = factory());
@@ -11413,7 +11413,11 @@ build at: 1782273533674
 			const globalScope = getGlobalScope(handler.scopes);
 			if (!globalScope) continue;
 			globalScope.chat = comment;
-			import_niwango_core.default.execute(handler.script, handler.scopes, [handler.script]);
+			try {
+				import_niwango_core.default.execute(handler.script, handler.scopes, [handler.script]);
+			} catch (e) {
+				console.error(e);
+			}
 		}
 	};
 	const getComments = (vpos) => {

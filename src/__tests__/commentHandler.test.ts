@@ -82,4 +82,36 @@ describe("comment handlers", () => {
     ]);
     expect(handlers).toHaveLength(2);
   });
+
+  test("logs handler execution errors and continues dispatch", () => {
+    const firstScript: A_ANY = { type: "Raw", value: "first" };
+    const secondScript: A_ANY = { type: "Raw", value: "second" };
+    const firstScopes = [{}, {}, Core.prototypeScope];
+    const secondScopes = [{}, {}, Core.prototypeScope];
+    const error = new Error("handler failed");
+    const consoleError = vi.spyOn(console, "error").mockImplementation(() => {
+      // keep the expected failure out of test output
+    });
+
+    execute.mockImplementation((executedScript) => {
+      if (executedScript === firstScript) {
+        throw error;
+      }
+      return undefined;
+    });
+
+    addHandler(firstScript, firstScopes, [], 100, 50);
+    addHandler(secondScript, secondScopes, [], 100, 50);
+    triggerHandlers(createComment(120));
+
+    expect(consoleError).toHaveBeenCalledOnce();
+    expect(consoleError).toHaveBeenCalledWith(error);
+    expect(execute).toHaveBeenCalledTimes(2);
+    expect(execute).toHaveBeenNthCalledWith(1, firstScript, firstScopes, [
+      firstScript,
+    ]);
+    expect(execute).toHaveBeenNthCalledWith(2, secondScript, secondScopes, [
+      secondScript,
+    ]);
+  });
 });
