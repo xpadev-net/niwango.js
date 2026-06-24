@@ -120,6 +120,8 @@ describe.each([
       [],
       { ...createComment(), message: 1 },
       { ...createComment(), message: null },
+      { ...createComment(), mail: 1 },
+      { ...createComment(), mail: null },
     ]);
   });
 

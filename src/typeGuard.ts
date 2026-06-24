@@ -153,7 +153,6 @@ const objectHasTypes = (
 
 const typeGuard = {
   comment: (i: unknown): i is Comment => normalizeComment(i) !== null,
-  normalizeComment,
   IrTextLiteral: (i: unknown): i is ITextLiteral =>
     isLiteralObject(i, "IrText") && objectHasTypes(i.options, textOptionTypes),
   IrShapeLiteral: (i: unknown): i is IShapeLiteral =>
