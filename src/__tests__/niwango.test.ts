@@ -162,6 +162,22 @@ test("draw floors fractional vpos values", () => {
   expect(niwango.draw(1.1)).toBe(true);
 });
 
+test("draw returns false and does not replay same-vpos work", () => {
+  const handlerScript: A_ANY = { type: "Raw", value: "handler" };
+  const handlerScopes = [{}, {}, Core.prototypeScope];
+  const execute = vi.spyOn(Core, "execute").mockReturnValue(undefined);
+  const niwango = new Niwango(document.createElement("div"), [
+    createComment({ no: 1, message: "same-vpos", _vpos: 10, vpos: 10 }),
+  ]);
+  addHandler(handlerScript, handlerScopes, [], 0);
+
+  expect(niwango.draw(10)).toBe(true);
+  expect(execute).toHaveBeenCalledTimes(1);
+
+  expect(niwango.draw(10)).toBe(false);
+  expect(execute).toHaveBeenCalledTimes(1);
+});
+
 test("draw skips huge forward seek windows", () => {
   const niwango = createNiwango();
 
@@ -175,6 +191,24 @@ test("draw limits forward seeks from the current vpos", () => {
   expect(niwango.draw(10)).toBe(true);
   expect(niwango.draw(100_011)).toBe(false);
   expect(niwango.draw(100_012)).toBe(true);
+});
+
+test("draw treats small rewinds under 100 vpos as a no-op draw", () => {
+  const handlerScript: A_ANY = { type: "Raw", value: "handler" };
+  const handlerScopes = [{}, {}, Core.prototypeScope];
+  const execute = vi.spyOn(Core, "execute").mockReturnValue(undefined);
+  const niwango = new Niwango(document.createElement("div"), [
+    createComment({ no: 1, message: "forward", _vpos: 150, vpos: 150 }),
+    createComment({ no: 2, message: "small rewind", _vpos: 175, vpos: 175 }),
+  ]);
+  addHandler(handlerScript, handlerScopes, [], 0);
+
+  expect(niwango.draw(200)).toBe(true);
+  expect(execute).toHaveBeenCalledTimes(2);
+
+  expect(niwango.draw(150)).toBe(true);
+  expect(execute).toHaveBeenCalledTimes(2);
+  expect(currentTime).toBe(175);
 });
 
 test("draw restores processed comment time when rewinding to a snapshot", () => {
