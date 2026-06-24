@@ -3,7 +3,7 @@ niwango.js v0.0.1-canary.20231002-1
 (c) 2023 xpadev-net https://xpadev.net
 Released under the MIT License.
 
-build at: 1782274567537
+build at: 1782283716222
 */
 //#region \0rolldown/runtime.js
 var __create = Object.create;
@@ -13441,9 +13441,9 @@ var Niwango = class Niwango {
 		this.render.apply(clear);
 	}
 	addComments(...newComments) {
-		const normalizedComments = normalizeComments(newComments);
-		normalizedComments.forEach(addCommentScript);
-		setComments([...comments, ...normalizedComments]);
+		const futureComments = normalizeComments(newComments).filter((comment) => comment._vpos > this.lastVpos);
+		futureComments.forEach(addCommentScript);
+		setComments([...comments, ...futureComments]);
 	}
 };
 //#endregion
