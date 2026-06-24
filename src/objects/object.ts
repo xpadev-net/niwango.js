@@ -18,6 +18,8 @@ import {
 } from "@/utils/object";
 import { uuid } from "@/utils/uuid";
 
+type SnapshotRecord = Record<string, unknown>;
+
 const defaultOptions: IObjectOptions = {
   x: 0,
   y: 0,
@@ -313,6 +315,29 @@ abstract class IrObject {
     console.debug("please override this method");
   }
 
+  public __restoreSnapshotState(snapshot: unknown) {
+    if (!IrObject.__isSnapshotRecord(snapshot)) return;
+
+    const moverQueue = IrObject.__normalizeMoverQueue(snapshot.moverQueue);
+    if (moverQueue) {
+      this.moverQueue = moverQueue;
+    }
+    if (typeof snapshot.__modified === "boolean") {
+      this.__modified = snapshot.__modified;
+    }
+    if (
+      typeof snapshot.__creationVpos === "number" &&
+      Number.isFinite(snapshot.__creationVpos)
+    ) {
+      Object.defineProperty(this, "__creationVpos", {
+        configurable: true,
+        enumerable: true,
+        value: snapshot.__creationVpos,
+        writable: true,
+      });
+    }
+  }
+
   protected get __isModified() {
     return (
       this.__modified ||
@@ -380,6 +405,57 @@ abstract class IrObject {
       return queue.target[axis] - pos;
     }
     return queue.target[axis];
+  }
+
+  private static __isSnapshotRecord(
+    snapshot: unknown,
+  ): snapshot is SnapshotRecord {
+    return (
+      typeof snapshot === "object" &&
+      snapshot !== null &&
+      !Array.isArray(snapshot)
+    );
+  }
+
+  private static __normalizeMoverQueue(
+    queue: unknown,
+  ): IrObjectMoverQueue | null {
+    if (!Array.isArray(queue)) return null;
+
+    const moverQueue: IrObjectMoverQueue = [];
+    for (const item of queue) {
+      if (!IrObject.__isSnapshotRecord(item)) continue;
+      const { current, target, diff, vpos, duration } = item;
+      if (
+        !IrObject.__isPos(current) ||
+        !IrObject.__isPos(target) ||
+        !IrObject.__isPos(diff) ||
+        typeof vpos !== "number" ||
+        !Number.isFinite(vpos) ||
+        typeof duration !== "number" ||
+        !Number.isFinite(duration)
+      ) {
+        continue;
+      }
+      moverQueue.push({
+        current: { ...current },
+        target: { ...target },
+        diff: { ...diff },
+        vpos,
+        duration,
+      });
+    }
+    return moverQueue;
+  }
+
+  private static __isPos(pos: unknown): pos is IrObjectPos {
+    return (
+      IrObject.__isSnapshotRecord(pos) &&
+      typeof pos.x === "number" &&
+      Number.isFinite(pos.x) &&
+      typeof pos.y === "number" &&
+      Number.isFinite(pos.y)
+    );
   }
 }
 
