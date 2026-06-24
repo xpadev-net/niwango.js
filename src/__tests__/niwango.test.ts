@@ -309,6 +309,25 @@ test("draw reports comment handler execute failures through onError", () => {
   expect(console.error).toHaveBeenCalledWith(executeError);
 });
 
+test("draw logs comment handler execute failures once without onError", () => {
+  const executeError = new Error("handler execute failed");
+  const handlerScript: A_ANY = { type: "Raw", value: "handler" };
+  const handlerScopes = [{}, {}, Core.prototypeScope];
+  vi.spyOn(console, "error").mockImplementation(() => undefined);
+  vi.spyOn(Core, "execute").mockImplementation(() => {
+    throw executeError;
+  });
+  const niwango = new Niwango(document.createElement("div"), [
+    createComment({ message: "trigger", _vpos: 10, vpos: 10 }),
+  ]);
+  addHandler(handlerScript, handlerScopes, [], 0);
+
+  expect(niwango.draw(10)).toBe(true);
+
+  expect(console.error).toHaveBeenCalledOnce();
+  expect(console.error).toHaveBeenCalledWith(executeError);
+});
+
 test("draw treats small rewinds under 100 vpos as a no-op draw", () => {
   const handlerScript: A_ANY = { type: "Raw", value: "handler" };
   const handlerScopes = [{}, {}, Core.prototypeScope];

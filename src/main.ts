@@ -257,14 +257,17 @@ class Niwango {
             config.stageWidth[environmentScope.isWide ? "full" : "default"];
         }
         if (queue.type === "comment") {
-          triggerHandlers(queue.comment, (error, comment) => {
-            reportError(this.onError, {
-              phase: "execute",
-              error,
-              source: "commentHandler",
-              vpos: comment._vpos,
-            });
-          });
+          const reportHandlerError = this.onError
+            ? (error: unknown, comment: Comment) => {
+                reportError(this.onError, {
+                  phase: "execute",
+                  error,
+                  source: "commentHandler",
+                  vpos: comment._vpos,
+                });
+              }
+            : undefined;
+          triggerHandlers(queue.comment, reportHandlerError);
           continue;
         }
         try {
