@@ -3,7 +3,7 @@ niwango.js v0.0.1-canary.20231002-1
 (c) 2023 xpadev-net https://xpadev.net
 Released under the MIT License.
 
-build at: 1782273107858
+build at: 1782273533674
 */
 (function(global, factory) {
 	typeof exports === "object" && typeof module !== "undefined" ? module.exports = factory() : typeof define === "function" && define.amd ? define([], factory) : (global = typeof globalThis !== "undefined" ? globalThis : global || self, global.Niwango = factory());
@@ -11623,7 +11623,7 @@ build at: 1782273107858
 	/**
 	* 描画オブジェクトの基底クラス
 	*/
-	var IrObject = class {
+	var IrObject = class IrObject {
 		constructor(options) {
 			this.__type = "IrObject";
 			this.__NIWANGO_LITERAL = "IrObject";
@@ -11847,6 +11847,18 @@ build at: 1782273107858
 		__draw() {
 			console.debug("please override this method");
 		}
+		__restoreSnapshotState(snapshot) {
+			if (!IrObject.__isSnapshotRecord(snapshot)) return;
+			const moverQueue = IrObject.__normalizeMoverQueue(snapshot.moverQueue);
+			if (moverQueue !== null) this.moverQueue = moverQueue;
+			if (typeof snapshot.__modified === "boolean") this.__modified = snapshot.__modified;
+			if (typeof snapshot.__creationVpos === "number" && Number.isFinite(snapshot.__creationVpos)) Object.defineProperty(this, "__creationVpos", {
+				configurable: true,
+				enumerable: true,
+				value: snapshot.__creationVpos,
+				writable: true
+			});
+		}
 		get __isModified() {
 			return this.__modified || this.mover === "hopping" && this.moverQueue.length > 0;
 		}
@@ -11885,6 +11897,29 @@ build at: 1782273107858
 				return queue.target[axis] - pos;
 			}
 			return queue.target[axis];
+		}
+		static __isSnapshotRecord(snapshot) {
+			return typeof snapshot === "object" && snapshot !== null && !Array.isArray(snapshot);
+		}
+		static __normalizeMoverQueue(queue) {
+			if (!Array.isArray(queue)) return null;
+			const moverQueue = [];
+			for (const item of queue) {
+				if (!IrObject.__isSnapshotRecord(item)) continue;
+				const { current, target, diff, vpos, duration } = item;
+				if (!IrObject.__isPos(current) || !IrObject.__isPos(target) || !IrObject.__isPos(diff) || typeof vpos !== "number" || !Number.isFinite(vpos) || typeof duration !== "number" || !Number.isFinite(duration)) continue;
+				moverQueue.push({
+					current: { ...current },
+					target: { ...target },
+					diff: { ...diff },
+					vpos,
+					duration
+				});
+			}
+			return moverQueue;
+		}
+		static __isPos(pos) {
+			return IrObject.__isSnapshotRecord(pos) && typeof pos.x === "number" && Number.isFinite(pos.x) && typeof pos.y === "number" && Number.isFinite(pos.y);
 		}
 	};
 	//#endregion
@@ -12820,7 +12855,7 @@ build at: 1782273107858
 		if (!snapshot) throw new Error("snapshot not found");
 		snapshots = snapshots.filter((s) => s.vpos <= snapshot.vpos);
 		resetObjects();
-		for (const obj of structuredClone(snapshot.drawObjects)) resultHook(obj);
+		for (const obj of structuredClone(snapshot.drawObjects)) restoreObjectLiteral(obj, true);
 		setQueue(structuredClone(snapshot.queue));
 		setScripts(structuredClone(snapshot.scripts));
 		setHandlers(structuredClone(snapshot.handlers));
@@ -12843,9 +12878,19 @@ build at: 1782273107858
 		return snapshot.vpos;
 	};
 	const resultHook = (input) => {
+		return restoreObjectLiteral(input);
+	};
+	const restoreObjectLiteral = (input, restoreState = false) => {
 		if (typeof input === "object") {
-			if (typeGuard.IrShapeLiteral(input)) return drawObjects.find((obj) => obj.__id === input.options.__id) ?? new IrShape(input.options);
-			else if (typeGuard.IrTextLiteral(input)) return drawObjects.find((obj) => obj.__id === input.options.__id) ?? new IrText(input.options);
+			if (typeGuard.IrShapeLiteral(input)) {
+				const restoredShape = drawObjects.find((obj) => obj.__id === input.options.__id) ?? new IrShape(input.options);
+				if (restoreState) restoredShape.__restoreSnapshotState(input);
+				return restoredShape;
+			} else if (typeGuard.IrTextLiteral(input)) {
+				const restoredText = drawObjects.find((obj) => obj.__id === input.options.__id) ?? new IrText(input.options);
+				if (restoreState) restoredText.__restoreSnapshotState(input);
+				return restoredText;
+			}
 		}
 		return input;
 	};

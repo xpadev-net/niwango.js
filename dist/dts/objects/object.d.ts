@@ -42,8 +42,12 @@ declare abstract class IrObject {
     protected __parsePos(): void;
     protected __updateColor(): void;
     protected __draw(): void;
+    __restoreSnapshotState(snapshot: unknown): void;
     protected get __isModified(): boolean;
     draw(): void;
     protected calcMover(queue: IrObjectMoverItem | undefined, basePos: number, axis: "x" | "y" | "scale"): number;
+    private static __isSnapshotRecord;
+    private static __normalizeMoverQueue;
+    private static __isPos;
 }
 export { IrObject };
