@@ -1,4 +1,5 @@
 import type { parsedComment } from "@/@types/flashText";
+import type { IObjectMover } from "@/@types/IrObject";
 import type { ITextOptions, ITextOptionsNullable } from "@/@types/IrText";
 import type { KTMap } from "@/@types/types";
 import { render } from "@/context";
@@ -8,7 +9,15 @@ import { IrObject } from "@/objects/object";
 import { measure, normalizeNewlines, parse } from "@/utils/flashText";
 import { number2color } from "@/utils/number2color";
 import { getOptions } from "@/utils/object";
-import { format, getValue, parseFont } from "@/utils/utils";
+import {
+  format,
+  getAllowedString,
+  getFiniteNumber,
+  getValue,
+  normalizeFiniteNumbers,
+  normalizeStringUnion,
+  parseFont,
+} from "@/utils/utils";
 
 const optionTypes: KTMap<keyof ITextOptions> = {
   text: "string",
@@ -46,6 +55,26 @@ const defaultOptions: ITextOptions = {
   mover: "",
 };
 
+const finiteNumberOptionKeys = [
+  "x",
+  "y",
+  "z",
+  "size",
+  "color",
+  "scale",
+  "alpha",
+] as const satisfies readonly (keyof ITextOptions)[];
+
+const filterOptions = ["", "fuchi", "kasumi", "kage"] as const;
+const moverOptions = ["", "smooth", "simple", "rolling", "hopping"] as const;
+
+const normalizeOptions = (options: ITextOptionsNullable) => {
+  normalizeFiniteNumbers(options, defaultOptions, finiteNumberOptionKeys);
+  normalizeStringUnion(options, "filter", filterOptions, defaultOptions.filter);
+  normalizeStringUnion(options, "mover", moverOptions, defaultOptions.mover);
+  return options;
+};
+
 /**
  * テキストオブジェクトのクラス
  */
@@ -59,7 +88,7 @@ class IrText extends IrObject {
   private __reverse: boolean;
   public override readonly __type: string = "IrText";
   constructor(_options: ITextOptionsNullable) {
-    const options = format(_options, optionTypes);
+    const options = normalizeOptions(format(_options, optionTypes));
     super(options);
     this.options = getOptions(defaultOptions, options);
     this.__actualHeight = this.__actualWidth = 0;
@@ -88,26 +117,51 @@ class IrText extends IrObject {
     return this.__actualHeight * this.__scale;
   }
 
+  override get x() {
+    return super.x;
+  }
+
+  override set x(val: number) {
+    super.x = getFiniteNumber(val, defaultOptions.x);
+  }
+
+  override get y() {
+    return super.y;
+  }
+
+  override set y(val: number) {
+    super.y = getFiniteNumber(val, defaultOptions.y);
+  }
+
+  override get z() {
+    return super.z;
+  }
+
+  override set z(val: number) {
+    super.z = getFiniteNumber(val, defaultOptions.z);
+  }
+
   get size() {
     return this.options.size;
   }
 
   set size(val) {
-    if (this.options.size < 3 !== val < 3) {
-      this.parsedComment = parse(this.text, val < 3);
+    const value = getFiniteNumber(val, defaultOptions.size);
+    if (this.options.size < 3 !== value < 3) {
+      this.parsedComment = parse(this.text, value < 3);
     }
-    const size = Math.abs(val * this.options.scale);
+    const size = Math.abs(value * this.options.scale);
     if (size < 10) {
       this.__scale = Math.max(size / 10, 0.16);
       this.__size = 10;
-    } else if (size > 100 && val >= 3) {
+    } else if (size > 100 && value >= 3) {
       this.__scale = size / 100;
       this.__size = 100;
     } else {
       this.__scale = 1;
       this.__size = size;
     }
-    this.options.size = val;
+    this.options.size = value;
     this.__updateFont();
     this.__modified = true;
   }
@@ -136,8 +190,9 @@ class IrText extends IrObject {
   }
 
   override set scale(val: number) {
-    const size = Math.abs(val * this.options.size);
-    this.__reverse = val < 0;
+    const value = getFiniteNumber(val, defaultOptions.scale);
+    const size = Math.abs(value * this.options.size);
+    this.__reverse = value < 0;
     if (size < 10) {
       this.__scale = Math.max(size / 10, 0.16);
       this.__size = 10;
@@ -148,7 +203,7 @@ class IrText extends IrObject {
       this.__scale = 1;
       this.__size = size;
     }
-    this.options.scale = val;
+    this.options.scale = value;
     this.__updateFont();
     this.__modified = true;
   }
@@ -163,13 +218,44 @@ class IrText extends IrObject {
     this.__modified = true;
   }
 
+  override get color() {
+    return super.color;
+  }
+
+  override set color(val: number) {
+    super.color = getFiniteNumber(val, defaultOptions.color);
+  }
+
   get filter() {
     return this.options.filter;
   }
 
   set filter(val) {
-    this.options.filter = val;
+    this.options.filter = getAllowedString(
+      val,
+      filterOptions,
+      defaultOptions.filter,
+    );
     this.__modified = true;
+  }
+
+  override get alpha() {
+    return super.alpha;
+  }
+
+  override set alpha(val: unknown) {
+    super.alpha = getFiniteNumber(
+      typeof val === "number" ? val : Number(val),
+      defaultOptions.alpha,
+    );
+  }
+
+  override get mover() {
+    return super.mover;
+  }
+
+  override set mover(val: IObjectMover) {
+    super.mover = getAllowedString(val, moverOptions, defaultOptions.mover);
   }
 
   __updateFont() {

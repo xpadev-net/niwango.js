@@ -1,7 +1,7 @@
 import { IObjectOptions } from "@/@types/IrObject";
 
-type IShapeType = "circle" | "rect";
-type IShapeOptions = {
+export type IShapeType = "circle" | "rect";
+export type IShapeOptions = {
   shape: IShapeType;
   width: number;
   height: number;

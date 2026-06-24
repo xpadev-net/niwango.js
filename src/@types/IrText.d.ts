@@ -23,8 +23,8 @@ export type commentContentIndex = {
 };
 export type commentFont = "defont" | "gulim" | "simsun";
 
-type ITextFilter = "" | "fuchi" | "kasumi" | "kage";
-type ITextOptions = {
+export type ITextFilter = "" | "fuchi" | "kasumi" | "kage";
+export type ITextOptions = {
   text: string;
   size: number;
   bold: boolean;
