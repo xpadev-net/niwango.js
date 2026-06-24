@@ -37,7 +37,7 @@ const restoreSnapshot = (vpos: number) => {
   snapshots = snapshots.filter((s) => s.vpos <= snapshot.vpos);
   resetObjects();
   for (const obj of structuredClone(snapshot.drawObjects)) {
-    resultHook(obj);
+    restoreObjectLiteral(obj, true);
   }
   setQueue(structuredClone(snapshot.queue));
   setScripts(structuredClone(snapshot.scripts));
@@ -66,13 +66,25 @@ const getLatestSnapshotVpos = (vpos: number) => {
 };
 
 const resultHook = (input: unknown) => {
+  return restoreObjectLiteral(input);
+};
+
+const restoreObjectLiteral = (input: unknown, restoreState = false) => {
   if (typeof input === "object") {
     if (typeGuard.IrShapeLiteral(input)) {
       const shape = drawObjects.find((obj) => obj.__id === input.options.__id);
-      return shape ?? new IrShape(input.options);
+      const restoredShape = shape ?? new IrShape(input.options);
+      if (restoreState) {
+        restoredShape.__restoreSnapshotState(input);
+      }
+      return restoredShape;
     } else if (typeGuard.IrTextLiteral(input)) {
       const text = drawObjects.find((obj) => obj.__id === input.options.__id);
-      return text ?? new IrText(input.options);
+      const restoredText = text ?? new IrText(input.options);
+      if (restoreState) {
+        restoredText.__restoreSnapshotState(input);
+      }
+      return restoredText;
     }
   }
   return input;
