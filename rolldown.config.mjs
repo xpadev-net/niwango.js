@@ -13,7 +13,7 @@ const banner = `/*!
 */`;
 
 export default defineConfig({
-  input: 'src/main.ts',
+  input: 'src/index.ts',
   output: [
     {
       file: 'dist/index.mjs',
