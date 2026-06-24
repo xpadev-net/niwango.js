@@ -3,7 +3,7 @@ niwango.js v0.0.1-canary.20231002-1
 (c) 2023 xpadev-net https://xpadev.net
 Released under the MIT License.
 
-build at: 1782270585479
+build at: 1782271499674
 */
 (function(global, factory) {
 	typeof exports === "object" && typeof module !== "undefined" ? module.exports = factory() : typeof define === "function" && define.amd ? define([], factory) : (global = typeof globalThis !== "undefined" ? globalThis : global || self, global.Niwango = factory());
@@ -11348,16 +11348,35 @@ build at: 1782270585479
 		return value ?? fallback;
 	};
 	const format = (options, types) => {
+		const objectOptions = options;
 		for (const key of Object.keys(options)) {
-			const value = options[key];
+			const value = objectOptions[key];
 			const type = types[key];
 			if (!type || type === "any") continue;
 			if (value !== void 0 && typeof value !== type) {
-				if (type === "string") options[key] = import_niwango_core.default.format(value, "string");
-				else if (type === "number") options[key] = import_niwango_core.default.format(value, "number");
-				else if (type === "boolean") options[key] = import_niwango_core.default.format(value, "boolean");
+				if (type === "string") objectOptions[key] = import_niwango_core.default.format(value, "string");
+				else if (type === "number") objectOptions[key] = import_niwango_core.default.format(value, "number");
+				else if (type === "boolean") objectOptions[key] = import_niwango_core.default.format(value, "boolean");
 			}
 		}
+		return options;
+	};
+	const getFiniteNumber = (value, fallback) => {
+		return typeof value === "number" && Number.isFinite(value) ? value : fallback;
+	};
+	const getAllowedString = (value, allowedValues, fallback) => {
+		return allowedValues.includes(value) ? value : fallback;
+	};
+	const normalizeFiniteNumbers = (options, defaults, keys) => {
+		for (const key of keys) {
+			const value = options[key];
+			if (value !== void 0 && (typeof value !== "number" || !Number.isFinite(value))) options[key] = defaults[key];
+		}
+		return options;
+	};
+	const normalizeStringUnion = (options, key, allowedValues, fallback) => {
+		const value = options[key];
+		if (value !== void 0 && (typeof value !== "string" || !allowedValues.includes(value))) options[key] = fallback;
 		return options;
 	};
 	//#endregion
@@ -11869,6 +11888,15 @@ build at: 1782270585479
 		}
 	};
 	//#endregion
+	//#region src/objects/options.ts
+	const objectMoverOptions = Object.keys({
+		"": true,
+		hopping: true,
+		rolling: true,
+		simple: true,
+		smooth: true
+	});
+	//#endregion
 	//#region src/utils/number2color.ts
 	/**
 	* 10進数のカラコを16進数に変換する
@@ -11917,6 +11945,24 @@ build at: 1782270585479
 		rotation: 0,
 		mover: ""
 	};
+	const finiteNumberOptionKeys$1 = [
+		"x",
+		"y",
+		"z",
+		"width",
+		"height",
+		"color",
+		"scale",
+		"alpha",
+		"rotation"
+	];
+	const shapeOptions = ["circle", "rect"];
+	const normalizeOptions$1 = (options) => {
+		normalizeFiniteNumbers(options, defaultOptions$1, finiteNumberOptionKeys$1);
+		normalizeStringUnion(options, "shape", shapeOptions, defaultOptions$1.shape);
+		normalizeStringUnion(options, "mover", objectMoverOptions, defaultOptions$1.mover);
+		return options;
+	};
 	const assertMaskSupported = (mask) => {
 		if (mask === true) throw new Error("drawShape mask option is not supported");
 	};
@@ -11925,7 +11971,7 @@ build at: 1782270585479
 	*/
 	var IrShape = class extends IrObject {
 		constructor(_options) {
-			const options = format(_options, optionTypes$1);
+			const options = normalizeOptions$1(format(_options, optionTypes$1));
 			assertMaskSupported(options.mask);
 			super(options);
 			this.__type = "IrShape";
@@ -11935,27 +11981,47 @@ build at: 1782270585479
 			this.__parsePos();
 			this.__draw();
 		}
+		get x() {
+			return super.x;
+		}
+		set x(val) {
+			super.x = getFiniteNumber(val, defaultOptions$1.x);
+		}
+		get y() {
+			return super.y;
+		}
+		set y(val) {
+			super.y = getFiniteNumber(val, defaultOptions$1.y);
+		}
+		get z() {
+			return super.z;
+		}
+		set z(val) {
+			super.z = getFiniteNumber(val, defaultOptions$1.z);
+		}
 		get shape() {
 			return this.options.shape;
 		}
 		set shape(val) {
-			this.options.shape = val;
+			this.options.shape = getAllowedString(val, shapeOptions, defaultOptions$1.shape);
 			this.__modified = true;
 		}
 		get width() {
 			return this.options.width;
 		}
 		set width(val) {
-			this.options.width = val;
-			this.__width = val;
+			const value = getFiniteNumber(val, defaultOptions$1.width);
+			this.options.width = value;
+			this.__width = value;
 			this.__modified = true;
 		}
 		get height() {
 			return this.options.height;
 		}
 		set height(val) {
-			this.options.height = val;
-			this.__height = val;
+			const value = getFiniteNumber(val, defaultOptions$1.height);
+			this.options.height = value;
+			this.__height = value;
 			this.__modified = true;
 		}
 		get __baseWidth() {
@@ -11966,6 +12032,18 @@ build at: 1782270585479
 		}
 		get __commentmask() {
 			return this.options.commentmask;
+		}
+		get scale() {
+			return super.scale;
+		}
+		set scale(val) {
+			super.scale = getFiniteNumber(val, defaultOptions$1.scale);
+		}
+		get color() {
+			return super.color;
+		}
+		set color(val) {
+			super.color = getFiniteNumber(val, defaultOptions$1.color);
 		}
 		get mask() {
 			return this.options.mask;
@@ -11984,7 +12062,19 @@ build at: 1782270585479
 			return this.options.rotation;
 		}
 		set rotation(val) {
-			this.options.rotation = val;
+			this.options.rotation = getFiniteNumber(val, defaultOptions$1.rotation);
+		}
+		get alpha() {
+			return super.alpha;
+		}
+		set alpha(val) {
+			super.alpha = getFiniteNumber(typeof val === "number" ? val : Number(val), defaultOptions$1.alpha);
+		}
+		get mover() {
+			return super.mover;
+		}
+		set mover(val) {
+			super.mover = getAllowedString(val, objectMoverOptions, defaultOptions$1.mover);
 		}
 		__updateColor() {
 			getCanvas(this.__id).context.fillStyle = number2color(this.color);
@@ -12360,12 +12450,33 @@ build at: 1782270585479
 		alpha: 0,
 		mover: ""
 	};
+	const finiteNumberOptionKeys = [
+		"x",
+		"y",
+		"z",
+		"size",
+		"color",
+		"scale",
+		"alpha"
+	];
+	const filterOptions = [
+		"",
+		"fuchi",
+		"kasumi",
+		"kage"
+	];
+	const normalizeOptions = (options) => {
+		normalizeFiniteNumbers(options, defaultOptions, finiteNumberOptionKeys);
+		normalizeStringUnion(options, "filter", filterOptions, defaultOptions.filter);
+		normalizeStringUnion(options, "mover", objectMoverOptions, defaultOptions.mover);
+		return options;
+	};
 	/**
 	* テキストオブジェクトのクラス
 	*/
 	var IrText = class extends IrObject {
 		constructor(_options) {
-			const options = format(_options, optionTypes);
+			const options = normalizeOptions(format(_options, optionTypes));
 			super(options);
 			this.__type = "IrText";
 			this.options = getOptions(defaultOptions, options);
@@ -12392,23 +12503,42 @@ build at: 1782270585479
 		get __baseHeight() {
 			return this.__actualHeight * this.__scale;
 		}
+		get x() {
+			return super.x;
+		}
+		set x(val) {
+			super.x = getFiniteNumber(val, defaultOptions.x);
+		}
+		get y() {
+			return super.y;
+		}
+		set y(val) {
+			super.y = getFiniteNumber(val, defaultOptions.y);
+		}
+		get z() {
+			return super.z;
+		}
+		set z(val) {
+			super.z = getFiniteNumber(val, defaultOptions.z);
+		}
 		get size() {
 			return this.options.size;
 		}
 		set size(val) {
-			if (this.options.size < 3 !== val < 3) this.parsedComment = parse(this.text, val < 3);
-			const size = Math.abs(val * this.options.scale);
+			const value = getFiniteNumber(val, defaultOptions.size);
+			if (this.options.size < 3 !== value < 3) this.parsedComment = parse(this.text, value < 3);
+			const size = Math.abs(value * this.options.scale);
 			if (size < 10) {
 				this.__scale = Math.max(size / 10, .16);
 				this.__size = 10;
-			} else if (size > 100 && val >= 3) {
+			} else if (size > 100 && value >= 3) {
 				this.__scale = size / 100;
 				this.__size = 100;
 			} else {
 				this.__scale = 1;
 				this.__size = size;
 			}
-			this.options.size = val;
+			this.options.size = value;
 			this.__updateFont();
 			this.__modified = true;
 		}
@@ -12427,8 +12557,9 @@ build at: 1782270585479
 			this.__modified = true;
 		}
 		set scale(val) {
-			const size = Math.abs(val * this.options.size);
-			this.__reverse = val < 0;
+			const value = getFiniteNumber(val, defaultOptions.scale);
+			const size = Math.abs(value * this.options.size);
+			this.__reverse = value < 0;
 			if (size < 10) {
 				this.__scale = Math.max(size / 10, .16);
 				this.__size = 10;
@@ -12439,7 +12570,7 @@ build at: 1782270585479
 				this.__scale = 1;
 				this.__size = size;
 			}
-			this.options.scale = val;
+			this.options.scale = value;
 			this.__updateFont();
 			this.__modified = true;
 		}
@@ -12451,12 +12582,30 @@ build at: 1782270585479
 			this.__updateFont();
 			this.__modified = true;
 		}
+		get color() {
+			return super.color;
+		}
+		set color(val) {
+			super.color = getFiniteNumber(val, defaultOptions.color);
+		}
 		get filter() {
 			return this.options.filter;
 		}
 		set filter(val) {
-			this.options.filter = val;
+			this.options.filter = getAllowedString(val, filterOptions, defaultOptions.filter);
 			this.__modified = true;
+		}
+		get alpha() {
+			return super.alpha;
+		}
+		set alpha(val) {
+			super.alpha = getFiniteNumber(typeof val === "number" ? val : Number(val), defaultOptions.alpha);
+		}
+		get mover() {
+			return super.mover;
+		}
+		set mover(val) {
+			super.mover = getAllowedString(val, objectMoverOptions, defaultOptions.mover);
 		}
 		__updateFont() {
 			getCanvas(this.__id).context.font = parseFont(this.parsedComment.font, this.__size, { bold: this.bold });

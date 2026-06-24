@@ -1,9 +1,16 @@
+import type { IObjectMover } from "./../@types/IrObject";
 import type { IShapeOptions, IShapeOptionsNullable } from "./../@types/IrShape";
 import { IrObject } from "./../objects/object";
 declare class IrShape extends IrObject {
     options: IShapeOptions;
     readonly __type: string;
     constructor(_options: IShapeOptionsNullable);
+    get x(): number;
+    set x(val: number);
+    get y(): number;
+    set y(val: number);
+    get z(): number;
+    set z(val: number);
     get shape(): import("./../@types/IrShape").IShapeType;
     set shape(val: import("./../@types/IrShape").IShapeType);
     get width(): number;
@@ -13,12 +20,20 @@ declare class IrShape extends IrObject {
     protected get __baseWidth(): number;
     protected get __baseHeight(): number;
     protected get __commentmask(): boolean;
+    get scale(): number;
+    set scale(val: number);
+    get color(): number;
+    set color(val: number);
     get mask(): boolean;
     set mask(val: boolean);
     get commentmask(): boolean;
     set commentmask(val: boolean);
     get rotation(): number;
     set rotation(val: number);
+    get alpha(): unknown;
+    set alpha(val: unknown);
+    get mover(): IObjectMover;
+    set mover(val: IObjectMover);
     __updateColor(): void;
     __draw(): void;
     draw(): void;

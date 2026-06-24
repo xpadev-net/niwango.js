@@ -1,3 +1,4 @@
+import type { IObjectMover } from "./../@types/IrObject";
 import type { ITextOptions, ITextOptionsNullable } from "./../@types/IrText";
 import { IrObject } from "./../objects/object";
 declare class IrText extends IrObject {
@@ -12,6 +13,12 @@ declare class IrText extends IrObject {
     constructor(_options: ITextOptionsNullable);
     protected get __baseWidth(): number;
     protected get __baseHeight(): number;
+    get x(): number;
+    set x(val: number);
+    get y(): number;
+    set y(val: number);
+    get z(): number;
+    set z(val: number);
     get size(): number;
     set size(val: number);
     get text(): string;
@@ -20,8 +27,14 @@ declare class IrText extends IrObject {
     set scale(val: number);
     get bold(): boolean;
     set bold(val: boolean);
+    get color(): number;
+    set color(val: number);
     get filter(): import("./../@types/IrText").ITextFilter;
     set filter(val: import("./../@types/IrText").ITextFilter);
+    get alpha(): unknown;
+    set alpha(val: unknown);
+    get mover(): IObjectMover;
+    set mover(val: IObjectMover);
     __updateFont(): void;
     __updateColor(): void;
     __measure(): void;

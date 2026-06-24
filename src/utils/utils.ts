@@ -90,25 +90,87 @@ const getValue = <T>(value: T | undefined, fallback: T): T => {
   return value ?? fallback;
 };
 
-const format = (
-  options: { [key: string]: unknown },
+const format = <T extends object>(
+  options: T,
   types: { [key: string]: ValueType },
 ) => {
+  const objectOptions = options as { [key: string]: unknown };
   for (const key of Object.keys(options)) {
-    const value = options[key];
+    const value = objectOptions[key];
     const type = types[key];
     if (!type || type === "any") continue;
     if (value !== undefined && typeof value !== type) {
       if (type === "string") {
-        options[key] = Core.format(value, "string");
+        objectOptions[key] = Core.format(value, "string");
       } else if (type === "number") {
-        options[key] = Core.format(value, "number");
+        objectOptions[key] = Core.format(value, "number");
       } else if (type === "boolean") {
-        options[key] = Core.format(value, "boolean");
+        objectOptions[key] = Core.format(value, "boolean");
       }
     }
   }
   return options;
 };
 
-export { format, getGlobalScope, getValue, parseFont };
+const getFiniteNumber = (
+  value: number | undefined,
+  fallback: number,
+): number => {
+  return typeof value === "number" && Number.isFinite(value) ? value : fallback;
+};
+
+const getAllowedString = <T extends string>(
+  value: string | undefined,
+  allowedValues: readonly T[],
+  fallback: T,
+): T => {
+  return allowedValues.includes(value as T) ? (value as T) : fallback;
+};
+
+const normalizeFiniteNumbers = <T extends object>(
+  options: Partial<T>,
+  defaults: T,
+  keys: readonly (keyof T)[],
+): Partial<T> => {
+  for (const key of keys) {
+    const value = options[key];
+    if (
+      value !== undefined &&
+      (typeof value !== "number" || !Number.isFinite(value))
+    ) {
+      options[key] = defaults[key];
+    }
+  }
+  return options;
+};
+
+const normalizeStringUnion = <
+  T extends object,
+  K extends keyof T,
+  V extends Extract<T[K], string>,
+>(
+  options: Partial<T>,
+  key: K,
+  allowedValues: readonly V[],
+  fallback: V,
+): Partial<T> => {
+  const value = options[key];
+  if (
+    value !== undefined &&
+    (typeof value !== "string" || !allowedValues.includes(value as V))
+  ) {
+    options[key] = fallback as T[K];
+  }
+  return options;
+};
+
+export {
+  format,
+  getAllowedString,
+  getFiniteNumber,
+  getGlobalScope,
+  getValue,
+  normalizeFiniteNumbers,
+  normalizeStringUnion,
+  parseFont,
+};
