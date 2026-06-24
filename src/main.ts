@@ -27,6 +27,7 @@ import {
 import { config, initConfig } from "@/definition/config";
 import { CanvasRender } from "@/render/canvas";
 import { DomRender } from "@/render/dom";
+import { normalizeComment } from "@/typeGuard";
 import { setup } from "@/utils/setup";
 import { nativeSort } from "@/utils/sort";
 
@@ -47,6 +48,34 @@ const canProcessDrawStepWindow = (fromVpos: number, toVpos: number) => {
   return stepWindow <= MAX_DRAW_VPOS_STEP_WINDOW;
 };
 
+const normalizeComments = (commentInputs: unknown) => {
+  const normalizedComments: Comment[] = [];
+  if (!Array.isArray(commentInputs)) {
+    return normalizedComments;
+  }
+  for (const commentInput of commentInputs) {
+    const comment = normalizeComment(commentInput);
+    if (comment) {
+      normalizedComments.push(comment);
+    }
+  }
+  return normalizedComments;
+};
+
+const addCommentScript = (comment: Comment) => {
+  if (comment.message.match(/^\//) && comment._owner) {
+    try {
+      const ast = {
+        ...Core.parseScript(comment.message, `${comment.no}.niwascript`),
+        __name: `${comment.no}.niwascript`,
+      };
+      addScript(ast, comment._vpos);
+    } catch (e) {
+      console.error(e);
+    }
+  }
+};
+
 class Niwango {
   private readonly render: IRender;
   static default = Niwango;
@@ -64,20 +93,9 @@ class Niwango {
     }
     this.lastVpos = -1;
 
-    comments.forEach((comment) => {
-      if (comment.message.match(/^\//) && comment._owner) {
-        try {
-          const ast = {
-            ...Core.parseScript(comment.message, `${comment.no}.niwascript`),
-            __name: `${comment.no}.niwascript`,
-          };
-          addScript(ast, comment._vpos);
-        } catch (e) {
-          console.error(e);
-        }
-      }
-    });
-    setComments(comments);
+    const normalizedComments = normalizeComments(comments);
+    normalizedComments.forEach(addCommentScript);
+    setComments(normalizedComments);
     setCurrentTime(-1);
     setRender(this.render);
     setGlobalScope({});
@@ -184,20 +202,9 @@ class Niwango {
   }
 
   public addComments(...newComments: Comment[]) {
-    newComments.forEach((comment) => {
-      if (comment.message.match(/^\//) && comment._owner) {
-        try {
-          const ast = {
-            ...Core.parseScript(comment.message, `${comment.no}.niwascript`),
-            __name: `${comment.no}.niwascript`,
-          };
-          addScript(ast, comment._vpos);
-        } catch (e) {
-          console.error(e);
-        }
-      }
-    });
-    setComments([...comments, ...newComments]);
+    const normalizedComments = normalizeComments(newComments);
+    normalizedComments.forEach(addCommentScript);
+    setComments([...comments, ...normalizedComments]);
   }
 }
 
