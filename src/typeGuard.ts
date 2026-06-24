@@ -50,30 +50,69 @@ const shapeOptionTypes = {
   PrimitiveTypeName
 >;
 
-const typeGuard = {
-  comment: (i: unknown): i is Comment =>
-    objectVerify(i, [
-      "message",
-      "vpos",
-      "isYourPost",
-      "mail",
-      "fromButton",
-      "isPremium",
-      "color",
-      "size",
-      "no",
-      "_vpos",
-      "_owner",
-    ]),
-  IrTextLiteral: (i: unknown): i is ITextLiteral =>
-    isLiteralObject(i, "IrText") && objectHasTypes(i.options, textOptionTypes),
-  IrShapeLiteral: (i: unknown): i is IShapeLiteral =>
-    isLiteralObject(i, "IrShape") &&
-    objectHasTypes(i.options, shapeOptionTypes),
-};
-
 const isRecord = (item: unknown): item is RecordValue =>
   typeof item === "object" && item !== null && !Array.isArray(item);
+
+const normalizeComment = (item: unknown): Comment | null => {
+  try {
+    if (!isRecord(item)) {
+      return null;
+    }
+    const {
+      message,
+      vpos,
+      isYourPost,
+      mail,
+      fromButton,
+      isPremium,
+      color,
+      size,
+      no,
+      _vpos,
+      _owner,
+    } = item;
+    if (typeof message !== "string" || typeof mail !== "string") {
+      return null;
+    }
+    if (
+      typeof vpos !== "number" ||
+      !Number.isFinite(vpos) ||
+      typeof color !== "number" ||
+      !Number.isFinite(color) ||
+      typeof size !== "number" ||
+      !Number.isFinite(size) ||
+      typeof no !== "number" ||
+      !Number.isFinite(no) ||
+      typeof _vpos !== "number" ||
+      !Number.isFinite(_vpos)
+    ) {
+      return null;
+    }
+    if (
+      typeof isYourPost !== "boolean" ||
+      typeof fromButton !== "boolean" ||
+      typeof isPremium !== "boolean" ||
+      typeof _owner !== "boolean"
+    ) {
+      return null;
+    }
+    return {
+      message,
+      vpos,
+      isYourPost,
+      mail,
+      fromButton,
+      isPremium,
+      color,
+      size,
+      no,
+      _vpos,
+      _owner,
+    };
+  } catch (_e) {
+    return null;
+  }
+};
 
 const isLiteralObject = (
   item: unknown,
@@ -112,15 +151,15 @@ const objectHasTypes = (
   return true;
 };
 
-const objectVerify = (item: unknown, keys: string[]): boolean => {
-  if (typeof item !== "object" || !item) {
-    return false;
-  }
-  for (const key of keys) {
-    if (!Object.prototype.hasOwnProperty.call(item, key)) {
-      return false;
-    }
-  }
-  return true;
+const typeGuard = {
+  comment: (i: unknown): i is Comment => normalizeComment(i) !== null,
+  normalizeComment,
+  IrTextLiteral: (i: unknown): i is ITextLiteral =>
+    isLiteralObject(i, "IrText") && objectHasTypes(i.options, textOptionTypes),
+  IrShapeLiteral: (i: unknown): i is IShapeLiteral =>
+    isLiteralObject(i, "IrShape") &&
+    objectHasTypes(i.options, shapeOptionTypes),
 };
+
+export { normalizeComment };
 export default typeGuard;
