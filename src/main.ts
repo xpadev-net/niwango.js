@@ -253,8 +253,11 @@ class Niwango {
 
   public addComments(...newComments: Comment[]) {
     const normalizedComments = normalizeComments(newComments);
-    normalizedComments.forEach(addCommentScript);
-    setComments([...comments, ...normalizedComments]);
+    const futureComments = normalizedComments.filter(
+      (comment) => comment._vpos > this.lastVpos,
+    );
+    futureComments.forEach(addCommentScript);
+    setComments([...comments, ...futureComments]);
   }
 }
 
