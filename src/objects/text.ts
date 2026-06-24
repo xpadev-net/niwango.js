@@ -244,7 +244,8 @@ class IrText extends IrObject {
     let lastFont = this.parsedComment.font;
     let leftOffset = 0;
     let lineCount = 0;
-    const reverseOffset = this.__reverse ? this.__actualWidth : 0;
+    const reverseOffsetX = this.__reverse ? this.__actualWidth : 0;
+    const reverseOffsetY = this.__reverse ? this.__actualHeight : 0;
     for (const item of this.parsedComment.content) {
       if (lastFont !== getValue(item.font, this.parsedComment.font)) {
         lastFont = getValue(item.font, this.parsedComment.font);
@@ -253,12 +254,12 @@ class IrText extends IrObject {
       if (item.type === "normal") {
         const lines = normalizeNewlines(item.content).split(/\n/g);
         lines.forEach((line, index) => {
-          const posX = leftOffset - reverseOffset;
+          const posX = leftOffset - reverseOffsetX;
           const posY =
             (lineOffset + lineCount + 1) * (this.__size * config.lineHeight) +
             config.commentYPaddingTop +
             this.__size * config.lineHeight * config.commentYOffset -
-            reverseOffset;
+            reverseOffsetY;
           if (this.filter === "fuchi") {
             context.strokeText(line, posX, posY);
           }
@@ -273,12 +274,12 @@ class IrText extends IrObject {
         continue;
       }
       item.content.forEach((part, index) => {
-        const posX = leftOffset - reverseOffset;
+        const posX = leftOffset - reverseOffsetX;
         const posY =
           (lineOffset + lineCount + 1) * (this.__size * config.lineHeight) +
           config.commentYPaddingTop +
           this.__size * config.lineHeight * config.commentYOffset -
-          reverseOffset;
+          reverseOffsetY;
         switch (part.type) {
           case "fill": {
             if (this.filter === "fuchi") {
