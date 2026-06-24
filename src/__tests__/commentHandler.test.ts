@@ -41,6 +41,18 @@ describe("comment handlers", () => {
     expect(handlers).toHaveLength(1);
   });
 
+  test("ignores slash-prefixed owner script comments", () => {
+    const globalScope = {};
+    const scopes = [globalScope, {}, Core.prototypeScope];
+
+    addHandler(script, scopes, [], 100, 50);
+    triggerHandlers(createComment(120, "/owner()"));
+
+    expect(execute).not.toHaveBeenCalled();
+    expect(globalScope).not.toHaveProperty("chat");
+    expect(handlers).toHaveLength(1);
+  });
+
   test("removes expired handlers without firing them", () => {
     addHandler(script, [{}], [], 100, 50);
 
