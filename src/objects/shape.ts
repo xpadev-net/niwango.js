@@ -4,6 +4,7 @@ import type { KTMap } from "@/@types/types";
 import { render } from "@/context";
 import { getCanvas } from "@/contexts/canvas";
 import { IrObject } from "@/objects/object";
+import { objectMoverOptions } from "@/objects/options";
 import { number2color } from "@/utils/number2color";
 import { getOptions } from "@/utils/object";
 import {
@@ -67,12 +68,16 @@ const finiteNumberOptionKeys = [
 ] as const satisfies readonly (keyof IShapeOptions)[];
 
 const shapeOptions = ["circle", "rect"] as const;
-const moverOptions = ["", "smooth", "simple", "rolling", "hopping"] as const;
 
 const normalizeOptions = (options: IShapeOptionsNullable) => {
   normalizeFiniteNumbers(options, defaultOptions, finiteNumberOptionKeys);
   normalizeStringUnion(options, "shape", shapeOptions, defaultOptions.shape);
-  normalizeStringUnion(options, "mover", moverOptions, defaultOptions.mover);
+  normalizeStringUnion(
+    options,
+    "mover",
+    objectMoverOptions,
+    defaultOptions.mover,
+  );
   return options;
 };
 
@@ -227,7 +232,11 @@ class IrShape extends IrObject {
   }
 
   override set mover(val: IObjectMover) {
-    super.mover = getAllowedString(val, moverOptions, defaultOptions.mover);
+    super.mover = getAllowedString(
+      val,
+      objectMoverOptions,
+      defaultOptions.mover,
+    );
   }
 
   override __updateColor() {

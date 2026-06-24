@@ -6,6 +6,7 @@ import { render } from "@/context";
 import { getCanvas } from "@/contexts/canvas";
 import { config } from "@/definition/config";
 import { IrObject } from "@/objects/object";
+import { objectMoverOptions } from "@/objects/options";
 import { measure, normalizeNewlines, parse } from "@/utils/flashText";
 import { number2color } from "@/utils/number2color";
 import { getOptions } from "@/utils/object";
@@ -66,12 +67,16 @@ const finiteNumberOptionKeys = [
 ] as const satisfies readonly (keyof ITextOptions)[];
 
 const filterOptions = ["", "fuchi", "kasumi", "kage"] as const;
-const moverOptions = ["", "smooth", "simple", "rolling", "hopping"] as const;
 
 const normalizeOptions = (options: ITextOptionsNullable) => {
   normalizeFiniteNumbers(options, defaultOptions, finiteNumberOptionKeys);
   normalizeStringUnion(options, "filter", filterOptions, defaultOptions.filter);
-  normalizeStringUnion(options, "mover", moverOptions, defaultOptions.mover);
+  normalizeStringUnion(
+    options,
+    "mover",
+    objectMoverOptions,
+    defaultOptions.mover,
+  );
   return options;
 };
 
@@ -255,7 +260,11 @@ class IrText extends IrObject {
   }
 
   override set mover(val: IObjectMover) {
-    super.mover = getAllowedString(val, moverOptions, defaultOptions.mover);
+    super.mover = getAllowedString(
+      val,
+      objectMoverOptions,
+      defaultOptions.mover,
+    );
   }
 
   __updateFont() {
