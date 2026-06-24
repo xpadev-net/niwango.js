@@ -319,7 +319,7 @@ abstract class IrObject {
     if (!IrObject.__isSnapshotRecord(snapshot)) return;
 
     const moverQueue = IrObject.__normalizeMoverQueue(snapshot.moverQueue);
-    if (moverQueue) {
+    if (moverQueue !== null) {
       this.moverQueue = moverQueue;
     }
     if (typeof snapshot.__modified === "boolean") {
