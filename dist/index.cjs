@@ -3,7 +3,7 @@ niwango.js v0.0.1-canary.20231002-1
 (c) 2023 xpadev-net https://xpadev.net
 Released under the MIT License.
 
-build at: 1782269544356
+build at: 1782270585479
 */
 //#region \0rolldown/runtime.js
 var __create = Object.create;
@@ -12624,24 +12624,19 @@ const shapeOptionTypes = {
 	rotation: "number",
 	mover: "string"
 };
-const typeGuard = {
-	comment: (i) => objectVerify(i, [
-		"message",
-		"vpos",
-		"isYourPost",
-		"mail",
-		"fromButton",
-		"isPremium",
-		"color",
-		"size",
-		"no",
-		"_vpos",
-		"_owner"
-	]),
-	IrTextLiteral: (i) => isLiteralObject(i, "IrText") && objectHasTypes(i.options, textOptionTypes),
-	IrShapeLiteral: (i) => isLiteralObject(i, "IrShape") && objectHasTypes(i.options, shapeOptionTypes)
-};
 const isRecord = (item) => typeof item === "object" && item !== null && !Array.isArray(item);
+const normalizeComment = (item) => {
+	try {
+		if (!isRecord(item)) return null;
+		const { message, vpos, isYourPost, mail, fromButton, isPremium, color, size, no, _vpos, _owner } = item;
+		if (typeof message !== "string" || typeof mail !== "string") return null;
+		if (typeof vpos !== "number" || !Number.isFinite(vpos) || typeof color !== "number" || !Number.isFinite(color) || typeof size !== "number" || !Number.isFinite(size) || typeof no !== "number" || !Number.isFinite(no) || typeof _vpos !== "number" || !Number.isFinite(_vpos)) return null;
+		if (typeof isYourPost !== "boolean" || typeof fromButton !== "boolean" || typeof isPremium !== "boolean" || typeof _owner !== "boolean") return null;
+		return item;
+	} catch (_e) {
+		return null;
+	}
+};
 const isLiteralObject = (item, type) => isRecord(item) && item.__NIWANGO_LITERAL === "IrObject" && item.__type === type && !(item instanceof IrObject);
 const objectHasTypes = (item, properties) => {
 	if (!isRecord(item)) return false;
@@ -12649,10 +12644,10 @@ const objectHasTypes = (item, properties) => {
 	if (Object.prototype.hasOwnProperty.call(item, "__id") && typeof item.__id !== "string") return false;
 	return true;
 };
-const objectVerify = (item, keys) => {
-	if (typeof item !== "object" || !item) return false;
-	for (const key of keys) if (!Object.prototype.hasOwnProperty.call(item, key)) return false;
-	return true;
+const typeGuard = {
+	comment: (i) => normalizeComment(i) !== null,
+	IrTextLiteral: (i) => isLiteralObject(i, "IrText") && objectHasTypes(i.options, textOptionTypes),
+	IrShapeLiteral: (i) => isLiteralObject(i, "IrShape") && objectHasTypes(i.options, shapeOptionTypes)
 };
 //#endregion
 //#region src/contexts/snapshot.ts
@@ -13099,6 +13094,25 @@ const normalizeDrawVpos = (vpos) => {
 const canProcessDrawStepWindow = (fromVpos, toVpos) => {
 	return toVpos - Math.max(0, fromVpos) <= MAX_DRAW_VPOS_STEP_WINDOW;
 };
+const normalizeComments = (commentInputs) => {
+	const normalizedComments = [];
+	if (!Array.isArray(commentInputs)) return normalizedComments;
+	for (const commentInput of commentInputs) {
+		const comment = normalizeComment(commentInput);
+		if (comment) normalizedComments.push(comment);
+	}
+	return normalizedComments;
+};
+const addCommentScript = (comment) => {
+	if (comment.message.match(/^\//) && comment._owner) try {
+		addScript({
+			...import_niwango_core.default.parseScript(comment.message, `${comment.no}.niwascript`),
+			__name: `${comment.no}.niwascript`
+		}, comment._vpos);
+	} catch (e) {
+		console.error(e);
+	}
+};
 var Niwango = class Niwango {
 	static {
 		this.default = Niwango;
@@ -13109,17 +13123,9 @@ var Niwango = class Niwango {
 		if (targetElement.nodeName === "DIV") this.render = new DomRender(targetElement);
 		else this.render = new CanvasRender(targetElement);
 		this.lastVpos = -1;
-		comments.forEach((comment) => {
-			if (comment.message.match(/^\//) && comment._owner) try {
-				addScript({
-					...import_niwango_core.default.parseScript(comment.message, `${comment.no}.niwascript`),
-					__name: `${comment.no}.niwascript`
-				}, comment._vpos);
-			} catch (e) {
-				console.error(e);
-			}
-		});
-		setComments(comments);
+		const normalizedComments = normalizeComments(comments);
+		normalizedComments.forEach(addCommentScript);
+		setComments(normalizedComments);
 		setCurrentTime(-1);
 		setRender(this.render);
 		setGlobalScope({});
@@ -13218,17 +13224,9 @@ var Niwango = class Niwango {
 		this.render.apply(clear);
 	}
 	addComments(...newComments) {
-		newComments.forEach((comment) => {
-			if (comment.message.match(/^\//) && comment._owner) try {
-				addScript({
-					...import_niwango_core.default.parseScript(comment.message, `${comment.no}.niwascript`),
-					__name: `${comment.no}.niwascript`
-				}, comment._vpos);
-			} catch (e) {
-				console.error(e);
-			}
-		});
-		setComments([...comments, ...newComments]);
+		const normalizedComments = normalizeComments(newComments);
+		normalizedComments.forEach(addCommentScript);
+		setComments([...comments, ...normalizedComments]);
 	}
 };
 //#endregion
