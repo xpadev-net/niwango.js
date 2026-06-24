@@ -4,6 +4,7 @@ import { afterEach, describe, expect, test, vi } from "vitest";
 import type { Comment } from "@/@types/comment";
 import { comments, currentTime } from "@/context";
 import { addHandler } from "@/contexts/commentHandler";
+import { environmentScope, globalScope } from "@/contexts/scope";
 import Niwango from "@/main";
 import { run } from "@/testUtils";
 
@@ -202,6 +203,78 @@ test("draw restores processed comment time when rewinding to a snapshot", () => 
     chat: expect.objectContaining({ message: "after snapshot", _vpos: 1050 }),
   });
   expect(currentTime).toBe(1050);
+});
+
+test.each([
+  ["past", 5],
+  ["same", 10],
+])("addComments ignores %s-vpos additions that playback has already reached", (_name, commentVpos) => {
+  const handlerScript: A_ANY = { type: "Raw", value: "handler" };
+  const ownerScript: A_ANY = { type: "Raw", value: "owner" };
+  const handlerScopes = [{}, {}, Core.prototypeScope];
+  const execute = vi.spyOn(Core, "execute").mockReturnValue(undefined);
+  vi.spyOn(Core, "parseScript").mockReturnValue(ownerScript);
+  const niwango = createNiwango();
+
+  addHandler(handlerScript, handlerScopes, [], 0);
+  expect(niwango.draw(10)).toBe(true);
+
+  niwango.addComments(
+    createComment({
+      no: 2,
+      message: "already reached",
+      _vpos: commentVpos,
+      vpos: commentVpos,
+    }),
+    createComment({
+      no: 3,
+      message: "/alreadyReached()",
+      _owner: true,
+      _vpos: commentVpos,
+      vpos: commentVpos,
+    }),
+  );
+
+  expect(niwango.draw(11)).toBe(true);
+  expect(execute).not.toHaveBeenCalled();
+});
+
+test("addComments dispatches future-vpos additions when playback reaches them", () => {
+  const handlerScript: A_ANY = { type: "Raw", value: "handler" };
+  const ownerScript: A_ANY = { type: "Raw", value: "owner" };
+  const handlerScopes = [{}, {}, Core.prototypeScope];
+  const execute = vi.spyOn(Core, "execute").mockReturnValue(undefined);
+  vi.spyOn(Core, "parseScript").mockReturnValue(ownerScript);
+  const niwango = createNiwango();
+
+  addHandler(handlerScript, handlerScopes, [], 0);
+  expect(niwango.draw(10)).toBe(true);
+
+  niwango.addComments(
+    createComment({ no: 2, message: "future", _vpos: 11, vpos: 11 }),
+    createComment({
+      no: 3,
+      message: "/future()",
+      _owner: true,
+      _vpos: 11,
+      vpos: 11,
+    }),
+  );
+
+  expect(niwango.draw(11)).toBe(true);
+  expect(execute).toHaveBeenCalledTimes(2);
+  expect(execute).toHaveBeenNthCalledWith(
+    1,
+    expect.objectContaining(ownerScript),
+    [globalScope, environmentScope, Core.prototypeScope],
+    [expect.objectContaining(ownerScript)],
+  );
+  expect(execute).toHaveBeenNthCalledWith(2, handlerScript, handlerScopes, [
+    handlerScript,
+  ]);
+  expect(handlerScopes[0]).toMatchObject({
+    chat: expect.objectContaining({ message: "future", _vpos: 11 }),
+  });
 });
 
 test("constructor treats non-array comments input as empty", () => {
