@@ -1,4 +1,4 @@
-import { describe, expect, test } from "vitest";
+import { afterEach, describe, expect, test, vi } from "vitest";
 
 import type { Comment } from "@/@types/comment";
 import { comments } from "@/context";
@@ -6,6 +6,77 @@ import Niwango from "@/main";
 import { run } from "@/testUtils";
 
 type CommentBoundary = (commentInputs: unknown[]) => void;
+
+const targetElementTypeError =
+  "Niwango constructor targetElement must be an HTMLDivElement or HTMLCanvasElement.";
+
+const createMockCanvasContext = () =>
+  ({
+    clearRect: vi.fn(),
+    drawImage: vi.fn(),
+    restore: vi.fn(),
+    rotate: vi.fn(),
+    save: vi.fn(),
+    scale: vi.fn(),
+    translate: vi.fn(),
+  }) as unknown as CanvasRenderingContext2D;
+
+const createIframeWindow = () => {
+  const iframe = document.createElement("iframe");
+  document.body.append(iframe);
+  const iframeWindow = iframe.contentWindow as
+    | (Window & typeof globalThis)
+    | null;
+  if (!iframeWindow) {
+    iframe.remove();
+    throw new Error("missing iframe window");
+  }
+  return { iframe, iframeWindow };
+};
+
+const createElementWithSpoofedPrototype = (
+  localName: string,
+  prototype: object,
+) => {
+  const targetElement = document.createElement(localName);
+  Object.setPrototypeOf(targetElement, prototype);
+  return targetElement;
+};
+
+const createElementWithSpoofedLocalNameAndPrototype = (
+  localName: string,
+  spoofedLocalName: string,
+  prototype: object,
+) => {
+  const targetElement = createElementWithSpoofedPrototype(localName, prototype);
+  Object.defineProperty(targetElement, "localName", {
+    value: spoofedLocalName,
+  });
+  return targetElement;
+};
+
+const createElementWithSpoofedOwnerDocumentLocalNameAndPrototype = (
+  localName: string,
+  spoofedLocalName: string,
+  prototype: object,
+) => {
+  const targetElement = createElementWithSpoofedLocalNameAndPrototype(
+    localName,
+    spoofedLocalName,
+    prototype,
+  );
+  Object.defineProperty(targetElement, "ownerDocument", {
+    value: {
+      defaultView: {
+        Element: Object,
+        HTMLDivElement: {
+          [Symbol.hasInstance]: () => true,
+        },
+      },
+    },
+  });
+  return targetElement;
+};
 
 const createComment = (overrides: Partial<Comment> = {}): Comment => ({
   message: "hello",
@@ -45,6 +116,10 @@ const expectBoundaryToSkipOnlyInvalid = (
   expect(comments).toEqual([validComment]);
   expect(comments[0]).toBe(validComment);
 };
+
+afterEach(() => {
+  vi.restoreAllMocks();
+});
 
 test("rand", () => {
   const rand1 = run(`rand("hoge")`);
@@ -105,6 +180,116 @@ test("constructor treats non-array comments input as empty", () => {
       new Niwango(document.createElement("div"), null as unknown as Comment[]),
   ).not.toThrow();
   expect(comments).toEqual([]);
+});
+
+test("constructor accepts div target elements", () => {
+  expect(
+    () => new Niwango(document.createElement("div"), [] satisfies Comment[]),
+  ).not.toThrow();
+});
+
+test("constructor accepts canvas target elements", () => {
+  vi.spyOn(HTMLCanvasElement.prototype, "getContext").mockReturnValue(
+    createMockCanvasContext(),
+  );
+
+  expect(
+    () => new Niwango(document.createElement("canvas"), [] satisfies Comment[]),
+  ).not.toThrow();
+});
+
+test("constructor accepts div target elements from another DOM realm", () => {
+  const { iframe, iframeWindow } = createIframeWindow();
+  try {
+    expect(
+      () =>
+        new Niwango(
+          iframeWindow.document.createElement("div"),
+          [] satisfies Comment[],
+        ),
+    ).not.toThrow();
+  } finally {
+    iframe.remove();
+  }
+});
+
+test("constructor accepts canvas target elements from another DOM realm", () => {
+  const { iframe, iframeWindow } = createIframeWindow();
+  vi.spyOn(HTMLCanvasElement.prototype, "getContext").mockReturnValue(
+    createMockCanvasContext(),
+  );
+  vi.spyOn(
+    iframeWindow.HTMLCanvasElement.prototype,
+    "getContext",
+  ).mockReturnValue(createMockCanvasContext());
+
+  try {
+    expect(
+      () =>
+        new Niwango(
+          iframeWindow.document.createElement("canvas"),
+          [] satisfies Comment[],
+        ),
+    ).not.toThrow();
+  } finally {
+    iframe.remove();
+  }
+});
+
+test.each([
+  ["span", document.createElement("span")],
+  ["null", null],
+  ["undefined", undefined],
+  ["plain object", {}],
+  ["object with canvas-like nodeName", { nodeName: "CANVAS" }],
+  ["object with div prototype", Object.create(HTMLDivElement.prototype)],
+  ["object with canvas prototype", Object.create(HTMLCanvasElement.prototype)],
+  [
+    "span element with div prototype",
+    createElementWithSpoofedPrototype("span", HTMLDivElement.prototype),
+  ],
+  [
+    "span element with spoofed localName and div prototype",
+    createElementWithSpoofedLocalNameAndPrototype(
+      "span",
+      "div",
+      HTMLDivElement.prototype,
+    ),
+  ],
+  [
+    "span element with spoofed ownerDocument, localName, and div prototype",
+    createElementWithSpoofedOwnerDocumentLocalNameAndPrototype(
+      "span",
+      "div",
+      HTMLDivElement.prototype,
+    ),
+  ],
+  [
+    "object with spoofed ownerDocument",
+    {
+      ownerDocument: {
+        defaultView: {
+          Element: Object,
+          HTMLDivElement: Object,
+        },
+      },
+    },
+  ],
+])("constructor rejects unsupported target: %s", (_name, targetElement) => {
+  expect(
+    () =>
+      new Niwango(
+        targetElement as HTMLCanvasElement | HTMLDivElement,
+        [] satisfies Comment[],
+      ),
+  ).toThrow(TypeError);
+  expect(
+    () =>
+      new Niwango(
+        targetElement as HTMLCanvasElement | HTMLDivElement,
+        [] satisfies Comment[],
+      ),
+  ).toThrow(targetElementTypeError);
 });
 
 describe.each([

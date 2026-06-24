@@ -76,6 +76,60 @@ const addCommentScript = (comment: Comment) => {
   }
 };
 
+type TargetElementDefinition = {
+  localName: "canvas" | "div";
+};
+
+const HTML_NAMESPACE = "http://www.w3.org/1999/xhtml";
+
+const getElementProperty = (
+  targetElement: unknown,
+  propertyName: "localName" | "namespaceURI",
+) => {
+  const propertyGetter = Object.getOwnPropertyDescriptor(
+    globalThis.Element?.prototype ?? {},
+    propertyName,
+  )?.get;
+  if (typeof propertyGetter !== "function") {
+    return undefined;
+  }
+  try {
+    return propertyGetter.call(targetElement);
+  } catch (_e) {
+    return undefined;
+  }
+};
+
+const isTargetElement = <T extends Element>(
+  targetElement: unknown,
+  { localName }: TargetElementDefinition,
+): targetElement is T => {
+  return (
+    getElementProperty(targetElement, "namespaceURI") === HTML_NAMESPACE &&
+    getElementProperty(targetElement, "localName") === localName
+  );
+};
+
+const createRender = (targetElement: unknown): IRender => {
+  if (
+    isTargetElement<HTMLDivElement>(targetElement, {
+      localName: "div",
+    })
+  ) {
+    return new DomRender(targetElement);
+  }
+  if (
+    isTargetElement<HTMLCanvasElement>(targetElement, {
+      localName: "canvas",
+    })
+  ) {
+    return new CanvasRender(targetElement);
+  }
+  throw new TypeError(
+    "Niwango constructor targetElement must be an HTMLDivElement or HTMLCanvasElement.",
+  );
+};
+
 class Niwango {
   private readonly render: IRender;
   static default = Niwango;
@@ -86,11 +140,7 @@ class Niwango {
   ) {
     setup();
     initConfig();
-    if (targetElement.nodeName === "DIV") {
-      this.render = new DomRender(targetElement as HTMLDivElement);
-    } else {
-      this.render = new CanvasRender(targetElement as HTMLCanvasElement);
-    }
+    this.render = createRender(targetElement);
     this.lastVpos = -1;
 
     const normalizedComments = normalizeComments(comments);

@@ -3,7 +3,7 @@ niwango.js v0.0.1-canary.20231002-1
 (c) 2023 xpadev-net https://xpadev.net
 Released under the MIT License.
 
-build at: 1782271895540
+build at: 1782273107858
 */
 (function(global, factory) {
 	typeof exports === "object" && typeof module !== "undefined" ? module.exports = factory() : typeof define === "function" && define.amd ? define([], factory) : (global = typeof globalThis !== "undefined" ? globalThis : global || self, global.Niwango = factory());
@@ -13265,6 +13265,24 @@ build at: 1782271895540
 			console.error(e);
 		}
 	};
+	const HTML_NAMESPACE = "http://www.w3.org/1999/xhtml";
+	const getElementProperty = (targetElement, propertyName) => {
+		const propertyGetter = Object.getOwnPropertyDescriptor(globalThis.Element?.prototype ?? {}, propertyName)?.get;
+		if (typeof propertyGetter !== "function") return;
+		try {
+			return propertyGetter.call(targetElement);
+		} catch (_e) {
+			return;
+		}
+	};
+	const isTargetElement = (targetElement, { localName }) => {
+		return getElementProperty(targetElement, "namespaceURI") === HTML_NAMESPACE && getElementProperty(targetElement, "localName") === localName;
+	};
+	const createRender = (targetElement) => {
+		if (isTargetElement(targetElement, { localName: "div" })) return new DomRender(targetElement);
+		if (isTargetElement(targetElement, { localName: "canvas" })) return new CanvasRender(targetElement);
+		throw new TypeError("Niwango constructor targetElement must be an HTMLDivElement or HTMLCanvasElement.");
+	};
 	//#endregion
 	return class Niwango {
 		static {
@@ -13273,8 +13291,7 @@ build at: 1782271895540
 		constructor(targetElement, comments) {
 			setup();
 			initConfig();
-			if (targetElement.nodeName === "DIV") this.render = new DomRender(targetElement);
-			else this.render = new CanvasRender(targetElement);
+			this.render = createRender(targetElement);
 			this.lastVpos = -1;
 			const normalizedComments = normalizeComments(comments);
 			normalizedComments.forEach(addCommentScript);
