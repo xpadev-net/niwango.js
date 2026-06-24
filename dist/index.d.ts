@@ -26,5 +26,4 @@ declare class Niwango {
   addComments(...newComments: Comment[]): void;
 }
 //#endregion
-export { Niwango as default };
-//# sourceMappingURL=index.d.ts.map
+export { type Comment, Niwango as default };

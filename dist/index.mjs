@@ -3,7 +3,7 @@ niwango.js v0.0.1-canary.20231002-1
 (c) 2023 xpadev-net https://xpadev.net
 Released under the MIT License.
 
-build at: 1782271499674
+build at: 1782271895540
 */
 //#region \0rolldown/runtime.js
 var __create = Object.create;
