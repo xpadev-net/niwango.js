@@ -3,7 +3,7 @@ niwango.js v0.0.1-canary.20231002-1
 (c) 2023 xpadev-net https://xpadev.net
 Released under the MIT License.
 
-build at: 1782257459167
+build at: 1782269544356
 */
 (function(global, factory) {
 	typeof exports === "object" && typeof module !== "undefined" ? module.exports = factory() : typeof define === "function" && define.amd ? define([], factory) : (global = typeof globalThis !== "undefined" ? globalThis : global || self, global.Niwango = factory());
@@ -12515,7 +12515,8 @@ build at: 1782257459167
 			let lastFont = this.parsedComment.font;
 			let leftOffset = 0;
 			let lineCount = 0;
-			const reverseOffset = this.__reverse ? this.__actualWidth : 0;
+			const reverseOffsetX = this.__reverse ? this.__actualWidth : 0;
+			const reverseOffsetY = this.__reverse ? this.__actualHeight : 0;
 			for (const item of this.parsedComment.content) {
 				if (lastFont !== getValue(item.font, this.parsedComment.font)) {
 					lastFont = getValue(item.font, this.parsedComment.font);
@@ -12524,8 +12525,8 @@ build at: 1782257459167
 				if (item.type === "normal") {
 					const lines = normalizeNewlines(item.content).split(/\n/g);
 					lines.forEach((line, index) => {
-						const posX = leftOffset - reverseOffset;
-						const posY = (lineOffset + lineCount + 1) * (this.__size * config.lineHeight) + config.commentYPaddingTop + this.__size * config.lineHeight * config.commentYOffset - reverseOffset;
+						const posX = leftOffset - reverseOffsetX;
+						const posY = (lineOffset + lineCount + 1) * (this.__size * config.lineHeight) + config.commentYPaddingTop + this.__size * config.lineHeight * config.commentYOffset - reverseOffsetY;
 						if (this.filter === "fuchi") context.strokeText(line, posX, posY);
 						context.fillText(line, posX, posY);
 						if (index === lines.length - 1) {
@@ -12538,8 +12539,8 @@ build at: 1782257459167
 					continue;
 				}
 				item.content.forEach((part, index) => {
-					const posX = leftOffset - reverseOffset;
-					const posY = (lineOffset + lineCount + 1) * (this.__size * config.lineHeight) + config.commentYPaddingTop + this.__size * config.lineHeight * config.commentYOffset - reverseOffset;
+					const posX = leftOffset - reverseOffsetX;
+					const posY = (lineOffset + lineCount + 1) * (this.__size * config.lineHeight) + config.commentYPaddingTop + this.__size * config.lineHeight * config.commentYOffset - reverseOffsetY;
 					switch (part.type) {
 						case "fill":
 							if (this.filter === "fuchi") context.strokeRect(posX, posY, part.width * this.__size, this.__size * config.lineHeight);
