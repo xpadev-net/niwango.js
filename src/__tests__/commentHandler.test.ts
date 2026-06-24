@@ -114,4 +114,26 @@ describe("comment handlers", () => {
       secondScript,
     ]);
   });
+
+  test("logs handler execution errors when a reporter is provided", () => {
+    const scopes = [{}, {}, Core.prototypeScope];
+    const error = new Error("handler failed");
+    const reportError = vi.fn();
+    const consoleError = vi.spyOn(console, "error").mockImplementation(() => {
+      // keep the expected failure out of test output
+    });
+
+    execute.mockImplementation(() => {
+      throw error;
+    });
+
+    addHandler(script, scopes, [], 100, 50);
+    const comment = createComment(120);
+    triggerHandlers(comment, reportError);
+
+    expect(consoleError).toHaveBeenCalledOnce();
+    expect(consoleError).toHaveBeenCalledWith(error);
+    expect(reportError).toHaveBeenCalledOnce();
+    expect(reportError).toHaveBeenCalledWith(error, comment);
+  });
 });

@@ -218,6 +218,7 @@ test("constructor reports owner script parse failures through onError", () => {
     error: parseError,
     comment: parseComment,
   });
+  expect(console.error).not.toHaveBeenCalled();
 });
 
 test("draw reports owner script execute failures through onError", () => {
@@ -244,6 +245,7 @@ test("draw reports owner script execute failures through onError", () => {
     source: "script",
     vpos: 0,
   });
+  expect(console.error).not.toHaveBeenCalled();
 });
 
 test("draw reports queued timer execute failures through onError", () => {
@@ -275,6 +277,7 @@ test("draw reports queued timer execute failures through onError", () => {
     source: "queue",
     vpos: 0,
   });
+  expect(console.error).not.toHaveBeenCalled();
 });
 
 test("draw reports comment handler execute failures through onError", () => {
@@ -302,6 +305,8 @@ test("draw reports comment handler execute failures through onError", () => {
     source: "commentHandler",
     vpos: 10,
   });
+  expect(console.error).toHaveBeenCalledOnce();
+  expect(console.error).toHaveBeenCalledWith(executeError);
 });
 
 test("draw treats small rewinds under 100 vpos as a no-op draw", () => {

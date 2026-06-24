@@ -61,11 +61,8 @@ const triggerHandlers = (
     try {
       Core.execute(handler.script, handler.scopes, [handler.script]);
     } catch (e) {
-      if (reportError) {
-        reportError(e, comment);
-      } else {
-        console.error(e);
-      }
+      console.error(e);
+      reportError?.(e, comment);
     }
   }
 };

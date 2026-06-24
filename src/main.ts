@@ -87,8 +87,8 @@ const reportError = (
   onError: NiwangoOptions["onError"],
   event: NiwangoErrorEvent,
 ) => {
-  console.error(event.error);
   if (!onError) {
+    console.error(event.error);
     return;
   }
   try {
