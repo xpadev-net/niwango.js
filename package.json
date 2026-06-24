@@ -21,7 +21,7 @@
   "scripts": {
     "build": "npx rimraf dist&&npm run build:ts&&npm run build:dts",
     "build:ts": "rolldown -c rolldown.config.mjs",
-    "build:dts": "npx copyfiles -u 2 src/@types/*.d.ts dist/dts/@types/&&tsc --emitDeclarationOnly&&node util/resolve-path-alias.cjs&&rolldown -c rolldown.config.dts.mjs",
+    "build:dts": "npx copyfiles -u 2 src/@types/*.d.ts dist/dts/@types/&&tsc --emitDeclarationOnly&&node util/resolve-path-alias.cjs&&rolldown -c rolldown.config.dts.mjs --input ./dist/dts/index.d.ts",
     "pegjs": "peggy --cache -o ./src/parser/parser.js --format umd --export-var parser ./src/grammer/niwango.pegjs",
     "watch": "rolldown -c rolldown.config.mjs --watch",
     "typedoc": "typedoc --entryPointStrategy Expand --out ./docs/type/ ./src/",

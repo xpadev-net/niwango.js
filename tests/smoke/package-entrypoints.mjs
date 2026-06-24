@@ -1,5 +1,12 @@
 import { execFileSync } from "node:child_process";
-import { mkdirSync, mkdtempSync, rmSync, writeFileSync } from "node:fs";
+import {
+  existsSync,
+  mkdirSync,
+  mkdtempSync,
+  readFileSync,
+  rmSync,
+  writeFileSync,
+} from "node:fs";
 import { tmpdir } from "node:os";
 import { dirname, join, resolve } from "node:path";
 import { fileURLToPath } from "node:url";
@@ -89,11 +96,26 @@ writeFileSync(
 writeFileSync(
   join(consumerDirectory, "types.ts"),
   [
-    'import Niwango from "@xpadev-net/niwango";',
+    'import Niwango, { type Comment } from "@xpadev-net/niwango";',
+    "",
+    "const comment: Comment = {",
+    '  message: "hello",',
+    "  vpos: 0,",
+    "  isYourPost: false,",
+    '  mail: "",',
+    "  fromButton: false,",
+    "  isPremium: false,",
+    "  color: 0xffffff,",
+    "  size: 2,",
+    "  no: 1,",
+    "  _vpos: 0,",
+    "  _owner: false,",
+    "};",
     "",
     "const Ctor: typeof Niwango = Niwango;",
     'const element = document.createElement("div");',
-    "const player = new Ctor(element, []);",
+    "const player = new Ctor(element, [comment]);",
+    "player.addComments(comment);",
     "const didDraw: boolean = player.draw(0);",
     "void didDraw;",
   ].join("\n"),
@@ -120,6 +142,30 @@ writeFileSync(
 
 run("node", ["esm.mjs"], { cwd: consumerDirectory });
 run("node", ["cjs.cjs"], { cwd: consumerDirectory });
+
+const installedDeclaration = join(
+  consumerDirectory,
+  "node_modules",
+  "@xpadev-net",
+  "niwango",
+  "dist",
+  "index.d.ts",
+);
+const declarationContent = readFileSync(installedDeclaration, "utf8");
+const sourceMapReferences = [
+  ...declarationContent.matchAll(/^\/\/# sourceMappingURL=(.+)$/gm),
+].map((match) => match[1]);
+for (const sourceMapReference of sourceMapReferences) {
+  const sourceMap = join(dirname(installedDeclaration), sourceMapReference);
+  if (!existsSync(sourceMap)) {
+    throw new Error(`Missing declaration source map: ${sourceMapReference}`);
+  }
+}
+console.log(
+  sourceMapReferences.length === 0
+    ? "Declaration source map references: none"
+    : `Declaration source map references: ${sourceMapReferences.length} found`,
+);
 
 const tscCommand = process.platform === "win32" ? "tsc.cmd" : "tsc";
 run(
