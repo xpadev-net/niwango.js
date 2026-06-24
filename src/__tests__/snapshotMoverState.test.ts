@@ -1,7 +1,7 @@
 import { beforeEach, describe, expect, test, vi } from "vitest";
 
 import type { IrObjectMoverQueue } from "@/@types/IrObject";
-import { setCurrentTime } from "@/context";
+import { currentTime, setCurrentTime } from "@/context";
 import { resetCanvas } from "@/contexts/canvas";
 import { drawObjects, resetObjects } from "@/contexts/objectManager";
 import {
@@ -104,5 +104,15 @@ describe("snapshot mover state", () => {
     expect(restored).toBeInstanceOf(IrShape);
     expect(restored?.__x).toBeCloseTo(snapshottedX);
     expect(getMoverQueue(restored)).toHaveLength(1);
+  });
+
+  test("restores the current time captured with the snapshot", () => {
+    setCurrentTime(900);
+    saveSnapshot(1000);
+
+    setCurrentTime(1050);
+    restoreSnapshot(1000);
+
+    expect(currentTime).toBe(900);
   });
 });

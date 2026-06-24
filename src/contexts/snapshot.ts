@@ -1,6 +1,7 @@
 import Core from "@xpadev-net/niwango-core";
 
 import type { ISnapshot } from "@/@types/types";
+import { currentTime, setCurrentTime } from "@/context";
 import { handlers, setHandlers } from "@/contexts/commentHandler";
 import { drawObjects, resetObjects } from "@/contexts/objectManager";
 import { queue, setQueue } from "@/contexts/queue";
@@ -21,6 +22,7 @@ let snapshots: ISnapshot[] = [];
 const saveSnapshot = (vpos: number) => {
   snapshots.push({
     vpos,
+    currentTime,
     queue: structuredClone(queue),
     scripts: structuredClone(scripts),
     handlers: structuredClone(handlers),
@@ -44,6 +46,7 @@ const restoreSnapshot = (vpos: number) => {
   setHandlers(structuredClone(snapshot.handlers));
   setGlobalScope(structuredClone(snapshot.globalScope));
   setEnvironmentScope(structuredClone(snapshot.environmentScope));
+  setCurrentTime(snapshot.currentTime);
   return snapshot.vpos;
 };
 
