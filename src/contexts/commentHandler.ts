@@ -53,7 +53,11 @@ const triggerHandlers = (comment: Comment) => {
     const globalScope = getGlobalScope(handler.scopes);
     if (!globalScope) continue;
     globalScope.chat = comment;
-    Core.execute(handler.script, handler.scopes, [handler.script]);
+    try {
+      Core.execute(handler.script, handler.scopes, [handler.script]);
+    } catch (e) {
+      console.error(e);
+    }
   }
 };
 
